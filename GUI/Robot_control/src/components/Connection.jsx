@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import LinkIcon from '@mui/icons-material/Link';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
+import { useTheme } from '../context/ThemeContext';
+
 function Connection() {
+    const { colors } = useTheme()
     const [isConnected, setIsConnected] = useState(false)
     return (
-        <div className='flex flex-row items-center rounded-md border-gray-600 p-2 gap-5 text-md text-gray-500'>
+        <div className='flex flex-row items-center rounded-md border-1 py-2 px-5 gap-5 text-sm'
+        style={{borderColor: colors.border, color: colors.text.primary}}>
             <p>CONEXIÓN</p>
             <input type="text" className='w-30 px-2' defaultValue={"192.168.1.100"} placeholder='IP' />
             <p>:</p>

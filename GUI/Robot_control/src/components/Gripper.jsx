@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import * as Slider from "@radix-ui/react-slider";
 function Gripper({opening, handleChangeOpening}) {
     return (
-        <div className='w-[max(330px,20vw)] rounded-lg text-white bg-[#1F1F1F] border-1 border-solid border-[#4A4A4A]'>
+        <div className='flex flex-col flex-1 rounded-lg text-white bg-[#1F1F1F] border-1 border-solid border-[#4A4A4A]'>
             <div className='w-full rounded-t-lg bg-[#2B2B2B] py-2 px-5 font-bold text-xl'>APERTURA DE LA PINZA</div>
             <div className="flex flex-col gap-4 py-2 px-5 text-[#828282] w-full">
                 <div className='flex flex-row items-center gap-5'> {/* Slider */}

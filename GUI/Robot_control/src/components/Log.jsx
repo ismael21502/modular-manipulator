@@ -11,7 +11,7 @@ function Log({ time, type, content }) {
 
     const colorClass = typeColors[type] || "text-gray-400"; // default
     return (
-        <p>{time} <span className={colorClass}>[{type}]</span> {content} </p>
+        <p className='text-sm'>{time} <span className={colorClass}>[{type}]</span> {content} </p>
     )
 }
 

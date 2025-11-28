@@ -5,13 +5,15 @@ import PositionsCard from './PositionsCard';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
-
+import { useTheme } from '../context/ThemeContext';
 function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, opening, setOpening, coords, setCoords, setShowSequences, ws }) {
+    const { colors } = useTheme()
     const [value, setValue] = useState("Home");
     const [newPosName, setNewPosName] = useState("")
     const [showPopUp, setShowPopUp] = useState(false)
     const [selectedMode, setSelectedMode] = useState("Posiciones")
-    const selectedModeClass = "border-b-4 border-indigo-600 bg-indigo-600/10 text-indigo-600 font-bold"
+    const [selectedPos, setSelectedPos] = useState("")
+
     const positions = [{
         name: "Zeroaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         joints: {
@@ -42,19 +44,19 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
             values: [0, 0, 0, 0, 0],
             names: ["J1", "J2", "J3", "J4", "G"]
         }
-        }, {
-            name: "Zero5",
-            joints: {
-                values: [0, 0, 0, 0, 0],
-                names: ["J1", "J2", "J3", "J4", "G"]
-            }
-        }, {
-            name: "Zero",
-            joints: {
-                values: [0, 0, 0, 0, 0],
-                names: ["J1", "J2", "J3", "J4", "G"]
-            }
-        }]
+    }, {
+        name: "Zero5",
+        joints: {
+            values: [0, 0, 0, 0, 0],
+            names: ["J1", "J2", "J3", "J4", "G"]
+        }
+    }, {
+        name: "Zero",
+        joints: {
+            values: [0, 0, 0, 0, 0],
+            names: ["J1", "J2", "J3", "J4", "G"]
+        }
+    }]
     const deletePosition = (positionName) => {
         if (positionName === "Home") return;
 
@@ -148,16 +150,33 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
     }
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
-        <div className="flex flex-col flex-1 min-h-0 justify-between">
+        <div className="flex flex-col h-full min-h-0">
             {/* tabs */}
-            <div className='w-full rounded-t-lg text-md text-gray-500 items-center flex flex-row text-center'>
+            <div className='w-full text-md text-gray-500 flex flex-row text-center border-b'
+                style={{ borderColor: colors.border }}>
                 <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Posiciones") }}>
-                    <div className={`py-3 ${selectedMode === "Posiciones" ? selectedModeClass : ""}`}>
+                    <div
+                        className={`w-full py-3`}
+                        style={selectedMode === "Posiciones" ? {
+                            backgroundColor: `${colors.base}1A`,
+                            color: colors.base,
+                            borderBottom: '4px solid',
+                            borderColor: colors.base,
+                            fontWeight: 'bold'
+                        } : {}}>
                         <p>POSICIONES</p>
                     </div>
                 </button>
                 <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Secuencias") }}>
-                    <div className={`w-full py-3 ${selectedMode === "Secuencias" ? selectedModeClass : ""}`}>
+                    <div
+                        className={`w-full py-3`}
+                        style={selectedMode === "Secuencias" ? {
+                            backgroundColor: `${colors.base}1A`,
+                            color: colors.base,
+                            borderBottom: '4px solid',
+                            borderColor: colors.base,
+                            fontWeight: 'bold'
+                        } : {}}>
                         <p>SECUENCIAS</p>
                     </div>
                 </button>
@@ -166,23 +185,27 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
             {/* scrollable content */}
             <div className="flex-1 min-h-0 overflow-auto flex flex-col gap-5 p-5">
                 {positions.map(position => (
-                    <PositionsCard key={position.name} position={position} isActive={true} />
+                    <PositionsCard key={position.name} position={position} setSelected={setSelectedPos} isActive={position.name == selectedPos ? true : false} />
                 ))}
             </div>
-            <div className='flex flex-col p-4 gap-3 bg-gray-100 border-t-1 border-gray-300 text-gray-800'>
+            <div className='flex flex-col p-4 gap-3 border-t'
+                style={{ borderColor: colors.border, color: colors.text.primary }}>
                 <div className='flex flex-row justify-between gap-3 '>
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer bg-white rounded-md border-1 border-gray-300'>
-                        <SaveIcon/>
+                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        style={{ borderColor: colors.border }}>
+                        <SaveIcon />
                         <p>Guardar</p>
-                    </button> 
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer bg-white rounded-md border-1 border-gray-300'>
-                        <DeleteIcon/>
+                    </button>
+                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        style={{ borderColor: colors.border }}>
+                        <DeleteIcon />
                         <p>Borrar</p>
                     </button>
                 </div>
                 <div className='flex flex-row justify-between gap-3 text-white'>
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer bg-indigo-600 rounded-md'>
-                        <PlayArrowRoundedIcon/>
+                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
+                        style={{ backgroundColor: colors.base_darker }}>
+                        <PlayArrowRoundedIcon />
                         <p>Reproducir movimiento</p>
                     </button>
                 </div>
