@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import * as Slider from "@radix-ui/react-slider";
+import OpenWithIcon from '@mui/icons-material/OpenWith';
+import { useTheme } from '../context/ThemeContext';
 function CartesianControl({ws, coords, setCoords}) {
+    const { colors } = useTheme()
     const [tempCoords, setTempCoords] = useState({ X: "0", Y: "0", Z: "0" });
 
     const handleChange = (axis, input) => {
@@ -38,16 +41,30 @@ function CartesianControl({ws, coords, setCoords}) {
         }
     };
 
-    const axes = ["X", "Y", "Z"];
+    const axes = {"X":"Lateral", "Y":"Profundidad", "Z":"Vertical"};
     return (
-        <div className='w-[max(330px,20vw)] rounded-lg text-white bg-[#1F1F1F] border-1 border-solid border-[#4A4A4A]'>
-            <div className='w-full rounded-t-lg bg-[#2B2B2B] py-2 px-5 font-bold text-xl'>CONTROL CARTESIANO</div>
-            <div className="flex flex-col gap-4 py-2 px-5 text-[#828282] w-full">
-                {axes.map(axis => (
-                    <div className='flex flex-row items-center gap-5' key={axis}> {/* Slider */}
-                        <h3 className='text-lg text-center'>{axis}</h3>
+        <div className='flex flex-1 flex-col'
+            style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
+            <div className='flex flex-row w-full py-2 px-5 gap-2 font-bold text-md'>
+                <OpenWithIcon/>
+                <p>CONTROL CARTESIANO</p>
+            </div>
+            <div className="flex flex-col gap-4 py-2 px-5 w-full">
+                {Object.entries(axes).map(([axis, label]) => (
+                    <div className='flex flex-col items-center' key={axis}> {/* Slider */}
+                        <div className='flex flex-row w-full justify-between'>
+                            <h3 className='text-sm text-center'>Eje {axis} ({label}) </h3>
+                            <div>
+                                <input type='text' className='text-sm w-[3rem] text-end mr-2'
+                                    //[ ] Hacer editable nuevamente
+                                    value={coords[axis]}
+                                    onChange={(e) => handleChange(axis, e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(axis, e)} />
+                                <span>m</span>
+                            </div>
+                        </div>
                         <Slider.Root
-                            className="relative flex items-center justify-center select-none touch-none h-8 w-54"
+                            className="relative flex items-center justify-center select-none touch-none h-8 w-full"
                             defaultValue={[0]}
                             min={-0.5}
                             max={0.5}
@@ -55,20 +72,14 @@ function CartesianControl({ws, coords, setCoords}) {
                             onValueChange={(val) => handleChange(axis, val)}
                             value={[coords[axis]]}
                         >
-                            <Slider.Track className="bg-[#2B2B2B] relative rounded-full h-2 w-full mx-auto overflow-hidden hover:cursor-pointer">
-                                <Slider.Range className="absolute bg-[#00FFFF] rounded-full h-full h-full" />
+                            <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
+                                style={{ backgroundColor: colors.border }}>
+                                <Slider.Range className="absolute rounded-full h-full h-full" 
+                                    style={{ backgroundColor: colors.axes[axis] }}/>
                             </Slider.Track>
-                            <Slider.Thumb className="block w-4 h-4 bg-[#00FFFF] rounded-full hover:cursor-pointer" />
-                        </Slider.Root>
-                        <div className="flex items-center">
-                            <input type='text' className='text-lg w-[3rem] text-center'
-                                //[ ] Hacer editable nuevamente
-                                value={coords[axis]}
-                                onChange={(e) => handleChange(axis, e.target.value)}
-                                onKeyDown={(e) => handleKeyDown(axis, e)} />
-                            <span>m</span>
-                        </div>
-
+                            <Slider.Thumb className="block w-4 h-4 rounded-full hover:cursor-pointer" 
+                                style={{ backgroundColor: colors.axes[axis] }}/>
+                        </Slider.Root>               
                     </div>
                 ))}
             </div>

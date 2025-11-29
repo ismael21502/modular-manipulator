@@ -5,58 +5,20 @@ import PositionsCard from './PositionsCard';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
+import EditIcon from '@mui/icons-material/Edit';
 import { useTheme } from '../context/ThemeContext';
-function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, opening, setOpening, coords, setCoords, setShowSequences, ws }) {
+import { useWebSocket } from '../context/WebSocketContext';
+import { useRobotState } from '../context/RobotState';
+
+function Positions({ setLogs, loadPositions, opening, setOpening, }) {
+    const { positions } = useWebSocket()
     const { colors } = useTheme()
-    const [value, setValue] = useState("Home");
+    const { joints, setJoints } = useRobotState()
+
     const [newPosName, setNewPosName] = useState("")
     const [showPopUp, setShowPopUp] = useState(false)
-    const [selectedMode, setSelectedMode] = useState("Posiciones")
     const [selectedPos, setSelectedPos] = useState("")
 
-    const positions = [{
-        name: "Zeroaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }, {
-        name: "Zero1",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }, {
-        name: "Zero2",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }, {
-        name: "Zero3",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }, {
-        name: "Zero4",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }, {
-        name: "Zero5",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }, {
-        name: "Zero",
-        joints: {
-            values: [0, 0, 0, 0, 0],
-            names: ["J1", "J2", "J3", "J4", "G"]
-        }
-    }]
     const deletePosition = (positionName) => {
         if (positionName === "Home") return;
 
@@ -78,45 +40,39 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
             .catch(err => setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]));
     }
 
-    useEffect(() => { loadPositions() }, [isConnected])
+    // useEffect(() => { loadPositions() }, [isConnected])
 
-    function moveRobot(targetJoints, targetGripperOpening, targetCoords) {
-        const duration = 700; // duración de la animación en ms
+    function moveRobot(targetJoints) {
+        const duration = 700;
         const start = performance.now();
-        const initialJoints = { ...joints };
-        const initialOpening = opening;
-        const initialCoords = { ...coords };
+
+        const initialJoints = { ...joints };     // ejemplo: {J1:0, J2:10, J3:30, J4:0, G:0}
+        const labels = targetJoints.labels;      // ['J1','J2','J3','J4','G']
+        const target = targetJoints.values;      // [0,45,45,0,0]
 
         function animate(time) {
             const elapsed = time - start;
             const t = Math.min(elapsed / duration, 1);
+            const newJoints = [];
 
-            const newJoints = {};
-            const newCoords = {};
+            // [ ] Arreglar esto
+            // Equivalente a zip(labels, target) en Python
+            labels.forEach((label, i) => {
+                const startVal = initialJoints[i];
+                const endVal = target[i];
 
-            for (let key in initialJoints) {
-                newJoints[key] = Math.round(initialJoints[key] + t * (targetJoints[key] - initialJoints[key]));
-            }
+                newJoints[i] = Math.round(startVal + t * (endVal - startVal));
+            });
+            setJoints(newJoints);            
 
-            const newOpening = Math.round(initialOpening + t * (targetGripperOpening - initialOpening));
-
-            for (let key in initialCoords) {
-                newCoords[key] = parseFloat((initialCoords[key] + t * (targetCoords[key] - initialCoords[key])).toFixed(2));
-            }
-
-            // Actualiza estados
-            setJoints(newJoints);
-            setOpening(newOpening);
-            setCoords(newCoords);
-
+            // ESTA ES LA CLAVE PARA ANIMAR TAMBIÉN EL CARTESIAN
             // Envía datos al backend si WebSocket está abierto
-            if (ws?.current?.readyState === WebSocket.OPEN) {
-                console.log("HOLA")
-                ws.current.send(JSON.stringify({
-                    type: "joints",
-                    data: { joints: Object.fromEntries(Object.entries(newJoints).map(([k, v]) => [k, v])), gripper: newOpening }
-                }));
-            }
+            // if (ws?.current?.readyState === WebSocket.OPEN) {
+            //     ws.current.send(JSON.stringify({
+            //         type: "joints",
+            //         data: { joints: Object.fromEntries(Object.entries(newJoints).map(([k, v]) => [k, v])), gripper: newOpening }
+            //     }));
+            // }
 
             if (t < 1) requestAnimationFrame(animate);
         }
@@ -125,8 +81,8 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
     }
 
     function sendPos() {
-        const target = positions.find(pos => pos.name === value);
-        if (target) moveRobot(target.joints, target.gripperOpening, target.coords);
+        const target = positions.find(pos => pos.name === selectedPos);
+        if (target) moveRobot(target.joints);
     }
 
     function savePos() {
@@ -134,7 +90,7 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
         fetch("http://localhost:8000/save", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newPosName, joints, gripperOpening: opening, coords }),
+            body: JSON.stringify({ name: newPosName, joints, gripperOpening: opening }),
         })
             .then(data => {
                 if (data.ok) {
@@ -150,38 +106,7 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
     }
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
-        <div className="flex flex-col h-full min-h-0">
-            {/* tabs */}
-            <div className='w-full text-md text-gray-500 flex flex-row text-center border-b'
-                style={{ borderColor: colors.border }}>
-                <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Posiciones") }}>
-                    <div
-                        className={`w-full py-3`}
-                        style={selectedMode === "Posiciones" ? {
-                            backgroundColor: `${colors.base}1A`,
-                            color: colors.base,
-                            borderBottom: '4px solid',
-                            borderColor: colors.base,
-                            fontWeight: 'bold'
-                        } : {}}>
-                        <p>POSICIONES</p>
-                    </div>
-                </button>
-                <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Secuencias") }}>
-                    <div
-                        className={`w-full py-3`}
-                        style={selectedMode === "Secuencias" ? {
-                            backgroundColor: `${colors.base}1A`,
-                            color: colors.base,
-                            borderBottom: '4px solid',
-                            borderColor: colors.base,
-                            fontWeight: 'bold'
-                        } : {}}>
-                        <p>SECUENCIAS</p>
-                    </div>
-                </button>
-            </div>
-
+        <div className="flex flex-1 flex-col min-h-0">
             {/* scrollable content */}
             <div className="flex-1 min-h-0 overflow-auto flex flex-col gap-5 p-5">
                 {positions.map(position => (
@@ -190,25 +115,41 @@ function Positions({ joints, setJoints, setLogs, loadPositions, isConnected, ope
             </div>
             <div className='flex flex-col p-4 gap-3 border-t'
                 style={{ borderColor: colors.border, color: colors.text.primary }}>
-                <div className='flex flex-row justify-between gap-3 '>
+                {selectedPos !== ""
+                    ? <div className='flex flex-row justify-between gap-3 '>
+                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                            style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}>
+                            <EditIcon />
+                            <p>Editar</p>
+                        </button>
+                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                            style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}>
+                            <DeleteIcon />
+                            <p>Borrar</p>
+                        </button>
+                    </div>
+                    :null}
+                <div className='flex w-full'
+                    style={{ borderColor: colors.border, color: colors.text.primary }}>
                     <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                        style={{ borderColor: colors.border }}>
+                        style={{ borderColor: colors.border }}
+                        >
                         <SaveIcon />
-                        <p>Guardar</p>
-                    </button>
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                        style={{ borderColor: colors.border }}>
-                        <DeleteIcon />
-                        <p>Borrar</p>
+                        <p>Guardar nueva pose</p>
                     </button>
                 </div>
-                <div className='flex flex-row justify-between gap-3 text-white'>
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
-                        style={{ backgroundColor: colors.base_darker }}>
-                        <PlayArrowRoundedIcon />
-                        <p>Reproducir movimiento</p>
-                    </button>
-                </div>
+                {selectedPos !== ""
+                    ? <div className='flex text-white'>
+                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
+                            style={{ backgroundColor: colors.primaryDark }}
+                            onClick={sendPos}>
+                            <PlayArrowRoundedIcon />
+                            <p>Reproducir movimiento</p>
+                        </button>
+                    </div>
+                    :null}
+
+                    
             </div>
             {/* <div className='p-2 flex flex-col gap-5'>
                 <div className='flex justify-between items-center w-full'>

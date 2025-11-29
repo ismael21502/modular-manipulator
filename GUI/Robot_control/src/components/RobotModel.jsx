@@ -4,11 +4,15 @@ import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
-export function Model({ url, angles, opening }) {
-  const { scene } = useGLTF(url);
+import { useRobotState } from '../context/RobotState';
+
+export function Model({ url }) {
+  const { scene } = useGLTF(url)
+  const { joints } = useRobotState()
+
   const degToRad = (deg) => deg * Math.PI / 180;
   useEffect(() => {
-    const maxOpeningDeg = 63 / 100
+    const maxOpeningDeg = 77 / 100
     // Accede a las partes del modelo
     const J1 = scene.getObjectByName("J1")
     const J2 = scene.getObjectByName("J2")
@@ -21,18 +25,19 @@ export function Model({ url, angles, opening }) {
     const limb2 = scene.getObjectByName("Limb2")
 
     // Aplica rotaciones como en tu ejemplo original
-    if (J1) J1.rotation.y = degToRad(angles[0])
-    if (J2) J2.rotation.x = degToRad(angles[1])
-    if (J3) J3.rotation.x = degToRad(angles[2])
+    if (J1) J1.rotation.y = degToRad(joints[0])
+    if (J2) J2.rotation.x = degToRad(joints[1])
+    if (J3) J3.rotation.x = degToRad(joints[2])
 
+    const clawRotation = joints[joints.length - 1]
     // Rotaciones de la pinza
-    if (claw1) claw1.rotation.z = degToRad(opening * maxOpeningDeg + 180) //Reemplazar por el angulo de la pinza
-    if (claw2) claw2.rotation.z = degToRad(-opening * maxOpeningDeg) //Reemplazar por el angulo de la pinza
-    if (jaw1) jaw1.rotation.z = degToRad(-opening * maxOpeningDeg + 180)
-    if (jaw2) jaw2.rotation.z = degToRad(opening * maxOpeningDeg)
-    if (limb1) limb1.rotation.z = degToRad(opening * maxOpeningDeg)
-    if (limb2) limb2.rotation.z = degToRad(-opening * maxOpeningDeg)
-  }, [scene, angles, opening])
+    if (claw1) claw1.rotation.z = degToRad(clawRotation * maxOpeningDeg + 180) //Reemplazar por el angulo de la pinza
+    if (claw2) claw2.rotation.z = degToRad(-clawRotation * maxOpeningDeg) //Reemplazar por el angulo de la pinza
+    if (jaw1) jaw1.rotation.z = degToRad(-clawRotation * maxOpeningDeg + 180)
+    if (jaw2) jaw2.rotation.z = degToRad(clawRotation * maxOpeningDeg)
+    if (limb1) limb1.rotation.z = degToRad(clawRotation * maxOpeningDeg)
+    if (limb2) limb2.rotation.z = degToRad(-clawRotation * maxOpeningDeg)
+  }, [scene, joints])
 
   return <primitive object={scene} />;
 }
@@ -52,14 +57,14 @@ function RobotModel({ angles, opening }) {
         {/* Luz de entorno tipo "Material Preview" */}
         <Environment preset="city" />
         {/* Grid de 20x20 con líneas cada 1 unidad */}
-        <gridHelper args={[max_X, max_Y, '#9e9e9e', '#9e9e9e']} />
+        <gridHelper args={[max_X, max_Y, '#3c9439', '#9e9e9e']} />
         <mesh>
           <boxGeometry args={[max_X, max_Y, max_Z]} />
           <meshBasicMaterial color="#666" wireframe opacity={0.2} transparent />
         </mesh>
 
         {/* Ejes XYZ */}
-        <axesHelper args={[1.5]} />
+        {/* <axesHelper args={[1.5]} /> */}
 
 
 

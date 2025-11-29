@@ -13,7 +13,7 @@ function Header({ title }) {
     style={{color: colors.border}}>
       <div className='flex flex-row gap-3 items-center'> {/*Title*/}
         <div className="flex items-center justify-center rounded-md p-2 "
-          style={{ backgroundColor: colors.base_darker }}>
+          style={{ backgroundColor: colors.primaryDark }}>
           <PrecisionManufacturingIcon className='text-white' fontSize='large' />
         </div>
         <p className='text-2xl'

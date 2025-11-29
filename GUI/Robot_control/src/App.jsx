@@ -7,152 +7,79 @@ import Console from "./components/Console.jsx"
 import Sequences from "./components/Sequences.jsx"
 import Header from "./components/Header.jsx"
 import { useTheme } from "./context/ThemeContext.jsx"
+import { useState } from "react"
+
 function App() {
   const { colors } = useTheme()
+  const [selectedMode, setSelectedMode] = useState("Posiciones")
   return (
-      <div className="h-[100vh] flex flex-col"
-      style={{backgroundColor: colors.background}}>
-        <Header title={"Robot control"} />
-        <div className="flex flex-1 flex-row min-h-0">
-          <div className="flex-[1_1_25%] min-w-0">
-            <Positions
-              joints={{}} setJoints={{}}
+    <div className="h-[100vh] flex flex-col transition-colors duration-150 ease-in-out"
+      style={{ backgroundColor: colors.background }}>
+      <Header title={"Robot control"} />
+      <div className="flex flex-1 flex-row min-h-0">
+        <div className="flex-[1_1_25%] min-w-0 min-h-0 flex flex-col">
+          {/* tabs */}
+          <div className='w-full text-md flex flex-row text-center border-b'
+            style={{ borderColor: colors.border, color: colors.text.title, fontWeight: 'bold' }}>
+            <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Posiciones") }}
+            >
+              <div
+                className={`w-full py-3`}
+                style={selectedMode === "Posiciones" ? {
+                  backgroundColor: `${colors.primary}1A`,
+                  color: colors.primary,
+                  borderBottom: '4px solid',
+                  borderColor: colors.primary,
+                  fontWeight: 'bold'
+                } : {}}>
+                <p>POSICIONES</p>
+              </div>
+            </button>
+            <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Secuencias") }}>
+              <div
+                className={`w-full py-3`}
+                style={selectedMode === "Secuencias" ? {
+                  backgroundColor: `${colors.primary}1A`,
+                  color: colors.primary,
+                  borderBottom: '4px solid',
+                  borderColor: colors.primary,
+                  fontWeight: 'bold'
+                } : {}}>
+                <p>SECUENCIAS</p>
+              </div>
+            </button>
+          </div>
+          {selectedMode === "Posiciones"
+            ? <Positions
               setLogs={{}}
               loadPositions={() => { }}
               isConnected={false}
               opening={{}} setOpening={() => { }}
-              coords={{}}
-              setCoords={{}}
-              setShowSequences={{}}
-              ws={{}}
             />
-          </div>
+            : <></>}
+        </div>
 
-          <div className="flex-[2_1_50%] min-w-0 h-full">
-            <div className="flex h-[65%]">
-              <RobotModel angles={[0, 0, 0]} opening={0} />
-            </div>
-            <div className="flex h-[35%]">
-              <Console
-                logs={[
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "WARNING",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "DEBUG",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "ERROR",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  },
-                  {
-                    'type': "INFO",
-                    'time': '12034',
-                    'values': 'aaaaaaa'
-                  }
-                ]} 
-                setLogs={()=>{}} 
-                isConnected={true} 
-                reconnect={()=>{}} 
-                loadPositions={()=>{}}
-              />
-            </div>
+        <div className="flex-[2_1_50%] min-w-0 h-full">
+          <div className="flex h-[65%]">
+            <RobotModel opening={0} />
           </div>
-          <div className="flex-[1_1_25%]">
-                <Gripper opening={0} handleChangeOpening={()=>{}}/>
+          <div className="flex h-[35%]">
+            <Console />
           </div>
         </div>
+        <div className="flex-[1_1_25%] overflow-y-auto">
+          <CartesianControl coords={{ X: "0", Y: "0", Z: "0" }} />
+          <Gripper opening={0} handleChangeOpening={() => { }} />
+          <ManualControl joints={{
+            'J1': 0,
+            'J2': -90,
+            'J3': 90
+          }}
+            handleChangeJoint={() => { }} />
+
+        </div>
       </div>
+    </div>
 
   )
 }

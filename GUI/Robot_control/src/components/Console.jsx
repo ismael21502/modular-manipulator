@@ -4,23 +4,18 @@ import Log from './Log';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import { useTheme } from '../context/ThemeContext';
+import { useWebSocket } from '../context/WebSocketContext';
 
-function Console({ logs, setLogs, isConnected, reconnect, loadPositions }) {
+function Console({ }) {
     const { colors } = useTheme()
-
-    const [isReconnecting, setIsReconnecting] = useState(false);
+    const { logs, setLogs } = useWebSocket()
     const logContainerRef = useRef(null)
     useEffect(() => {
         if (logContainerRef.current) {
             logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
         }
     }, [logs])
-    const handleReconnection = async () => {
-        setIsReconnecting(true);
-        await reconnect(); // suponiendo que sea async
-        await loadPositions()
-        setTimeout(() => setIsReconnecting(false), 500)
-    }
+    
     function clearConsole(e) {
         setLogs([])
     }
@@ -44,7 +39,7 @@ function Console({ logs, setLogs, isConnected, reconnect, loadPositions }) {
             </div>
             <div className="flex flex-grow flex-col p-2 px-3 w-full overflow-y-auto">
                     {logs.map((log, index) => {
-                        if (log.type == "JOINTS" || log.type == "COORDS") {
+                        if (log.category != "log") {
                             return
                         }
                         return <Log key={`${log.time}-${index}`} type={log.type} time={log.time} content={log.values} />

@@ -5,18 +5,16 @@ import { useTheme } from '../context/ThemeContext';
 function PositionsCard({ isActive = false, position, setSelected = () =>{} }) {
     const { colors } = useTheme()
 
-    const inactiveColor = "#4b5563"; // gray-600
-
-    const textColor = isActive ? colors.base : inactiveColor;
+    const textColor = isActive ? colors.primary : colors.text.title;
     const backgroundColor = isActive
-        ? `${colors.base}1A` // 10% opacity
+        ? `${colors.primary}1A` // 10% opacity
         : ``;
 
     return (
         <button onClick={()=>{setSelected(position.name)}}>
             <div
                 className="flex w-full flex-row items-center rounded-xl p-4 gap-3 cursor-pointer"
-                style={{ border: `1px solid ${isActive ? colors.base : colors.border}`, backgroundColor }}
+                style={{ border: `1px solid ${isActive ? colors.primary : colors.border}`, backgroundColor }}
             >
                 <div className="flex flex-col flex-1 min-w-0 gap-3">
                     {/* Nombre */}
@@ -31,12 +29,12 @@ function PositionsCard({ isActive = false, position, setSelected = () =>{} }) {
                     <div
                         className="truncate text-sm text-start"
                         style={{ color: colors.text.primary }}
-                        title={position.joints.names
-                            .map((name, i) => `${name}:${position.joints.values[i]}${name === "G" ? "%" : "°"}`)
+                        title={position.joints.labels
+                            .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)
                             .join(" · ")}
                     >
-                        {position.joints.names
-                            .map((name, i) => `${name}:${position.joints.values[i]}${name === "G" ? "%" : "°"}`)
+                        {position.joints.labels
+                            .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)
                             .join(" ")}
                     </div>
                 </div>
@@ -44,7 +42,7 @@ function PositionsCard({ isActive = false, position, setSelected = () =>{} }) {
                 {isActive && (
                     <div
                         className="flex w-6 h-6 items-center justify-center rounded-full"
-                        style={{ backgroundColor: colors.base }}
+                        style={{ backgroundColor: colors.primary }}
                     >
                         <DoneIcon style={{ color: "white", fontWeight: "bold" }} fontSize="small" />
                     </div>
