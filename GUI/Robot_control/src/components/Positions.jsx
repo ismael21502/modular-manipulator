@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as Select from "@radix-ui/react-select";
-import PopUp from './PopUp';
+import SavePopUp from './SavePopUp';
 import PositionsCard from './PositionsCard';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,37 +10,14 @@ import { useTheme } from '../context/ThemeContext';
 import { useWebSocket } from '../context/WebSocketContext';
 import { useRobotState } from '../context/RobotState';
 
-function Positions({ setLogs, loadPositions, opening, setOpening, }) {
-    const { positions } = useWebSocket()
+function Positions() {
+    const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
     const { joints, setJoints } = useRobotState()
 
     const [newPosName, setNewPosName] = useState("")
     const [showPopUp, setShowPopUp] = useState(false)
     const [selectedPos, setSelectedPos] = useState("")
-
-    const deletePosition = (positionName) => {
-        if (positionName === "Home") return;
-
-        fetch("http://localhost:8000/delete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: positionName }),
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "ok") {
-                    loadPositions();
-                    setValue("Home");
-                    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "INFO", values: `La posición fue eliminada con éxito.` }]);
-                } else {
-                    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error del servidor: ${data.status}` }]);
-                }
-            })
-            .catch(err => setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]));
-    }
-
-    // useEffect(() => { loadPositions() }, [isConnected])
 
     function moveRobot(targetJoints) {
         const duration = 700;
@@ -63,7 +40,7 @@ function Positions({ setLogs, loadPositions, opening, setOpening, }) {
 
                 newJoints[i] = Math.round(startVal + t * (endVal - startVal));
             });
-            setJoints(newJoints);            
+            setJoints(newJoints);
 
             // ESTA ES LA CLAVE PARA ANIMAR TAMBIÉN EL CARTESIAN
             // Envía datos al backend si WebSocket está abierto
@@ -85,25 +62,10 @@ function Positions({ setLogs, loadPositions, opening, setOpening, }) {
         if (target) moveRobot(target.joints);
     }
 
-    function savePos() {
-        if (!newPosName) return;
-        fetch("http://localhost:8000/save", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newPosName, joints, gripperOpening: opening }),
-        })
-            .then(data => {
-                if (data.ok) {
-                    loadPositions();
-                    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "INFO", values: "Posición guardada correctamente" }]);
-                } else {
-                    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", values: "La posición no fue guardada" }]);
-                }
-            })
-            .catch(err => setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", values: `No fue posible guardar la posición: ${err}` }]));
-
-        setNewPosName("");
+    const handleSaving = () => {
+        setShowPopUp(true)
     }
+
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
         <div className="flex flex-1 flex-col min-h-0">
@@ -123,17 +85,18 @@ function Positions({ setLogs, loadPositions, opening, setOpening, }) {
                             <p>Editar</p>
                         </button>
                         <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                            style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}>
+                            style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
+                            onClick={() => { deletePos(selectedPos), setSelectedPos("") }}>
                             <DeleteIcon />
                             <p>Borrar</p>
                         </button>
                     </div>
-                    :null}
+                    : null}
                 <div className='flex w-full'
                     style={{ borderColor: colors.border, color: colors.text.primary }}>
                     <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                         style={{ borderColor: colors.border }}
-                        >
+                        onClick={() => { handleSaving() }}>
                         <SaveIcon />
                         <p>Guardar nueva pose</p>
                     </button>
@@ -147,58 +110,15 @@ function Positions({ setLogs, loadPositions, opening, setOpening, }) {
                             <p>Reproducir movimiento</p>
                         </button>
                     </div>
-                    :null}
+                    : null}
 
-                    
-            </div>
-            {/* <div className='p-2 flex flex-col gap-5'>
-                <div className='flex justify-between items-center w-full'>
-                    <Select.Root value={value} onValueChange={setValue}>
-                        <Select.Trigger className="border border-gray-400 px-3 py-2 rounded cursor-pointer">
-                            <Select.Value placeholder="Selecciona un color" />
-                            <Select.Icon className="SelectIcon ml-3" />
-                        </Select.Trigger>
-                        <Select.Content className="bg-[#2B2B2B] border border-gray-400 rounded mt-1">
-                            {positions.length > 0 ? positions.map(pos => (
-                                <Select.Item key={pos.name} value={pos.name} className="px-3 py-1 hover:bg-[#3B3939] cursor-pointer">
-                                    <Select.ItemText>{pos.name}</Select.ItemText>
-                                </Select.Item>
-                            )) :
-                                <Select.Item key="Home" value="Home" className="px-3 py-1 hover:bg-[#3B3939] cursor-pointer">
-                                    <Select.ItemText>Home</Select.ItemText>
-                                </Select.Item>}
-                        </Select.Content>
-                    </Select.Root>
-                    <button className='flex py-2 px-4 gap-2 items-center bg-[#e0006f] rounded-md cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_10px_#e0006f] text-bold'
-                        onClick={sendPos}>
-                        <i className="fa-solid fa-play"></i>
-                        <p>Enviar</p>
-                    </button>
-                </div>
 
-                <div>
-                    <p className='font-bold text-xl px-3 mb-5'>Guardar pose actual</p>
-                    <div className='flex justify-between'>
-                        <input type="text" className='border-1 border-[#3B3939] rounded-sm px-2 w-[8rem]' placeholder='Nombre' onChange={(e) => setNewPosName(e.target.value)} value={newPosName} />
-                        <div className='flex gap-5'>
-                            <button className='flex py-2 px-4 gap-2 items-center bg-[#e0006f] rounded-md cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_10px_#e0006f] text-bold'
-                                onClick={savePos}>
-                                <i className="fa-solid fa-floppy-disk"></i>
-                                <p>Guardar</p>
-                            </button>
-                            <button className='flex py-2 px-4 gap-2 items-center bg-[#008787] rounded-md cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_10px_#008787] text-bold'
-                                onClick={() => setShowPopUp(true)}>
-                                <i className="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            {(value === "Home")
-                ? <PopUp isOpen={showPopUp} title="Aviso" message={`No es posible eliminar la posición "Home", ya que está protegida por el sistema.`} onCancel={() => setShowPopUp(false)} onConfirm={() => { deletePosition(value); setShowPopUp(false); }} />
-                : <PopUp isOpen={showPopUp} title="CONFIRMAR ELIMINACIÓN" message={`¿Estás seguro que quieres eliminar "${value}"? Esta acción no se puede deshacer.`} onCancel={() => setShowPopUp(false)} onConfirm={() => { deletePosition(value); setShowPopUp(false); }} />
-            } */}
+
+            <SavePopUp
+                isOpen={showPopUp}
+                setIsopen={setShowPopUp}  />
         </div>
     )
 }

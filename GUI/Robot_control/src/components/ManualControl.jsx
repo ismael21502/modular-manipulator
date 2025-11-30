@@ -34,7 +34,7 @@ function ManualControl({ }) {
 
       <div className="flex flex-col py-2 px-5 w-full justify-between">
         {joints.map((val, i) => (
-          labels[i] === "G"? null:
+          labels[i] === "Gripper"? null:
           <div key={labels[i]} className="flex flex-col items-center">
             <div className="flex flex-row w-full justify-between">
               <h3 className="text-sm text-center">{labels[i]}</h3>

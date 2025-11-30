@@ -11,9 +11,11 @@ function Connection() {
         <div className='flex flex-row items-center rounded-md border-1 py-2 px-5 gap-5 text-sm'
         style={{borderColor: colors.border, color: colors.text.primary}}>
             <p>CONEXIÓN</p>
-            <input type="text" className='w-30 px-2' defaultValue={"192.168.1.100"} placeholder='IP' />
-            <p>:</p>
-            <input type="text" className='w-20 px-2' defaultValue={"5173"} placeholder='PORT' />
+            <div className='flex flex-row justify-end items-center'>
+                <input type="text" className='w-30 px-2 text-end' defaultValue={"192.168.1.100"} placeholder='IP' />
+                <p>:</p>
+                <input type="text" className='w-20 px-2' defaultValue={"5173"} placeholder='PORT' />
+            </div>
             <div className='h-5 w-[1px] bg-gray-400'>
             </div>
             <button onClick={ () => {

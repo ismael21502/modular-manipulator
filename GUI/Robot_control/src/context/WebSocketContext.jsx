@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-
+import { useRobotState } from "./RobotState";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
+    const { joints, labels } = useRobotState()
     const ws = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [logs, setLogs] = useState([])
@@ -94,7 +95,45 @@ export const WebSocketProvider = ({ children }) => {
                 }])
             }
         }
-    };
+    }
+
+    function savePos(newPosName) {
+        if (!newPosName) return;
+        fetch("http://localhost:8000/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: newPosName, joints: {values: joints, labels} }),
+        })
+            .then(data => {
+                if (data.ok) {
+                    loadPositions()
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "INFO", values: "Posición guardada correctamente" }])
+                } else {
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: "La posición no fue guardada" }])
+                }
+            })
+            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: `No fue posible guardar la posición: ${err}` }]))
+    }
+    const deletePos = (positionName) => {
+        if (positionName === "Home") return;
+
+        fetch("http://localhost:8000/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: positionName }),
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    loadPositions()
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "INFO", values: `La posición fue eliminada con éxito.` }])
+                } else {
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error del servidor: ${data.status}` }])
+                }
+            })
+            .catch(err => setLogs(prev => [...prev, { category: 'log',  time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
+    }
+
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
@@ -108,7 +147,12 @@ export const WebSocketProvider = ({ children }) => {
     }, [])
 
     return (
-        <WebSocketContext.Provider value={{ ws, isConnected, connect, disconnect, send, logs, setLogs, positions }}>
+        <WebSocketContext.Provider value={{ 
+            ws, 
+            isConnected, 
+            connect, disconnect, send, 
+            logs, setLogs, 
+            positions, savePos, deletePos}}>
             {children}
         </WebSocketContext.Provider>
     )

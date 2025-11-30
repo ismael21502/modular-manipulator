@@ -50,12 +50,7 @@ function App() {
             </button>
           </div>
           {selectedMode === "Posiciones"
-            ? <Positions
-              setLogs={{}}
-              loadPositions={() => { }}
-              isConnected={false}
-              opening={{}} setOpening={() => { }}
-            />
+            ? <Positions />
             : <></>}
         </div>
 

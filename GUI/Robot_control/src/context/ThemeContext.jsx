@@ -15,8 +15,8 @@ export const ThemeProvider = ({ children }) => {
             border: mode === "light" ? "#cacaca" : "#242a42",
 
             text: {
-                primary: mode === "light" ? "#747474" : "#f8f8f8",
-                title: mode === "light" ? "#7e848d" : "#c3cbd7",
+                primary: mode === "light" ? "#4d4d4dff" : "#f8f8f8",
+                title: mode === "light" ? "#505761ff" : "#c3cbd7",
             },
             terminal: {
                 head: mode === "light" ? "#1f1f1f" : "#070707ff",
