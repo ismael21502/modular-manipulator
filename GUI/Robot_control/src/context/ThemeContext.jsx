@@ -23,9 +23,9 @@ export const ThemeProvider = ({ children }) => {
                 content: mode === "light" ? "#111111" : "#000000"
             },
             axes: {
-                X: "#ff4f4f",
-                Y: "#3fcc3f",
-                Z: "#3b59e0",
+                x: "#ff4f4f",
+                y: "#3fcc3f",
+                z: "#3b59e0",
             }
         },
 

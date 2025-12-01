@@ -23,9 +23,11 @@ function SavePopUp({ isOpen, setIsopen }) {
         setIsopen(false)
     }
     return (
-        <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'>
+        <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
+        onClick={() =>{setIsopen(false)}}>
             <div className='w-[360px] rounded-lg p-4 flex flex-col gap-5'
-                style={{ backgroundColor: colors.background, color: colors.text.primary }}>
+                style={{ backgroundColor: colors.background, color: colors.text.primary }}
+                onClick={(e) => e.stopPropagation()}>
                 <div>
                     <p className="text-xl font-bold"
                         style={{ color: colors.text.title }}>Nueva posición</p>

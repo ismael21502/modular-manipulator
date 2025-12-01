@@ -111,11 +111,7 @@ function Positions() {
                         </button>
                     </div>
                     : null}
-
-
             </div>
-
-
             <SavePopUp
                 isOpen={showPopUp}
                 setIsopen={setShowPopUp}  />

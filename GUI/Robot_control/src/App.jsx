@@ -51,7 +51,7 @@ function App() {
           </div>
           {selectedMode === "Posiciones"
             ? <Positions />
-            : <></>}
+            : <Sequences />}
         </div>
 
         <div className="flex-[2_1_50%] min-w-0 h-full">
@@ -63,7 +63,7 @@ function App() {
           </div>
         </div>
         <div className="flex-[1_1_25%] overflow-y-auto">
-          <CartesianControl coords={{ X: "0", Y: "0", Z: "0" }} />
+          <CartesianControl />
           <Gripper opening={0} handleChangeOpening={() => { }} />
           <ManualControl joints={{
             'J1': 0,
