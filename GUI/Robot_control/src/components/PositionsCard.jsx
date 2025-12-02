@@ -2,7 +2,7 @@ import React from 'react'
 import DoneIcon from '@mui/icons-material/Done';
 import { useTheme } from '../context/ThemeContext';
 
-function PositionsCard({ isActive = false, position, setSelected = () =>{} }) {
+function PositionsCard({ isActive = false, name, joints, labels , setSelected = () =>{} }) {
     const { colors } = useTheme()
 
     const textColor = isActive ? colors.primary : colors.text.title;
@@ -11,7 +11,7 @@ function PositionsCard({ isActive = false, position, setSelected = () =>{} }) {
         : ``;
 
     return (
-        <button onClick={()=>{setSelected(position.name)}}>
+        <button onClick={()=>{setSelected(name)}}>
             <div
                 className="flex w-full flex-row items-center rounded-xl p-4 gap-3 cursor-pointer"
                 style={{ border: `1px solid ${isActive ? colors.primary : colors.border}`, backgroundColor }}
@@ -22,19 +22,19 @@ function PositionsCard({ isActive = false, position, setSelected = () =>{} }) {
                         className="truncate text-sm font-bold text-start"
                         style={{ color: textColor }}
                     >
-                        {position.name}
+                        {name}
                     </p>
 
                     {/* Joints */}
                     <div
                         className="truncate text-sm text-start"
                         style={{ color: colors.text.primary }}
-                        title={position.joints.labels
-                            .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)
-                            .join(" · ")}
+                        // title={position.joints.labels
+                        //     .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)
+                        //     .join(" · ")}
                     >
-                        {position.joints.labels
-                            .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)
+                        {joints
+                            .map((joint, i) => `${labels[i]}: ${joint}${labels[i] === "G" ? "%" : "°"}`)
                             .join(" ")}
                     </div>
                 </div>

@@ -24,15 +24,15 @@ function Gripper({ }) {
     return (
         <div className='flex flex-col flex-1 py-2'
             style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
-            <div className='flex flex-row justify-between w-full py-2 px-5 font-bold text-md'>
-                <div className='flex flex-row gap-2 items-center'>
+            <div className='flex flex-row justify-between w-full py-2 px-5 text-md'>
+                <div className='flex flex-row gap-2 items-center font-bold'>
                     <BackHandIcon fontSize='small' />
                     <p>PINZA</p>
                 </div>
                 <div className="flex items-center gap-1 text-sm"
                     style={{}}>
                     <input type='text' className='w-[2rem] text-end' value={opening} onChange={(e) => handleChangeOpening(e.target.value)} />
-                    <span>{jointConfig[gripperIndex].unit}</span>
+                    <span>{jointConfig[4].unit}</span>
                 </div>
             </div>
             <div className="flex flex-col gap-4 py-2 px-5 w-full">

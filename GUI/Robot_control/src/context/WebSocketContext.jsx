@@ -3,7 +3,7 @@ import { useRobotState } from "./RobotState";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { joints, labels } = useRobotState()
+    const { joints, jointConfig } = useRobotState()
     const ws = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [logs, setLogs] = useState([])
@@ -35,7 +35,6 @@ export const WebSocketProvider = ({ children }) => {
             setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", category: "log", values: "No se pudo conectar al servidor" }])
             console.error("WebSocket error:", err)
         };
-
         const handleMessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
@@ -102,7 +101,7 @@ export const WebSocketProvider = ({ children }) => {
         fetch("http://localhost:8000/save", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newPosName, joints: {values: joints, labels} }),
+            body: JSON.stringify({ name: newPosName, values: joints  }),
         })
             .then(data => {
                 if (data.ok) {

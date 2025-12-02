@@ -12,7 +12,15 @@ function Console({ }) {
     const logContainerRef = useRef(null)
     useEffect(() => {
         if (logContainerRef.current) {
-            logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+            const { scrollTop, clientHeight, scrollHeight } = logContainerRef.current;
+
+            // Verifica si el usuario está al final del contenedor
+            const currentHeight = scrollHeight - scrollTop
+            const isAtBottom = (clientHeight -50 >= currentHeight || currentHeight <= clientHeight +50)
+            // Desplazar solo si el usuario está al final
+            if (isAtBottom) {
+                logContainerRef.current.scrollTop = scrollHeight;
+            }
         }
     }, [logs])
     
@@ -37,28 +45,14 @@ function Console({ }) {
                 </button>
 
             </div>
-            <div className="flex flex-grow flex-col p-2 px-3 w-full overflow-y-auto">
+            <div className="flex flex-grow flex-col p-2 px-3 w-full overflow-y-auto" ref={logContainerRef}>
                     {logs.map((log, index) => {
                         if (log.category != "log") {
                             return
                         }
                         return <Log key={`${log.time}-${index}`} type={log.type} time={log.time} content={log.values} />
                     })}
-                {/* <div className="flex gap-3 justify-between">
-                    <button className='flex py-2 px-4 gap-2 items-center bg-[#e0006f] rounded-md cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_10px_#e0006f] text-bold'
-                        onClick={clearConsole}>
-                        <i className="fa-solid fa-trash"></i>
-                        <p>Limpiar consola</p>
-
-                    </button>
-                    <button className='flex py-2 px-4 gap-2 items-center bg-[#008787] rounded-md cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_5px_#00FFFF] text-bold'
-                        onClick={handleReconnection}>
-                        <i className={`fa-solid fa-refresh ${isReconnecting ? "rotate" : ""}`} ></i>
-                        <p>Reconectar</p>
-                    </button>
-                </div> */}
             </div>
-
         </div>
     )
 }

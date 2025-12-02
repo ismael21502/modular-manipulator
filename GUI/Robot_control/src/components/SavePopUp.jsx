@@ -10,7 +10,7 @@ function SavePopUp({ isOpen, setIsopen }) {
     const { savePos } = useWebSocket()
     const [name, setName] = useState("")
     const { colors } = useTheme()
-    const { joints, labels } = useRobotState()
+    const { joints, jointConfig } = useRobotState()
     const [showRequeriedName, setShowRequiredName] = useState(false)
     const handleConfirm = () => {
         // [ ] Añadir feedback
@@ -51,11 +51,11 @@ function SavePopUp({ isOpen, setIsopen }) {
                     : null}
                 </div>
                 <div className="flex flex-row flex-wrap gap-3 justify-between ">
-                    {joints.map((joint, i) => (
+                    {jointConfig.map((joint, i) => (
                         <div className="rounded-md py-1 px-3"
                             style={{ color: colors.text.primary, border: '1px solid', borderColor: colors.border }}
-                            key={i}>
-                            <p  >{labels[i]}: {joint}{labels[i] === "G" ? "%" : "°"}</p>
+                            key={joint.id}>
+                            <p  >{joint.label}: {joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
                         </div>
                     ))}
                 </div>

@@ -13,9 +13,8 @@ import { useRobotState } from '../context/RobotState';
 function Positions() {
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
-    const { joints, setJoints } = useRobotState()
+    const { joints, setJoints, jointConfig } = useRobotState()
 
-    const [newPosName, setNewPosName] = useState("")
     const [showPopUp, setShowPopUp] = useState(false)
     const [selectedPos, setSelectedPos] = useState("")
 
@@ -24,21 +23,17 @@ function Positions() {
         const start = performance.now();
 
         const initialJoints = { ...joints };     // ejemplo: {J1:0, J2:10, J3:30, J4:0, G:0}
-        const labels = targetJoints.labels;      // ['J1','J2','J3','J4','G']
-        const target = targetJoints.values;      // [0,45,45,0,0]
-
+        const targets = targetJoints;      // [0,45,45,0,0]
+        console.log(targetJoints)
         function animate(time) {
             const elapsed = time - start;
             const t = Math.min(elapsed / duration, 1);
             const newJoints = [];
 
-            // [ ] Arreglar esto
-            // Equivalente a zip(labels, target) en Python
-            labels.forEach((label, i) => {
-                const startVal = initialJoints[i];
-                const endVal = target[i];
-
-                newJoints[i] = Math.round(startVal + t * (endVal - startVal));
+            targets.forEach((target, i) => {
+                const startVal = initialJoints[i]
+                const endVal = target
+                newJoints[i] = Math.round(startVal + t * (endVal - startVal) )
             });
             setJoints(newJoints);
 
@@ -59,7 +54,8 @@ function Positions() {
 
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
-        if (target) moveRobot(target.joints);
+        console.log(target)
+        if (target) moveRobot(target.values);
     }
 
     const handleSaving = () => {
@@ -71,8 +67,8 @@ function Positions() {
         <div className="flex flex-1 flex-col min-h-0">
             {/* scrollable content */}
             <div className="flex-1 min-h-0 overflow-auto flex flex-col gap-5 p-5">
-                {positions.map(position => (
-                    <PositionsCard key={position.name} position={position} setSelected={setSelectedPos} isActive={position.name == selectedPos ? true : false} />
+                {positions.map((position, i) => (
+                    <PositionsCard key={position.name} name={position.name} joints={position.values} labels={jointConfig.map(joint => joint.label)} setSelected={setSelectedPos} isActive={position.name == selectedPos ? true : false} />
                 ))}
             </div>
             <div className='flex flex-col p-4 gap-3 border-t'

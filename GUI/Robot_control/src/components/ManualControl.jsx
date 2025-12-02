@@ -8,12 +8,10 @@ function ManualControl({ }) {
   const { colors } = useTheme()
   const { joints, jointConfig, setJoints } = useRobotState()
 
-  const handleChangeJoint = (i, val) => {
-    console.log(val)
-    
+  const handleChangeJoint = (i, val) => {    
     setJoints(prev =>
       {const newJoints = [...prev]
-      newJoints[i] = val
+      newJoints[i] = val[0]
       return newJoints}
     )
   }
