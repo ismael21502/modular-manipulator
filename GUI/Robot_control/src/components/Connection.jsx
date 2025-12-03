@@ -6,15 +6,21 @@ import { useWebSocket } from "../context/WebSocketContext.jsx"
 
 function Connection() {
     const { colors } = useTheme()
-    const { isConnected, connect, disconnect} = useWebSocket()
+    const { isConnected, connect, disconnect, port, setPort, IP, setIP } = useWebSocket()
+    const onIPChange = (newIP) => {
+        setIP(newIP)
+    }
+    const onPortChange = (newPort) => {
+        setPort(newPort)
+    }
     return (
         <div className='flex flex-row items-center rounded-md border-1 py-2 px-5 gap-5 text-sm'
         style={{borderColor: colors.border, color: colors.text.primary}}>
             <p>CONEXIÓN</p>
             <div className='flex flex-row justify-end items-center'>
-                <input type="text" className='w-30 px-2 text-end' defaultValue={"192.168.1.100"} placeholder='IP' />
+                <input type="text" className='w-30 px-2 text-end' placeholder='IP' value={IP} onChange={(e) => {onIPChange(e.target.value)}}/>
                 <p>:</p>
-                <input type="text" className='w-20 px-2' defaultValue={"5173"} placeholder='PORT' />
+                <input type="text" className='w-20 px-2' placeholder='PORT' value={port} onChange={(e) => {onPortChange(e.target.value)}}/>
             </div>
             <div className='h-5 w-[1px] bg-gray-400'>
             </div>

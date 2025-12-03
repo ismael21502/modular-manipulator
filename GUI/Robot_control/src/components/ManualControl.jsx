@@ -41,7 +41,7 @@ function ManualControl({ }) {
                 <div className="flex items-start">
                   <input
                     type="text"
-                    className="text-sm mb-3 w-[2.5rem] text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+                    className="text-sm mb-3 w-[2.5rem] text-end mr-1 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
                     value={joints[i]}
                     onChange={(e) => handleChangeJoint(joint, e.target.value)}
                   />

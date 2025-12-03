@@ -57,7 +57,6 @@ function CartesianControl() {
                                 <h3 className='text-center'>{axis.label} </h3>
                                 <div >
                                     <input type='text' className='w-[3rem] text-end mr-2'
-                                        //[ ] Hacer editable nuevamente
                                         value={cartesian[i]}
                                         onChange={(e) => handleChange(axis, i, e.target.value)}
                                         // onKeyDown={(e) => handleKeyDown(axis, i, e)} 

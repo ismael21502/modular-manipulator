@@ -8,33 +8,45 @@ export const WebSocketProvider = ({ children }) => {
     const [isConnected, setIsConnected] = useState(false);
     const [logs, setLogs] = useState([])
     const [positions, setPositions] = useState([])
+    const [IP, setIP] = useState("localhost")
+    const [port, setPort] = useState("8000")
+
     const connect = () => {
         // Cerrar la conexión previa si existe y no está cerrada
         if (ws.current && ws.current.readyState !== WebSocket.CLOSED) {
             ws.current.close()
         }
 
-        ws.current = new WebSocket("ws://localhost:8000/ws")
+        ws.current = new WebSocket(`ws://${IP}:${port}/ws`)
+        let connectionAttempted = false; // Flag para controlar el estado de conexión
 
         // Funciones de manejo de eventos
         const handleOpen = () => {
+            connectionAttempted = true; // La conexión se ha establecido correctamente
+
             setIsConnected(true)
             setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "INFO", category: "log", values: "Conexión establecida" }])
             loadPositions()
         }
 
         const handleClose = () => {
+            if (!connectionAttempted) {
+                return // No se había intentado la conexión
+            }
             if (ws.current.readyState === WebSocket.CONNECTING) return
             setIsConnected(false)
             setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "WARNING", category: "log", values: "Conexión cerrada" }])
         }
 
         const handleError = (err) => {
-            if (ws.current.readyState === WebSocket.CONNECTING) return;
+            if (ws.current.readyState === WebSocket.CONNECTING && !connectionAttempted) {
+                // Ignorar si no se ha intentado conexión
+                return
+            }
             setIsConnected(false)
             setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", category: "log", values: "No se pudo conectar al servidor" }])
             console.error("WebSocket error:", err)
-        };
+        }
         const handleMessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
@@ -65,7 +77,7 @@ export const WebSocketProvider = ({ children }) => {
     }
     const loadPositions = async (retries = 3, delay = 1000) => {
         try {
-            const res = await fetch("http://localhost:8000/positions");
+            const res = await fetch(`http://${IP}:${port}/positions`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
@@ -98,7 +110,11 @@ export const WebSocketProvider = ({ children }) => {
 
     function savePos(newPosName) {
         if (!newPosName) return;
-        fetch("http://localhost:8000/save", {
+        if(ws.current?.readyState !== WebSocket.OPEN) {
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: "No hay conexión con el servidor" }])
+            return;
+        }
+        fetch(`http://${IP}:${port}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: newPosName, values: joints  }),
@@ -116,7 +132,7 @@ export const WebSocketProvider = ({ children }) => {
     const deletePos = (positionName) => {
         if (positionName === "Home") return;
 
-        fetch("http://localhost:8000/delete", {
+        fetch(`http://${IP}:${port}/delete`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: positionName }),
@@ -132,7 +148,7 @@ export const WebSocketProvider = ({ children }) => {
             })
             .catch(err => setLogs(prev => [...prev, { category: 'log',  time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
     }
-
+    
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
@@ -151,7 +167,10 @@ export const WebSocketProvider = ({ children }) => {
             isConnected, 
             connect, disconnect, send, 
             logs, setLogs, 
-            positions, savePos, deletePos}}>
+            positions, savePos, deletePos,
+            IP, setIP,
+            port, setPort,
+            }}>
             {children}
         </WebSocketContext.Provider>
     )

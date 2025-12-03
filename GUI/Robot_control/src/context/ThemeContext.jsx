@@ -12,6 +12,8 @@ export const ThemeProvider = ({ children }) => {
             primaryDark: mode === "light" ? "#5a2ac9" : "#6b4bb8",
             accent: mode === "light" ? "#1e293b" : "#2b384e",
             danger: mode === "light" ? "#cf2e2e" : "#ca3838",
+            warning: mode === "light" ? "#dfc223ff" : "#e6d925ff",
+            success: mode === "light" ? "#33cf2e" : "#49ca38",
             border: mode === "light" ? "#cacaca" : "#242a42",
 
             text: {
