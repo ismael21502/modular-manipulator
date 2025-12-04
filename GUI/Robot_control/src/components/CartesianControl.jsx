@@ -3,14 +3,19 @@ import * as Slider from "@radix-ui/react-slider";
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import { useTheme } from '../context/ThemeContext';
 import { useRobotState } from '../context/RobotState';
+import { useWebSocket } from '../context/WebSocketContext';
+import { debounce } from 'lodash'
+
 function CartesianControl() {
     const { colors } = useTheme()
     // const [tempCoords, setTempCoords] = useState({ X: "0", Y: "0", Z: "0" });
-
+    const {send} = useWebSocket()
     const { cartesian, setCartesian, cartesianConfig } = useRobotState()
-    useEffect(() => {
-        console.log("C Config: ", cartesianConfig)
-    }, [])
+
+    const debouncedSend = debounce((value, unit) => {
+        send({ type: "cartesian_move", values: value, unit: unit});
+    }, 300)
+
     const handleChange = (axis, i, input) => {
         const axisId = axis.id
         let newValue = Array.isArray(input) ? input[0] : parseFloat(input)
@@ -23,8 +28,11 @@ function CartesianControl() {
         setCartesian(prev => {
             const newCartesian = [...prev]
             newCartesian[i] = newValue
+            // const dataToSend = {type: "cartesian_move", values: newCartesian, unit: axis.unit} //Enviar frame de referencia? Enviar speed?
+            debouncedSend(newCartesian, axis.unit)
             return newCartesian
         })
+        
         // setTempCoords(prev => ({ ...prev, [axisId]: newValue.toString() }))
 
         // // Enviar por websocket

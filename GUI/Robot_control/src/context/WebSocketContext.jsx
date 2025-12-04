@@ -3,7 +3,7 @@ import { useRobotState } from "./RobotState";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { joints, jointConfig } = useRobotState()
+    const { joints, setJoints, jointConfig } = useRobotState()
     const ws = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [logs, setLogs] = useState([])
@@ -52,7 +52,7 @@ export const WebSocketProvider = ({ children }) => {
                 const data = JSON.parse(event.data);
                 if (data.type === "JOINTS") setJoints(data.values)
                 else if (data.type === "COORDS") setCoords(data.values)
-                setLogs(prev => [...prev, data])
+                // setLogs(prev => [...prev, data])
             } catch {
                 console.log("Mensaje no JSON:", event.data)
             }
@@ -153,7 +153,7 @@ export const WebSocketProvider = ({ children }) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
-    }
+    } 
 
     useEffect(() => {
         connect()

@@ -41,43 +41,43 @@ function Positions() {
     const [showPopUp, setShowPopUp] = useState(false)
     const [selectedPos, setSelectedPos] = useState("")
 
-    function moveRobot(targetJoints) {
-        const duration = 700;
-        const start = performance.now();
+    // function moveRobot(targetJoints) {
+    //     const duration = 700;
+    //     const start = performance.now();
 
-        const initialJoints = { ...joints };     // ejemplo: {J1:0, J2:10, J3:30, J4:0, G:0}
-        const labels = targetJoints.labels;      // ['J1','J2','J3','J4','G']
-        const target = targetJoints.values;      // [0,45,45,0,0]
+    //     const initialJoints = { ...joints };     // ejemplo: {J1:0, J2:10, J3:30, J4:0, G:0}
+    //     const labels = targetJoints.labels;      // ['J1','J2','J3','J4','G']
+    //     const target = targetJoints.values;      // [0,45,45,0,0]
 
-        function animate(time) {
-            const elapsed = time - start;
-            const t = Math.min(elapsed / duration, 1);
-            const newJoints = [];
+    //     function animate(time) {
+    //         const elapsed = time - start;
+    //         const t = Math.min(elapsed / duration, 1);
+    //         const newJoints = [];
 
-            // [ ] Arreglar esto
-            // Equivalente a zip(labels, target) en Python
-            labels.forEach((label, i) => {
-                const startVal = initialJoints[i];
-                const endVal = target[i];
+    //         // [ ] Arreglar esto
+    //         // Equivalente a zip(labels, target) en Python
+    //         labels.forEach((label, i) => {
+    //             const startVal = initialJoints[i];
+    //             const endVal = target[i];
 
-                newJoints[i] = Math.round(startVal + t * (endVal - startVal));
-            });
-            setJoints(newJoints);
+    //             newJoints[i] = Math.round(startVal + t * (endVal - startVal));
+    //         });
+    //         setJoints(newJoints);
 
-            // ESTA ES LA CLAVE PARA ANIMAR TAMBIÉN EL CARTESIAN
-            // Envía datos al backend si WebSocket está abierto
-            // if (ws?.current?.readyState === WebSocket.OPEN) {
-            //     ws.current.send(JSON.stringify({
-            //         type: "joints",
-            //         data: { joints: Object.fromEntries(Object.entries(newJoints).map(([k, v]) => [k, v])), gripper: newOpening }
-            //     }));
-            // }
+    //         // ESTA ES LA CLAVE PARA ANIMAR TAMBIÉN EL CARTESIAN
+    //         // Envía datos al backend si WebSocket está abierto
+    //         // if (ws?.current?.readyState === WebSocket.OPEN) {
+    //         //     ws.current.send(JSON.stringify({
+    //         //         type: "joints",
+    //         //         data: { joints: Object.fromEntries(Object.entries(newJoints).map(([k, v]) => [k, v])), gripper: newOpening }
+    //         //     }));
+    //         // }
 
-            if (t < 1) requestAnimationFrame(animate);
-        }
+    //         if (t < 1) requestAnimationFrame(animate);
+    //     }
 
-        requestAnimationFrame(animate);
-    }
+    //     requestAnimationFrame(animate);
+    // }
 
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
