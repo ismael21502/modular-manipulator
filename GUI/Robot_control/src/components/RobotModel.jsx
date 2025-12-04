@@ -25,7 +25,7 @@ export function Model({ url }) {
     const limb2 = scene.getObjectByName("Limb2")
 
     // Aplica rotaciones como en tu ejemplo original
-    if (J1) J1.rotation.y = degToRad(joints[0])
+    if (J1) J1.rotation.y = degToRad(joints[0]+90) //[ ] Este offset no debería existir
     if (J2) J2.rotation.x = degToRad(joints[1])
     if (J3) J3.rotation.x = degToRad(joints[2])
 

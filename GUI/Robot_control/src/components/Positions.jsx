@@ -54,7 +54,6 @@ function Positions() {
 
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
-        console.log(target)
         if (target) moveRobot(target.values);
     }
 
