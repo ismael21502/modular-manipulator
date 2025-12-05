@@ -32,10 +32,10 @@ function ManualControl({ }) {
         </button>
       </div>
 
-      <div className="flex flex-col py-2 px-5 w-full justify-between">
+      <div className="flex flex-col py-2 px-5 w-full justify-between gap-6">
         {jointConfig.map((joint, i) => (
           joint.label === "Gripper" ? null :
-            <div key={joint.id} className="flex flex-col items-center">
+            <div key={joint.id} className="flex flex-col items-center gap-2">
               <div className="flex flex-row w-full justify-between">
                 <h3 className="text-sm text-center">{joint.label}</h3>
                 <div className="flex items-start">
@@ -50,7 +50,7 @@ function ManualControl({ }) {
                 </div>
               </div>
               <Slider.Root
-                className="relative flex items-center justify-center select-none touch-none h-8 w-full"
+                className="relative flex items-center justify-center select-none touch-none h-1 w-full"
                 min={joint.min}
                 max={joint.max}
                 step={1}

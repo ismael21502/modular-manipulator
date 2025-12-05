@@ -3,6 +3,8 @@ import { useState } from "react"
 import { useWebSocket } from "../context/WebSocketContext"
 import { useRobotState } from "../context/RobotState"
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 
 function SavePopUp({ isOpen, setIsopen }) {
 
@@ -63,13 +65,14 @@ function SavePopUp({ isOpen, setIsopen }) {
                     <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.danger, border: '1px solid', borderColor: colors.border }}
                         onClick={() => { setIsopen(false) }}>
-                        <i className="fa-solid fa-xmark"></i>
+                        <CloseIcon />
+
                         Cancelar
                     </button>
                     <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.primary }}
                         onClick={handleConfirm}>
-                        <i className="fa-solid fa-check"></i>
+                        <CheckIcon />
                         Confirmar
                     </button>
                 </div>

@@ -48,19 +48,19 @@ function CartesianControl() {
 
     const axes = { "X": "Lateral", "Y": "Profundidad", "Z": "Vertical" };
     return (
-        <div className='flex flex-1 flex-col'
+        <div className='flex flex-1 flex-col py-2'
             style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
             <div className='flex flex-row w-full py-2 px-5 gap-2 font-bold text-md'>
                 <OpenWithIcon />
                 <p>CONTROL CARTESIANO</p>
             </div>
-            <div className="flex flex-col gap-4 py-2 px-5 w-full">
+            <div className="flex flex-col gap-4 py-2 px-5 w-full gap-6">
                 {/* {cartesianConfig.map((axis, i) => (
                     axis.id == "roll" || axis.id == "pitch" || axis.id == "yaw" ? null : <div>{axis.label}</div>
                 ))} */}
                 {cartesianConfig.map((axis, i) => (
                     axis.id == "roll" || axis.id == "pitch" || axis.id == "yaw" ? null :
-                        <div className='flex flex-col items-center' key={axis.id}>
+                        <div className='flex flex-col items-center gap-3' key={axis.id}>
                             <div className='flex flex-row w-full justify-between text-sm'>
                                 <h3 className='text-center'>{axis.label} </h3>
                                 <div >
@@ -73,7 +73,7 @@ function CartesianControl() {
                                 </div>
                             </div>
                             <Slider.Root
-                                className="relative flex items-center justify-center select-none touch-none h-8 w-full"
+                                className="relative flex items-center justify-center select-none touch-none h-1 w-full"
                                 defaultValue={axis.default}
                                 min={axis.min}
                                 max={axis.max}

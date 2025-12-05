@@ -107,7 +107,27 @@ export const WebSocketProvider = ({ children }) => {
             }
         }
     }
-
+    function updatePos(oldName, posName, values) {
+        if(!posName) return
+        if (ws.current?.readyState !== WebSocket.OPEN) {
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type:"ERROR", values: "No hay conexión con el backend" } ])
+            return
+        }
+        fetch(`http://${IP}:${port}/update`,{
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({oldName: oldName, name: posName, values: values})
+        })
+        .then(data => {
+            if(data.ok){
+                loadPositions()
+                setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: 'INFO', values: 'Posición actualizada con éxito'}])
+            } else{
+                setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: 'ERROR', values: 'La posición no fue actualizada' }])
+            }
+        })
+            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible actualizar la posición: ${err}` }]))
+    }
     function savePos(newPosName) {
         if (!newPosName) return;
         if(ws.current?.readyState !== WebSocket.OPEN) {
@@ -167,7 +187,7 @@ export const WebSocketProvider = ({ children }) => {
             isConnected, 
             connect, disconnect, send, 
             logs, setLogs, 
-            positions, savePos, deletePos,
+            positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
             }}>

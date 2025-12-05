@@ -39,7 +39,7 @@ function Gripper({ }) {
                 <div className='flex flex-row items-center gap-5'> {/* Slider */}
                     <LockOpenOutlinedIcon fontSize='small' />
                     <Slider.Root
-                        className="relative flex items-center justify-center select-none touch-none h-8 w-full"
+                        className="relative flex items-center justify-center select-none touch-none h-1 w-full"
                         defaultValue={[jointConfig[gripperIndex].default]}
                         min={jointConfig[gripperIndex].min}
                         max={jointConfig[gripperIndex].max}

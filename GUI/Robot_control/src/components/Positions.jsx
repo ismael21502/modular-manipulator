@@ -9,13 +9,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useTheme } from '../context/ThemeContext';
 import { useWebSocket } from '../context/WebSocketContext';
 import { useRobotState } from '../context/RobotState';
+import EditPosPopUp from './EditPosPopUp';
 
 function Positions() {
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
     const { joints, setJoints, jointConfig } = useRobotState()
 
-    const [showPopUp, setShowPopUp] = useState(false)
+    const [showSavePopUp, setShowSavePopUp] = useState(false)
+    const [showEditPopUp, setShowEditPopUp] = useState(false)
     const [selectedPos, setSelectedPos] = useState("")
 
     function moveRobot(targetJoints) {
@@ -24,7 +26,6 @@ function Positions() {
 
         const initialJoints = { ...joints };     // ejemplo: {J1:0, J2:10, J3:30, J4:0, G:0}
         const targets = targetJoints;      // [0,45,45,0,0]
-        console.log(targetJoints)
         function animate(time) {
             const elapsed = time - start;
             const t = Math.min(elapsed / duration, 1);
@@ -33,7 +34,7 @@ function Positions() {
             targets.forEach((target, i) => {
                 const startVal = initialJoints[i]
                 const endVal = target
-                newJoints[i] = Math.round(startVal + t * (endVal - startVal) )
+                newJoints[i] = Math.round(startVal + t * (endVal - startVal))
             });
             setJoints(newJoints);
 
@@ -58,7 +59,11 @@ function Positions() {
     }
 
     const handleSaving = () => {
-        setShowPopUp(true)
+        setShowSavePopUp(true)
+    }
+
+    const handleEditing = () => {
+        setShowEditPopUp(true)
     }
 
     return (
@@ -75,7 +80,8 @@ function Positions() {
                 {selectedPos !== ""
                     ? <div className='flex flex-row justify-between gap-3 '>
                         <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                            style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}>
+                            style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}
+                            onClick={() => {handleEditing()}}>
                             <EditIcon />
                             <p>Editar</p>
                         </button>
@@ -108,8 +114,12 @@ function Positions() {
                     : null}
             </div>
             <SavePopUp
-                isOpen={showPopUp}
-                setIsopen={setShowPopUp}  />
+                isOpen={showSavePopUp}
+                setIsopen={setShowSavePopUp} />
+            <EditPosPopUp
+                isOpen={showEditPopUp}
+                setIsopen={setShowEditPopUp}
+                selectedPos={selectedPos} />
         </div>
     )
 }
