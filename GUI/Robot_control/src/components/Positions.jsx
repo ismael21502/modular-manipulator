@@ -79,13 +79,13 @@ function Positions() {
                 style={{ borderColor: colors.border, color: colors.text.primary }}>
                 {selectedPos !== ""
                     ? <div className='flex flex-row justify-between gap-3 '>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}
                             onClick={() => {handleEditing()}}>
                             <EditIcon />
                             <p>Editar</p>
                         </button>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
                             onClick={() => { deletePos(selectedPos), setSelectedPos("") }}>
                             <DeleteIcon />
@@ -95,7 +95,7 @@ function Positions() {
                     : null}
                 <div className='flex w-full'
                     style={{ borderColor: colors.border, color: colors.text.primary }}>
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                    <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                         style={{ borderColor: colors.border }}
                         onClick={() => { handleSaving() }}>
                         <SaveIcon />
@@ -104,7 +104,7 @@ function Positions() {
                 </div>
                 {selectedPos !== ""
                     ? <div className='flex text-white'>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
                             style={{ backgroundColor: colors.primaryDark }}
                             onClick={sendPos}>
                             <PlayArrowRoundedIcon />

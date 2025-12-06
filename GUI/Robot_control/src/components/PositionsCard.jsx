@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DoneIcon from '@mui/icons-material/Done';
 import { useTheme } from '../context/ThemeContext';
 
 function PositionsCard({ isActive = false, name, joints, labels , setSelected = () =>{} }) {
     const { colors } = useTheme()
-
     const textColor = isActive ? colors.primary : colors.text.title;
     const backgroundColor = isActive
         ? `${colors.primary}1A` // 10% opacity
@@ -13,8 +12,8 @@ function PositionsCard({ isActive = false, name, joints, labels , setSelected = 
     return (
         <button onClick={()=>{setSelected(name)}}>
             <div
-                className="flex w-full flex-row items-center rounded-xl p-4 gap-3 cursor-pointer"
-                style={{ border: `1px solid ${isActive ? colors.primary : colors.border}`, backgroundColor }}
+                className={`card ${isActive? "active": ""} flex w-full flex-row items-center rounded-xl p-4 gap-3 cursor-pointer`}
+                style={{ backgroundColor }}
             >
                 <div className="flex flex-col flex-1 min-w-0 gap-3">
                     {/* Nombre */}

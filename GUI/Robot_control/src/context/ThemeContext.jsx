@@ -34,7 +34,17 @@ export const ThemeProvider = ({ children }) => {
         mode,
         setMode,
     };
-    return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+    return <ThemeContext.Provider value={theme}
+    >
+        <div style={{
+            "--cardHover": theme.colors.primary,
+            "--cardBorder": theme.colors.border,
+            "--cardActiveBorder": theme.colors.primary,
+        }}>
+            {children}
+        </div>
+
+    </ThemeContext.Provider>
 }
 
 export const useTheme = () => useContext(ThemeContext)

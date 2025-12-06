@@ -3,7 +3,23 @@
 .rotate {
   animation: spin 0.8s linear infinite;
 }
+.card {
+  border: 1px solid var(--cardBorder);
+  transition: border 0.2s ease;
+}
+.card:hover{
+  border-color: var(--cardHover);
+  transform: scale(1.03);
+  transition: transform 0.2s ease-in;
+}
+.card.active {
+  border-color: var(--cardActiveBorder);
+}
 
+.button:hover {
+  transform: scale(1.03);
+  transition: transform 0.1s ease-in;
+}
 @keyframes spin {
   from {
     transform: rotate(0deg);

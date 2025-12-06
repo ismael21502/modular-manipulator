@@ -29,7 +29,7 @@ function Connection() {
                 ? disconnect()
                     : connect()
             } }>
-                <div className="flex rounded-md px-2 py-1 items-center gap-3 cursor-pointer text-white"
+                <div className="button flex rounded-md px-2 py-1 items-center gap-3 cursor-pointer text-white"
                     style={isConnected ?{backgroundColor: colors.danger} : {backgroundColor : colors.accent}}>
                     {isConnected
                         ? <LinkOffIcon />
