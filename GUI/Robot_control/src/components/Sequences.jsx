@@ -9,83 +9,127 @@ import { useWebSocket } from '../context/WebSocketContext';
 import { useRobotState } from '../context/RobotState';
 import SequencesCard from './SequencesCard';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-
-function Positions() {
+import { useRef } from 'react';
+function Sequences() {
     const sequences = [{
-        name: "Zero",
+        name: "Pick and place",
         updated_at: new Date().toISOString(),    // string ISO
         steps: [
+            { //Cambiar por ref a home
+                type: "inline",
+                joints: [0, -25, 65, 90, 0],
+                delay: 100, //ms
+                duration: 700, // ms 
+                label: "Home"  // opcional
+            },
             {
-                joints: [0, 0, 0, 0, 0],
-                duration: 1000, // ms
+                type: "inline",
+                joints: [0, 15, 25, 110, 0],
+                delay: 100, //ms
+                duration: 400, // ms 
                 label: "Start"  // opcional
             },
             {
-                joints: [45, 45, 45, 45, 45],
-                duration: 1500,
-                label: "Mid"
+                type: "inline",
+                joints: [0, 15, 25, 110, 100],
+                delay: 200,
+                duration: 500,
+                label: "Pick"
             },
             {
-                joints: [65, 65, 65, 65, 65],
+                type: "inline",
+                joints: [0, 15, 25, 50, 100],
+                delay: 150,
+                duration: 600, 
+                label: "Lift"
+            },
+            {
+                type: "inline",
+                joints: [180, 15, 25, 50, 100],
+                delay: 150,
                 duration: 1200,
-                label: "End"
-            }
+                label: "Turn"
+            },
+            {
+                type: "inline",
+                joints: [180, 15, 25, 110, 100],
+                delay: 100,
+                duration: 600,
+                label: "Lftn't"
+            },
+            {
+                type: "inline",
+                joints: [180, 15, 25, 110, 0],
+                delay: 150,
+                duration: 500,
+                label: "Release"
+            },
         ]
     }]
+
+    //Posible formato de referencia de posiciones
+    // { "type": "ref", "positionId": "home", "delay": 500 },
 
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
     const { joints, setJoints } = useRobotState()
+    const jointsRef = useRef(joints)
+
+    useEffect(() => {
+        jointsRef.current = joints
+    }, [joints])
 
     const [newPosName, setNewPosName] = useState("")
     const [showPopUp, setShowPopUp] = useState(false)
     const [selectedPos, setSelectedPos] = useState("")
 
-    // function moveRobot(targetJoints) {
-    //     const duration = 700;
-    //     const start = performance.now();
+    function moveRobot(targetJoints, duration) {
+        return new Promise((resolve) => {
+            const start = performance.now()
 
-    //     const initialJoints = { ...joints };     // ejemplo: {J1:0, J2:10, J3:30, J4:0, G:0}
-    //     const labels = targetJoints.labels;      // ['J1','J2','J3','J4','G']
-    //     const target = targetJoints.values;      // [0,45,45,0,0]
+            // Clonamos el valor ACTUAL de "joints" y no uno desfasado
+            const initial = jointsRef.current;   // Usaremos un ref 👈
+            const target = targetJoints
 
-    //     function animate(time) {
-    //         const elapsed = time - start;
-    //         const t = Math.min(elapsed / duration, 1);
-    //         const newJoints = [];
+            function animate(time) {
+                const elapsed = time - start;
+                const t = Math.min(elapsed / duration, 1);
 
-    //         // [ ] Arreglar esto
-    //         // Equivalente a zip(labels, target) en Python
-    //         labels.forEach((label, i) => {
-    //             const startVal = initialJoints[i];
-    //             const endVal = target[i];
+                const newJoints = initial.map((startVal, i) => {
+                    const endVal = target[i]
+                    return Math.round(startVal + t * (endVal - startVal))
+                });
 
-    //             newJoints[i] = Math.round(startVal + t * (endVal - startVal));
-    //         });
-    //         setJoints(newJoints);
+                setJoints(newJoints)
 
-    //         // ESTA ES LA CLAVE PARA ANIMAR TAMBIÉN EL CARTESIAN
-    //         // Envía datos al backend si WebSocket está abierto
-    //         // if (ws?.current?.readyState === WebSocket.OPEN) {
-    //         //     ws.current.send(JSON.stringify({
-    //         //         type: "joints",
-    //         //         data: { joints: Object.fromEntries(Object.entries(newJoints).map(([k, v]) => [k, v])), gripper: newOpening }
-    //         //     }));
-    //         // }
+                if (t < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve()  // 👈 mueve la promesa cuando esté terminado
+                }
+            }
 
-    //         if (t < 1) requestAnimationFrame(animate);
-    //     }
+            requestAnimationFrame(animate);
+        })
+    }
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-    //     requestAnimationFrame(animate);
-    // }
-
+    const startSequence = async () =>{
+        const sequence = sequences.find(seq => seq.name === selectedPos)
+        if (sequence === null) return
+        for (const step of sequence.steps) {
+            const target = step.joints
+            if (target) await moveRobot(target, step.duration)
+            await delay(step.delay*5)
+        }
+    }
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
         if (target) moveRobot(target.joints);
     }
 
     const handleSaving = () => {
-        setShowPopUp(true)
+        //setShowPopUp(true)
     }
 
     return (
@@ -101,14 +145,14 @@ function Positions() {
                 style={{ borderColor: colors.border, color: colors.text.primary }}>
                 {selectedPos !== ""
                     ? <div className='flex flex-row justify-between gap-3 '>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}>
                             <EditIcon />
                             <p>Editar</p>
                         </button>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
-                            onClick={() => { deletePos(selectedPos), setSelectedPos("") }}>
+                            onClick={() => { }}>
                             <DeleteIcon />
                             <p>Borrar</p>
                         </button>
@@ -116,7 +160,7 @@ function Positions() {
                     : null}
                 <div className='flex w-full'
                     style={{ borderColor: colors.border, color: colors.text.primary }}>
-                    <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                    <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                         style={{ borderColor: colors.border }}
                         onClick={() => { handleSaving() }}>
                         <RadioButtonCheckedIcon />
@@ -125,9 +169,9 @@ function Positions() {
                 </div>
                 {selectedPos !== ""
                     ? <div className='flex text-white'>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
                             style={{ backgroundColor: colors.primaryDark }}
-                            onClick={sendPos}>
+                            onClick={startSequence}>
                             <PlayArrowRoundedIcon />
                             <p>Ejecutar secuencia</p>
                         </button>
@@ -145,4 +189,4 @@ function Positions() {
     )
 }
 
-export default Positions
+export default Sequences

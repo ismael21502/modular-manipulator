@@ -9,7 +9,7 @@ function SequencesCard({ isActive = false, sequence, setSelected = () => { } }) 
     const backgroundColor = isActive
         ? `${colors.primary}1A` // 10% opacity
         : ``;
-    const duration = (sequence.steps.reduce((acc, step) => acc + step.duration, 0)/1000).toFixed(2)
+    const duration = (sequence.steps.reduce((acc, step) => acc + step.duration + step.delay, 0)/1000).toFixed(2)
     return (
         <button onClick={() => { setSelected(sequence.name) }}>
             <div

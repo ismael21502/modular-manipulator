@@ -9,16 +9,13 @@
 }
 .card:hover{
   border-color: var(--cardHover);
-  transform: scale(1.03);
-  transition: transform 0.2s ease-in;
 }
 .card.active {
   border-color: var(--cardActiveBorder);
 }
 
 .button:hover {
-  transform: scale(1.03);
-  transition: transform 0.1s ease-in;
+  transform: scale(1.01);
 }
 @keyframes spin {
   from {
