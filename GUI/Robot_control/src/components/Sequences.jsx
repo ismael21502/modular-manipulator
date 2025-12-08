@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import SavePopUp from './SavePopUp';
-import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import EditIcon from '@mui/icons-material/Edit';
@@ -9,178 +8,124 @@ import { useWebSocket } from '../context/WebSocketContext';
 import { useRobotState } from '../context/RobotState';
 import SequencesCard from './SequencesCard';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import { useRef } from 'react';
-function Sequences() {
-    const sequences = [{
-        name: "Pick and place",
-        updated_at: new Date().toISOString(),    // string ISO
-        steps: [
-            { //Cambiar por ref a home
-                type: "inline",
-                joints: [0, -25, 65, 90, 0],
-                delay: 100, //ms
-                duration: 700, // ms 
-                label: "Home"  // opcional
-            },
-            {
-                type: "inline",
-                joints: [0, 15, 25, 110, 0],
-                delay: 100, //ms
-                duration: 400, // ms 
-                label: "Start"  // opcional
-            },
-            {
-                type: "inline",
-                joints: [0, 15, 25, 110, 100],
-                delay: 200,
-                duration: 500,
-                label: "Pick"
-            },
-            {
-                type: "inline",
-                joints: [0, 15, 25, 50, 100],
-                delay: 150,
-                duration: 600, 
-                label: "Lift"
-            },
-            {
-                type: "inline",
-                joints: [180, 15, 25, 50, 100],
-                delay: 150,
-                duration: 1200,
-                label: "Turn"
-            },
-            {
-                type: "inline",
-                joints: [180, 15, 25, 110, 100],
-                delay: 100,
-                duration: 600,
-                label: "Lftn't"
-            },
-            {
-                type: "inline",
-                joints: [180, 15, 25, 110, 0],
-                delay: 150,
-                duration: 500,
-                label: "Release"
-            },
-        ]
-    }]
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import UndoIcon from '@mui/icons-material/Undo';
 
+function Sequences() {
+    const { joints, sequences, startSequence } = useRobotState()
     //Posible formato de referencia de posiciones
     // { "type": "ref", "positionId": "home", "delay": 500 },
-
-    const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
-    const { joints, setJoints } = useRobotState()
-    const jointsRef = useRef(joints)
-
-    useEffect(() => {
-        jointsRef.current = joints
-    }, [joints])
-
-    const [newPosName, setNewPosName] = useState("")
     const [showPopUp, setShowPopUp] = useState(false)
-    const [selectedPos, setSelectedPos] = useState("")
-
-    function moveRobot(targetJoints, duration) {
-        return new Promise((resolve) => {
-            const start = performance.now()
-
-            // Clonamos el valor ACTUAL de "joints" y no uno desfasado
-            const initial = jointsRef.current;   // Usaremos un ref 👈
-            const target = targetJoints
-
-            function animate(time) {
-                const elapsed = time - start;
-                const t = Math.min(elapsed / duration, 1);
-
-                const newJoints = initial.map((startVal, i) => {
-                    const endVal = target[i]
-                    return Math.round(startVal + t * (endVal - startVal))
-                });
-
-                setJoints(newJoints)
-
-                if (t < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    resolve()  // 👈 mueve la promesa cuando esté terminado
-                }
-            }
-
-            requestAnimationFrame(animate);
-        })
+    const [selectedeSequence, setSelectedeSequence] = useState("")
+    const [isRecording, setIsRecording] = useState(false)
+    const [steps, setSteps] = useState([])
+    const captureStep = () => { //Revisar si es un nombre apropiado
+        setSteps(prev => [
+            ...prev,
+            joints
+        ])
     }
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-    const startSequence = async () =>{
-        const sequence = sequences.find(seq => seq.name === selectedPos)
-        if (sequence === null) return
-        for (const step of sequence.steps) {
-            const target = step.joints
-            if (target) await moveRobot(target, step.duration)
-            await delay(step.delay*5)
-        }
+    const deleteStep = () => {
+        if(steps.length == 0) return
+        setSteps(prev => prev.slice(0, -1))
     }
-    function sendPos() {
-        const target = positions.find(pos => pos.name === selectedPos);
-        if (target) moveRobot(target.joints);
+    const saveSequence = () =>{
+        //Modal de guardado
+        setSteps([])
+        setIsRecording(false)
     }
-
-    const handleSaving = () => {
-        //setShowPopUp(true)
-    }
-
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
         <div className="flex flex-1 flex-col min-h-0">
             {/* scrollable content */}
             <div className="flex-1 min-h-0 overflow-auto flex flex-col gap-5 p-5">
                 {sequences.map(sequence => (
-                    <SequencesCard key={sequence.name} sequence={sequence} setSelected={setSelectedPos} isActive={sequence.name == selectedPos ? true : false} />
+                    <SequencesCard key={sequence.name} sequence={sequence} setSelected={setSelectedeSequence} isActive={sequence.name == selectedeSequence ? true : false} />
                 ))}
             </div>
-            <div className='flex flex-col p-4 gap-3 border-t'
-                style={{ borderColor: colors.border, color: colors.text.primary }}>
-                {selectedPos !== ""
-                    ? <div className='flex flex-row justify-between gap-3 '>
-                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                            style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}>
-                            <EditIcon />
-                            <p>Editar</p>
-                        </button>
-                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                            style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
-                            onClick={() => { }}>
-                            <DeleteIcon />
-                            <p>Borrar</p>
+            {isRecording
+                ? <div className='flex flex-col pb-4 gap-3 border-t'
+                    style={{ borderColor: colors.border, color: colors.text.primary, }}>
+                    <div className='flex flex-row justify-between w-full px-4 py-2'
+                        style={{ backgroundColor: `${colors.danger}23`, color: colors.danger, borderBottom: "1px solid", borderColor: colors.border }}>
+                        <div className='flex flex-row gap-2 items-center font-bold'>
+                            <div className="rounded-full w-3 h-3 animate-pulse-rec"
+                            style={{backgroundColor: colors.danger}}>
+                            </div>
+                            <p>GRABANDO</p>
+                        </div>
+                        <div className="flex flex-row gap-2 items-center">
+                            <p>{steps.length} pasos</p>
+                        </div>
+                    </div>
+                    <div className='flex w-full px-4 gap-3'>
+                        
+                            <button className='button flex flex-1 p-2 justify-center gap-2 cursor-pointer rounded-md border-1'
+                                style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}23` }}
+                                onClick={captureStep}>
+                                <AddCircleIcon />
+                                <p>Capturar paso</p>
+                            </button>
+                            <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                                style={{ borderColor: colors.accent, color: colors.accent, backgroundColor: `${colors.accent}1A` }}
+                                onClick={deleteStep}>
+                                    {/* Revisar el color de esto */}
+                                <UndoIcon />
+                                <p>Deshacer</p>
+                            </button>
+                    </div>
+                    <div className='flex w-full px-4'
+                    >
+                        <button className='button flex flex-1 p-2 justify-center gap-2 cursor-pointer rounded-md text-white'
+                            style={{ backgroundColor: colors.danger }}
+                            onClick={saveSequence}>
+                            <StopCircleIcon />
+                            <p>Terminar </p>
                         </button>
                     </div>
-                    : null}
-                <div className='flex w-full'
-                    style={{ borderColor: colors.border, color: colors.text.primary }}>
-                    <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                        style={{ borderColor: colors.border }}
-                        onClick={() => { handleSaving() }}>
-                        <RadioButtonCheckedIcon />
-                        <p>Grabar</p>
-                    </button>
                 </div>
-                {selectedPos !== ""
-                    ? <div className='flex text-white'>
-                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
-                            style={{ backgroundColor: colors.primaryDark }}
-                            onClick={startSequence}>
-                            <PlayArrowRoundedIcon />
-                            <p>Ejecutar secuencia</p>
+                : <div className='flex flex-col p-4 gap-3 border-t'
+                    style={{ borderColor: colors.border, color: colors.text.primary }}>
+                    {selectedeSequence !== ""
+                        ? <div className='flex flex-row justify-between gap-3 '>
+                            <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                                style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}>
+                                <EditIcon />
+                                <p>Editar</p>
+                            </button>
+                            <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                                style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
+                                onClick={() => { }}>
+                                <DeleteIcon />
+                                <p>Borrar</p>
+                            </button>
+                        </div>
+                        : null}
+                    <div className='flex w-full'
+                        style={{ borderColor: colors.border, color: colors.text.primary }}>
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                            style={{ borderColor: colors.border }}
+                            onClick={() => { setIsRecording(true) }}>
+                            <RadioButtonCheckedIcon />
+                            <p>Grabar</p>
                         </button>
                     </div>
-                    : null}
+                    {selectedeSequence !== ""
+                        ? <div className='flex text-white'>
+                            <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
+                                style={{ backgroundColor: colors.primaryDark }}
+                                onClick={() => { startSequence(selectedeSequence) }}>
+                                <PlayArrowRoundedIcon />
+                                <p>Ejecutar secuencia</p>
+                            </button>
+                        </div>
+                        : null}
 
 
-            </div>
-
+                </div>
+            }
 
             <SavePopUp
                 isOpen={showPopUp}

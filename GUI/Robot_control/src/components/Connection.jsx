@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useWebSocket } from "../context/WebSocketContext.jsx"
 
 function Connection() {
-    const { colors } = useTheme()
+    const { colors, mode } = useTheme()
     const { isConnected, connect, disconnect, port, setPort, IP, setIP } = useWebSocket()
     const onIPChange = (newIP) => {
         setIP(newIP)
@@ -30,7 +30,7 @@ function Connection() {
                     : connect()
             } }>
                 <div className="button flex rounded-md px-2 py-1 items-center gap-3 cursor-pointer text-white"
-                    style={isConnected ?{backgroundColor: colors.danger} : {backgroundColor : colors.accent}}>
+                    style={isConnected ? { backgroundColor: colors.danger } : { backgroundColor: mode === "light" ? "#1e293b" : "#2b384e" }}>
                     {isConnected
                         ? <LinkOffIcon />
                         : <LinkIcon />}
