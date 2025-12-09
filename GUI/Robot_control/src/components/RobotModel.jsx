@@ -5,6 +5,7 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useRobotState } from '../context/RobotState';
+import AxisWidget from './AxisWidget';
 
 export function Model({ url }) {
   const { scene } = useGLTF(url)
@@ -72,11 +73,9 @@ function RobotModel({ angles, opening }) {
         {/* Ejes XYZ */}
         {/* <axesHelper args={[1.5]} /> */}
 
-
-
-
         <Model url="/Modbot.glb" angles={angles} opening={opening} />
         <OrbitControls />
+        
       </Canvas>
 
 

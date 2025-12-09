@@ -6,7 +6,7 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
-function SavePopUp({ isOpen, setIsopen }) {
+function SavePosModal({ isOpen, setIsOpen }) {
 
     if (isOpen != true) return null
     const { savePos } = useWebSocket()
@@ -22,11 +22,11 @@ function SavePopUp({ isOpen, setIsopen }) {
         }
         setShowRequiredName(false)
         savePos(name)
-        setIsopen(false)
+        setIsOpen(false)
     }
     return (
         <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
-        onClick={() =>{setIsopen(false)}}>
+            onClick={() => { setIsOpen(false) }}>
             <div className='w-[360px] rounded-lg p-4 flex flex-col gap-5'
                 style={{ backgroundColor: colors.background, color: colors.text.primary }}
                 onClick={(e) => e.stopPropagation()}>
@@ -35,22 +35,22 @@ function SavePopUp({ isOpen, setIsopen }) {
                         style={{ color: colors.text.title }}>Nueva posición</p>
                 </div>
                 <div className="flex flex-col gap-2">
-                <div className="flex flex-row gap-5 items-center">
-                    <p>Nombre</p>
-                    <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1"
-                        style={{ borderColor:  showRequeriedName? colors.danger: colors.border }}
-                        value={name}
-                        onChange={(e) => { setName(e.target.value) }} />
-                    
-                </div>
-                {showRequeriedName
-                    ? <div className="flex flex-row gap-2 items-center"
-                    style={{color: colors.danger}}>
-                        
-                        <InfoOutlineIcon fontSize="small"/>
-                        <p>Ingresa un nombre</p>
+                    <div className="flex flex-row gap-5 items-center">
+                        <p>Nombre</p>
+                        <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1"
+                            style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
+                            value={name}
+                            onChange={(e) => { setName(e.target.value) }} />
+
                     </div>
-                    : null}
+                    {showRequeriedName
+                        ? <div className="flex flex-row gap-2 items-center"
+                            style={{ color: colors.danger }}>
+
+                            <InfoOutlineIcon fontSize="small" />
+                            <p>Ingresa un nombre</p>
+                        </div>
+                        : null}
                 </div>
                 <div className="flex flex-row flex-wrap gap-3 justify-between ">
                     {jointConfig.map((joint, i) => (
@@ -64,7 +64,7 @@ function SavePopUp({ isOpen, setIsopen }) {
                 <div className="flex justify-between text-lg text-white">
                     <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.danger, border: '1px solid', borderColor: colors.border }}
-                        onClick={() => { setIsopen(false) }}>
+                        onClick={() => { setIsOpen(false) }}>
                         <CloseIcon />
 
                         Cancelar
@@ -81,4 +81,4 @@ function SavePopUp({ isOpen, setIsopen }) {
     )
 }
 
-export default SavePopUp
+export default SavePosModal

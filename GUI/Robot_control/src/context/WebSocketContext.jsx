@@ -3,14 +3,14 @@ import { useRobotState } from "./RobotState";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { joints, setJoints, jointConfig } = useRobotState()
+    const { joints, setJoints } = useRobotState()
     const ws = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const [logs, setLogs] = useState([])
     const [positions, setPositions] = useState([])
     const [IP, setIP] = useState("localhost")
     const [port, setPort] = useState("8000")
-
+    const [sequences, setSequences] = useState([])
     const connect = () => {
         // Cerrar la conexión previa si existe y no está cerrada
         if (ws.current && ws.current.readyState !== WebSocket.CLOSED) {
@@ -25,8 +25,9 @@ export const WebSocketProvider = ({ children }) => {
             connectionAttempted = true; // La conexión se ha establecido correctamente
 
             setIsConnected(true)
-            setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "INFO", category: "log", values: "Conexión establecida" }])
+            setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Conexión establecida" }])
             loadPositions()
+            loadSequences()
         }
 
         const handleClose = () => {
@@ -35,7 +36,7 @@ export const WebSocketProvider = ({ children }) => {
             }
             if (ws.current.readyState === WebSocket.CONNECTING) return
             setIsConnected(false)
-            setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "WARNING", category: "log", values: "Conexión cerrada" }])
+            setLogs(prev => [...prev, { time: new Date().toISOString(), type: "WARNING", category: "log", values: "Conexión cerrada" }])
         }
 
         const handleError = (err) => {
@@ -44,7 +45,7 @@ export const WebSocketProvider = ({ children }) => {
                 return
             }
             setIsConnected(false)
-            setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: "ERROR", category: "log", values: "No se pudo conectar al servidor" }])
+            setLogs(prev => [...prev, { time: new Date().toISOString(), type: "ERROR", category: "log", values: "No se pudo conectar al servidor" }])
             console.error("WebSocket error:", err)
         }
         const handleMessage = (event) => {
@@ -85,7 +86,7 @@ export const WebSocketProvider = ({ children }) => {
                 setPositions(data);
             } else {
                 setLogs(prev => [...prev, {
-                    time: new Date().toLocaleTimeString(),
+                    time: new Date().toISOString(),
                     type: "WARNING",
                     category: "log",
                     values: "No se encontraron posiciones predefinidas"
@@ -99,7 +100,7 @@ export const WebSocketProvider = ({ children }) => {
                 setTimeout(() => loadPositions(retries - 1, delay), delay)
             } else {
                 setLogs(prev => [...prev, {
-                    time: new Date().toLocaleTimeString(),
+                    time: new Date().toISOString(),
                     type: "ERROR",
                     category: "log",
                     values: `Error cargando posiciones: ${err}`
@@ -129,10 +130,10 @@ export const WebSocketProvider = ({ children }) => {
             .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible actualizar la posición: ${err}` }]))
     }
     function savePos(newPosName) {
-        if (!newPosName) return;
+        if (!newPosName) return
         if(ws.current?.readyState !== WebSocket.OPEN) {
-            setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: "No hay conexión con el servidor" }])
-            return;
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
+            return
         }
         fetch(`http://${IP}:${port}/save`, {
             method: "POST",
@@ -142,12 +143,12 @@ export const WebSocketProvider = ({ children }) => {
             .then(data => {
                 if (data.ok) {
                     loadPositions()
-                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "INFO", values: "Posición guardada correctamente" }])
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "INFO", values: "Posición guardada correctamente" }])
                 } else {
-                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: "La posición no fue guardada" }])
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "La posición no fue guardada" }])
                 }
             })
-            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: `No fue posible guardar la posición: ${err}` }]))
+            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible guardar la posición: ${err}` }]))
     }
     const deletePos = (positionName) => {
         if (positionName === "Home") return;
@@ -161,14 +162,70 @@ export const WebSocketProvider = ({ children }) => {
             .then(data => {
                 if (data.status === "ok") {
                     loadPositions()
-                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "INFO", values: `La posición fue eliminada con éxito.` }])
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "INFO", values: `La posición fue eliminada con éxito.` }])
                 } else {
-                    setLogs(prev => [...prev, { category: 'log', time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error del servidor: ${data.status}` }])
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error del servidor: ${data.status}` }])
                 }
             })
-            .catch(err => setLogs(prev => [...prev, { category: 'log',  time: new Date().toLocaleTimeString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
+            .catch(err => setLogs(prev => [...prev, { category: 'log',  time: new Date().toISOString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
     }
-    
+    const loadSequences = async (retries = 3, delay = 1000) => {
+        try {
+            const res = await fetch(`http://${IP}:${port}/sequences`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+                setSequences(data);
+            } else {
+                setLogs(prev => [...prev, {
+                    time: new Date().toISOString(),
+                    type: "WARNING",
+                    category: "log",
+                    values: "No se encontraron sequencias guardadas"
+                }]);
+                setSequences([])
+            }
+
+        } catch (err) {
+            if (retries > 0) {
+                console.warn(`Reintentando cargar posiciones... (${retries} intentos restantes)`)
+                setTimeout(() => loadSequences(retries - 1, delay), delay)
+            } else {
+                setLogs(prev => [...prev, {
+                    time: new Date().toISOString(),
+                    type: "ERROR",
+                    category: "log",
+                    values: `Error cargando posiciones: ${err}`
+                }])
+            }
+        }
+    }
+    const saveSeq = (name, steps) => {
+        if(!name) return
+        if (ws.current?.readyState !== WebSocket.OPEN) {
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
+            return { status: 'error' }
+        }
+        // console.log(JSON.stringify({ name: name, updated_at: new Date().toISOString(), steps: steps }))
+        fetch(`http://${IP}:${port}/saveSeq`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, updated_at: new Date().toISOString(), steps: steps }),
+        })
+            .then(data => {
+                if (data.ok) {
+                    //LoadSequences
+                    loadSequences()
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "INFO", values: "Secuencia guardada correctamente" }])
+                    return {status: 'ok'}
+                } else {
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "La secuencia no fue guardada" }])
+                    return { status: 'error' }
+                }
+            })
+            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible guardar la secuencia: ${err}` }]))
+    }
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
@@ -190,6 +247,7 @@ export const WebSocketProvider = ({ children }) => {
             positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
+            sequences, saveSeq
             }}>
             {children}
         </WebSocketContext.Provider>

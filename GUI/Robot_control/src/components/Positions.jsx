@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as Select from "@radix-ui/react-select";
-import SavePopUp from './SavePopUp';
+import SavePosModal from './SavePosModal';
 import PositionsCard from './PositionsCard';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -81,9 +81,9 @@ function Positions() {
                     </div>
                     : null}
             </div>
-            <SavePopUp
+            <SavePosModal
                 isOpen={showSavePopUp}
-                setIsopen={setShowSavePopUp} />
+                setIsOpen={setShowSavePopUp} />
             <EditPosPopUp
                 isOpen={showEditPopUp}
                 setIsopen={setShowEditPopUp}

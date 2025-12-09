@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import SavePopUp from './SavePopUp';
+import SaveSeqModal from './SaveSeqModal';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,18 +13,27 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import UndoIcon from '@mui/icons-material/Undo';
 
 function Sequences() {
-    const { joints, sequences, startSequence } = useRobotState()
+    const { joints, startSequence } = useRobotState()
+    const { sequences } = useWebSocket()
     //Posible formato de referencia de posiciones
     // { "type": "ref", "positionId": "home", "delay": 500 },
     const { colors } = useTheme()
-    const [showPopUp, setShowPopUp] = useState(false)
     const [selectedeSequence, setSelectedeSequence] = useState("")
     const [isRecording, setIsRecording] = useState(false)
     const [steps, setSteps] = useState([])
+    const [showSaveModal, setShowSaveModal] = useState(false)
+
     const captureStep = () => { //Revisar si es un nombre apropiado
+        console.log(steps.length)
         setSteps(prev => [
             ...prev,
-            joints
+            {
+                type: "inline",
+                joints: joints,
+                delay: 200, //ms
+                duration: 1000, // ms 
+                label: `Paso ${steps.length+1}`  // opcional
+            }
         ])
     }
     const deleteStep = () => {
@@ -33,8 +42,9 @@ function Sequences() {
     }
     const saveSequence = () =>{
         //Modal de guardado
-        setSteps([])
-        setIsRecording(false)
+        setShowSaveModal(true)
+        // setSteps([])
+        // setIsRecording(false)
     }
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
@@ -61,7 +71,6 @@ function Sequences() {
                         </div>
                     </div>
                     <div className='flex w-full px-4 gap-3'>
-                        
                             <button className='button flex flex-1 p-2 justify-center gap-2 cursor-pointer rounded-md border-1'
                                 style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}23` }}
                                 onClick={captureStep}>
@@ -116,7 +125,7 @@ function Sequences() {
                         ? <div className='flex text-white'>
                             <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
                                 style={{ backgroundColor: colors.primaryDark }}
-                                onClick={() => { startSequence(selectedeSequence) }}>
+                                onClick={() => { startSequence(selectedeSequence, sequences) }}>
                                 <PlayArrowRoundedIcon />
                                 <p>Ejecutar secuencia</p>
                             </button>
@@ -126,10 +135,7 @@ function Sequences() {
 
                 </div>
             }
-
-            <SavePopUp
-                isOpen={showPopUp}
-                setIsopen={setShowPopUp} />
+            <SaveSeqModal isOpen={showSaveModal} setIsOpen={setShowSaveModal} steps={steps} setSteps={setSteps}/>
         </div>
     )
 }

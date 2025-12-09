@@ -11,61 +11,7 @@ export const RobotStateProvider = ({ children }) => {
     //     { label: "Gripper", value: 0, min: 0, max: 100, type: "linear" }
     //   ])
     
-    const sequences = [{
-        name: "Pick and place",
-        updated_at: new Date().toISOString(),    // string ISO
-        steps: [
-            { //Cambiar por ref a home
-                type: "inline",
-                joints: [0, -25, 65, 90, 0],
-                delay: 100, //ms
-                duration: 700, // ms 
-                label: "Home"  // opcional
-            },
-            {
-                type: "inline",
-                joints: [0, 15, 25, 110, 0],
-                delay: 100, //ms
-                duration: 400, // ms 
-                label: "Start"  // opcional
-            },
-            {
-                type: "inline",
-                joints: [0, 15, 25, 110, 100],
-                delay: 200,
-                duration: 500,
-                label: "Pick"
-            },
-            {
-                type: "inline",
-                joints: [0, 15, 25, 50, 100],
-                delay: 150,
-                duration: 600,
-                label: "Lift"
-            },
-            {
-                type: "inline",
-                joints: [180, 15, 25, 50, 100],
-                delay: 150,
-                duration: 1200,
-                label: "Turn"
-            },
-            {
-                type: "inline",
-                joints: [180, 15, 25, 110, 100],
-                delay: 100,
-                duration: 600,
-                label: "Lftn't"
-            },
-            {
-                type: "inline",
-                joints: [180, 15, 25, 110, 0],
-                delay: 150,
-                duration: 500,
-                label: "Release"
-            },
-        ]
-    }]
+    
     const jointConfig = robotConfig.joints
     const [joints, setJoints] = useState(
         robotConfig.joints.map(joint => joint.default ?? 0)
@@ -112,7 +58,7 @@ export const RobotStateProvider = ({ children }) => {
 
     const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
-    const startSequence = async (selectedPos) => {
+    const startSequence = async (selectedPos, sequences) => {
         const sequence = sequences.find(seq => seq.name === selectedPos)
         if (sequence === null) return
         for (const step of sequence.steps) {
@@ -129,7 +75,7 @@ export const RobotStateProvider = ({ children }) => {
     // }
 
     return (
-        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, cartesian, setCartesian, cartesianConfig, moveRobot, startSequence, sequences }}>
+        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, cartesian, setCartesian, cartesianConfig, moveRobot, startSequence }}>
             {children}
         </RobotStateContext.Provider>
     )
