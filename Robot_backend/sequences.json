@@ -1,0 +1,196 @@
+[
+  {
+    "name": "Pick and place",
+    "updated_at": "2025-12-09T04:50:27.201Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -25,
+          65,
+          90,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Home"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          15,
+          25,
+          100,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Approach"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          15,
+          25,
+          100,
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Pick"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          15,
+          25,
+          49,
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Lift"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          180,
+          15,
+          25,
+          49,
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Turn"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          180,
+          15,
+          25,
+          100,
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Lower"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          180,
+          15,
+          25,
+          100,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Release"
+      }
+    ]
+  },
+  {
+    "name": "Test1",
+    "updated_at": "2025-12-09T22:21:07.439Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -25,
+          65,
+          90,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -90,
+          -68,
+          -43,
+          22,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 2"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          90,
+          -21,
+          -138,
+          69,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 3"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          90,
+          25,
+          45,
+          69,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 4"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          90,
+          25,
+          40,
+          69,
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 5"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          25,
+          40,
+          69,
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 6"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          25,
+          40,
+          69,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 7"
+      }
+    ]
+  }
+]

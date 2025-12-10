@@ -16,7 +16,7 @@ export const ThemeProvider = ({ children }) => {
             warning: mode === "light" ? "#dfc223ff" : "#e6d925ff",
             success: mode === "light" ? "#33cf2e" : "#49ca38",
             border: mode === "light" ? "#cacaca" : "#242a42",
-
+            disabled: "#a5a5a5ff",
             text: {
                 primary: mode === "light" ? "#4d4d4dff" : "#f8f8f8",
                 title: mode === "light" ? "#505761ff" : "#c3cbd7",

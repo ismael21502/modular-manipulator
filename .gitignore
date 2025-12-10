@@ -1,5 +1,7 @@
 /RobotArmESP32/
 /node_modules/
-/Robot_backend/
+Robot_backend/CCD.py
+/Robot_backend/__pycache__/
+Robot_backend/main2.py
 Robot.blend
 notes.txt

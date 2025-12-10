@@ -6,7 +6,7 @@ import { useTheme } from '../context/ThemeContext'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
-function SaveSeqModal({ isOpen, setIsOpen, steps, setSteps }) {
+function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
     if (isOpen != true) return null
     const { saveSeq } = useWebSocket()
     const { jointConfig } = useRobotState()
@@ -15,20 +15,21 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, setSteps }) {
     const [showRequeriedName, setShowRequiredName] = useState(false)
     const [localSteps, setLocalSteps] = useState(steps.map(step => (step)))
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         // [ ] Añadir feedback
         if (name === "") {
             setShowRequiredName(true)
             return
         }
         setShowRequiredName(false)
-        const serverResponse = saveSeq(name, localSteps)
-        console.log(serverResponse)
-        // if (serverResponse === "ok"){
-        //     setIsOpen(false)    
-        // }
-        
-        
+        const serverResponse = await saveSeq(name, localSteps)
+        if (serverResponse.status === "ok"){
+            setIsOpen(false)    
+            onConfirm()
+        } else{
+            setIsOpen(false)
+            //Revisar si hay errores
+        }
     }
     return (
         <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
@@ -47,12 +48,10 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, setSteps }) {
                             style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
                             value={name}
                             onChange={(e) => { setName(e.target.value) }} />
-
                     </div>
                     {showRequeriedName
                         ? <div className="flex flex-row gap-2 items-center"
                             style={{ color: colors.danger }}>
-
                             <InfoOutlineIcon fontSize="small" />
                             <p>Ingresa un nombre</p>
                         </div>
@@ -126,7 +125,6 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, setSteps }) {
                         style={{ backgroundColor: colors.danger, border: '1px solid', borderColor: colors.border }}
                         onClick={() => { setIsOpen(false) }}>
                         <CloseIcon />
-
                         Cancelar
                     </button>
                     <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'

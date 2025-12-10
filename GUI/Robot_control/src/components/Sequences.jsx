@@ -14,7 +14,7 @@ import UndoIcon from '@mui/icons-material/Undo';
 
 function Sequences() {
     const { joints, startSequence } = useRobotState()
-    const { sequences } = useWebSocket()
+    const { sequences, deleteSequence } = useWebSocket()
     //Posible formato de referencia de posiciones
     // { "type": "ref", "positionId": "home", "delay": 500 },
     const { colors } = useTheme()
@@ -42,9 +42,13 @@ function Sequences() {
     }
     const saveSequence = () =>{
         //Modal de guardado
+        if(steps.length == 0) return
         setShowSaveModal(true)
         // setSteps([])
-        // setIsRecording(false)
+    }
+    const closeModal = () => {
+        setSteps([])
+        setIsRecording(false)
     }
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
@@ -64,10 +68,15 @@ function Sequences() {
                             <div className="rounded-full w-3 h-3 animate-pulse-rec"
                             style={{backgroundColor: colors.danger}}>
                             </div>
-                            <p>GRABANDO</p>
+                            <p>Grabando ({steps.length} {steps.length == 1 ? "paso" : "pasos"}) </p>
                         </div>
-                        <div className="flex flex-row gap-2 items-center">
-                            <p>{steps.length} pasos</p>
+                        <div className="flex flex-row gap-2 items-center text-sm ">
+                            <button onClick={() => {
+                                setIsRecording(false)
+                                setSteps([])
+                            }} className='cursor-pointer hover:underline'>
+                                <p>Cancelar</p>
+                            </button>
                         </div>
                     </div>
                     <div className='flex w-full px-4 gap-3'>
@@ -87,8 +96,8 @@ function Sequences() {
                     </div>
                     <div className='flex w-full px-4'
                     >
-                        <button className='button flex flex-1 p-2 justify-center gap-2 cursor-pointer rounded-md text-white'
-                            style={{ backgroundColor: colors.danger }}
+                        <button className={`${steps.length > 0 ? "button cursor-pointer": "" } flex flex-1 p-2 justify-center gap-2 rounded-md text-white`}
+                            style={{ backgroundColor:  steps.length > 0 ? colors.danger: colors.disabled }}
                             onClick={saveSequence}>
                             <StopCircleIcon />
                             <p>Terminar </p>
@@ -106,7 +115,7 @@ function Sequences() {
                             </button>
                             <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                                 style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
-                                onClick={() => { }}>
+                                onClick={() => { selectedeSequence !== "" ? deleteSequence(selectedeSequence): {} }}>
                                 <DeleteIcon />
                                 <p>Borrar</p>
                             </button>
@@ -135,7 +144,7 @@ function Sequences() {
 
                 </div>
             }
-            <SaveSeqModal isOpen={showSaveModal} setIsOpen={setShowSaveModal} steps={steps} setSteps={setSteps}/>
+            <SaveSeqModal isOpen={showSaveModal} setIsOpen={setShowSaveModal} steps={steps} onConfirm={closeModal}/>
         </div>
     )
 }

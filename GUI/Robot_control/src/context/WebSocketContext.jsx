@@ -151,8 +151,6 @@ export const WebSocketProvider = ({ children }) => {
             .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible guardar la posición: ${err}` }]))
     }
     const deletePos = (positionName) => {
-        if (positionName === "Home") return;
-
         fetch(`http://${IP}:${port}/delete`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -168,6 +166,23 @@ export const WebSocketProvider = ({ children }) => {
                 }
             })
             .catch(err => setLogs(prev => [...prev, { category: 'log',  time: new Date().toISOString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
+    }
+    const deleteSequence = (sequenceName) => {
+        fetch(`http://${IP}:${port}/deleteSeq`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: sequenceName }),
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    loadSequences()
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "INFO", values: `La sequencia fue eliminada con éxito.` }])
+                } else {
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error del servidor: ${data.status}` }])
+                }
+            })
+            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error al intentar borrar la sequencia: ${err}` }]))
     }
     const loadSequences = async (retries = 3, delay = 1000) => {
         try {
@@ -201,30 +216,28 @@ export const WebSocketProvider = ({ children }) => {
             }
         }
     }
-    const saveSeq = (name, steps) => {
+    const saveSeq = async (name, steps) => {
         if(!name) return
         if (ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
             return { status: 'error' }
         }
         // console.log(JSON.stringify({ name: name, updated_at: new Date().toISOString(), steps: steps }))
-        fetch(`http://${IP}:${port}/saveSeq`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: name, updated_at: new Date().toISOString(), steps: steps }),
-        })
-            .then(data => {
-                if (data.ok) {
-                    //LoadSequences
-                    loadSequences()
-                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "INFO", values: "Secuencia guardada correctamente" }])
-                    return {status: 'ok'}
-                } else {
-                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "La secuencia no fue guardada" }])
-                    return { status: 'error' }
-                }
+        try{
+            const res = await fetch(`http://${IP}:${port}/saveSeq`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name, updated_at: new Date().toISOString(), steps: steps }),
             })
-            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible guardar la secuencia: ${err}` }]))
+            if (res.ok) {
+                loadSequences()
+                return { status: 'ok' }
+            } else {
+                return { status: 'error' }
+            }
+        }catch{
+            return { status: 'error' }
+        }
     }
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
@@ -247,7 +260,7 @@ export const WebSocketProvider = ({ children }) => {
             positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
-            sequences, saveSeq
+            sequences, saveSeq, deleteSequence
             }}>
             {children}
         </WebSocketContext.Provider>
