@@ -34,10 +34,17 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
     const handleChangeVal = (i, val, min, max) => {
         const raw = Array.isArray(val) ? val[0] : val
 
-        if (raw === "-" || raw === "") {
+        if (raw === "-") {
             setValues(prev => {
                 const newVals = [...prev]
                 newVals[i] = raw
+                return newVals
+            })
+            return
+        } else if (raw === ""){
+            setValues(prev => {
+                const newVals = [...prev]
+                newVals[i] = "0"
                 return newVals
             })
             return
@@ -94,9 +101,16 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
                         //     key={joint.id}>
                         //     <p  >{joint.label}: {joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
                         // </div>
-                        <div key={joint.id} className="flex flex-col w-full">
-                            <p>{joint.label}</p>
-                            <div className="flex flex-row w-full items-center">
+                        <div key={joint.id} className="flex flex-col w-full gap-2">
+                            <div className="flex justify-between ">
+                                <p>{joint.label}</p>
+                                <div style={{color: colors.primary, fontWeight: 'bold'}}>
+                                    <input type="text" value={values[i]} className="w-10 text-end ml-2" onChange={(e) => { handleChangeVal(i, e.target.value, joint.min, joint.max) }} />
+                                    <span>{joint.unit == "deg" ? "°" : "%"}</span>
+                                </div>
+                            </div>
+                            <div className="flex flex-row w-full items-center gap-2">
+                                <p className="text-sm" style={{ color: colors.text.secondary }}>{joint.min}{joint.unit === "deg"? "°": "%"}</p>
                                 <Slider.Root
                                     className="relative flex items-center justify-center select-none touch-none h-1 w-full"
                                     min={joint.min}
@@ -113,24 +127,23 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
                                     <Slider.Thumb className="block w-4 h-4 rounded-full hover:cursor-pointer"
                                         style={{ backgroundColor: colors.primary }} />
                                 </Slider.Root>
-                                <input type="text" value={values[i]} className="w-10 text-end ml-2" onChange={(e) => { handleChangeVal(i, e.target.value, joint.min, joint.max) }}/>
-                                <span>{joint.unit == "deg"? "°": "%"}</span>
+                                <p className="text-sm" style={{ color: colors.text.secondary }}>{joint.max}{joint.unit === "deg" ? "°" : "%"}</p>
                             </div>
-                            <div className="flex flex-row gap-3">
+                            {/* <div className="flex flex-row gap-3">
                                 <p>Min: {joint.min}</p>
                                 <p>Max: {joint.max}</p>
-                            </div>
+                            </div> */}
                         </div>
                     ))}
                 </div>
                 <div className="flex justify-between text-lg text-white">
-                    <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
-                        style={{ backgroundColor: colors.danger, border: '1px solid', borderColor: colors.border }}
+                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                        style={{ backgroundColor: colors.dangerDark }}
                         onClick={() => { setIsopen(false) }}>
                         <CloseIcon />
                         Cancelar
                     </button>
-                    <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.primary }}
                         onClick={handleConfirm}>
                         <CheckIcon />

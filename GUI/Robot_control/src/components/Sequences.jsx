@@ -24,7 +24,6 @@ function Sequences() {
     const [showSaveModal, setShowSaveModal] = useState(false)
 
     const captureStep = () => { //Revisar si es un nombre apropiado
-        console.log(steps.length)
         setSteps(prev => [
             ...prev,
             {
@@ -97,7 +96,7 @@ function Sequences() {
                     <div className='flex w-full px-4'
                     >
                         <button className={`${steps.length > 0 ? "button cursor-pointer": "" } flex flex-1 p-2 justify-center gap-2 rounded-md text-white`}
-                            style={{ backgroundColor:  steps.length > 0 ? colors.danger: colors.disabled }}
+                            style={{ backgroundColor:  steps.length > 0 ? colors.dangerDark: colors.disabled }}
                             onClick={saveSequence}>
                             <StopCircleIcon />
                             <p>Terminar </p>

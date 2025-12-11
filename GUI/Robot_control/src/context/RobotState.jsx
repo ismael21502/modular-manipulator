@@ -17,7 +17,7 @@ export const RobotStateProvider = ({ children }) => {
         robotConfig.joints.map(joint => joint.default ?? 0)
     )
     const jointsRef = useRef(joints)
-
+    const [isPlaying, setIsPlaying] = useState(false)
     useEffect(() => {
         jointsRef.current = joints
     }, [joints])
@@ -59,13 +59,16 @@ export const RobotStateProvider = ({ children }) => {
     const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
     const startSequence = async (selectedPos, sequences) => {
+        if(isPlaying) return
+        setIsPlaying(true)
         const sequence = sequences.find(seq => seq.name === selectedPos)
         if (sequence === null) return
         for (const step of sequence.steps) {
             const target = step.joints
             if (target) await moveRobot(target, step.duration)
-            await delay(step.delay * 5)
+            await delay(step.delay)
         }
+        setIsPlaying(false)
     }
     // const startSequence = async (sequence) => {
     //     for (const step of sequence.steps) {

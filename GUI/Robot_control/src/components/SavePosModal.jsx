@@ -52,7 +52,7 @@ function SavePosModal({ isOpen, setIsOpen }) {
                         </div>
                         : null}
                 </div>
-                <div className="flex flex-row flex-wrap gap-3 justify-between ">
+                {/* <div className="flex flex-row flex-wrap gap-3 justify-between ">
                     {jointConfig.map((joint, i) => (
                         <div className="rounded-md py-1 px-3"
                             style={{ color: colors.text.primary, border: '1px solid', borderColor: colors.border }}
@@ -60,16 +60,28 @@ function SavePosModal({ isOpen, setIsOpen }) {
                             <p  >{joint.label}: {joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
                         </div>
                     ))}
+                </div> */}
+                <div className="flex flex-row flex-wrap w-full gap-2 text-sm" >
+                    {jointConfig.map((joint, i) => (
+                        <div key={joint.id} className="flex flex-1 min-w-[25%] flex-row p-2 rounded-md border-1 justify-center"
+                            style={{ backgroundColor: colors.background, borderColor: colors.border }}>
+                            <div className="flex  flex-col justify-center gap-1">
+                                <p className='text-center font-bold'
+                                    style={{ color: colors.text.title }}>{joint.label}</p>
+                                <p className='text-center font-bold'
+                                    style={{ color: colors.primary }}> {joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
                 <div className="flex justify-between text-lg text-white">
-                    <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
-                        style={{ backgroundColor: colors.danger, border: '1px solid', borderColor: colors.border }}
+                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                        style={{ backgroundColor: colors.dangerDark }}
                         onClick={() => { setIsOpen(false) }}>
                         <CloseIcon />
-
                         Cancelar
                     </button>
-                    <button className='flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.primary }}
                         onClick={handleConfirm}>
                         <CheckIcon />

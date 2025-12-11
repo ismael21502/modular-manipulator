@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+* {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE y Edge antiguo */
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari y Edge moderno */
+}
+
 .rotate {
   animation: spin 0.8s linear infinite;
 }

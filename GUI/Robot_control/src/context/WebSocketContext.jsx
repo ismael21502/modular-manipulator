@@ -11,12 +11,14 @@ export const WebSocketProvider = ({ children }) => {
     const [IP, setIP] = useState("localhost")
     const [port, setPort] = useState("8000")
     const [sequences, setSequences] = useState([])
+    const [isConnecting, setIsConnecting] = useState(false)
+
     const connect = () => {
         // Cerrar la conexión previa si existe y no está cerrada
         if (ws.current && ws.current.readyState !== WebSocket.CLOSED) {
             ws.current.close()
         }
-
+        setIsConnecting(true)
         ws.current = new WebSocket(`ws://${IP}:${port}/ws`)
         let connectionAttempted = false; // Flag para controlar el estado de conexión
 
@@ -25,6 +27,7 @@ export const WebSocketProvider = ({ children }) => {
             connectionAttempted = true; // La conexión se ha establecido correctamente
 
             setIsConnected(true)
+            setIsConnecting(false)
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Conexión establecida" }])
             loadPositions()
             loadSequences()
@@ -36,6 +39,7 @@ export const WebSocketProvider = ({ children }) => {
             }
             if (ws.current.readyState === WebSocket.CONNECTING) return
             setIsConnected(false)
+            setIsConnecting(false)
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "WARNING", category: "log", values: "Conexión cerrada" }])
         }
 
@@ -45,6 +49,7 @@ export const WebSocketProvider = ({ children }) => {
                 return
             }
             setIsConnected(false)
+            setIsConnecting(false)
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "ERROR", category: "log", values: "No se pudo conectar al servidor" }])
             console.error("WebSocket error:", err)
         }
@@ -254,7 +259,7 @@ export const WebSocketProvider = ({ children }) => {
     return (
         <WebSocketContext.Provider value={{ 
             ws, 
-            isConnected, 
+            isConnected, isConnecting,
             connect, disconnect, send, 
             logs, setLogs, 
             positions, savePos, deletePos, updatePos,
