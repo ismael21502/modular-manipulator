@@ -5,11 +5,12 @@ const ThemeContext = createContext()
 
 export const ThemeProvider = ({ children }) => {
     const [mode, setMode] = useState("light")
+    const primary = mode === "light" ? "#6d40d8" : "#7b4af0"
     const theme = {
         colors: {
             background: mode === "light" ? "#ffffff" : "#0c0f1a",
 
-            primary: mode === "light" ? "#6d40d8" : "#7b4af0",
+            primary: primary,
             primaryDark: mode === "light" ? "#5a2ac9" : "#6a3cdc",
 
             accent: mode === "light" ? "#d89a27" : "#e0a631",
@@ -37,6 +38,10 @@ export const ThemeProvider = ({ children }) => {
                 content: mode === "light" ? "#0f0f0f" : "#000000"
             },
 
+            scrollbar: {
+                track: mode === "light" ? "#0000001e" : "#ffffff10",
+                thumb: mode === "light" ? `${primary}DD` : `${primary}AA`, 
+            },
             // Ejes con colores más sobrios pero reconocibles
             axes: {
                 x: "#ff5c5c",

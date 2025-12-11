@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
 import { useRef, useEffect } from 'react';
 import Log from './Log';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import { useTheme } from '../context/ThemeContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import CustomScroll from './CustomScroll';
 
 function Console({ }) {
     const { colors } = useTheme()
@@ -28,7 +28,7 @@ function Console({ }) {
         setLogs([])
     }
     return (
-        <div className='overflow-hidden flex flex-col flex-1 text-white border-1 border-solid border-[#4A4A4A]'
+        <div className='flex flex-col flex-1 text-white border-1 border-solid border-[#4A4A4A]' //overflow-hidden
         style={{backgroundColor: colors.terminal.content}}>
             <div className='flex w-full py-1 px-5 font-bold text-lg justify-between items-center border-b-1 border-[#4A4A4A]'
                 style={{ backgroundColor: colors.terminal.head }}>
@@ -45,14 +45,25 @@ function Console({ }) {
                 </button>
 
             </div>
-            <div className="flex flex-grow flex-col p-2 px-3 w-full overflow-y-auto" ref={logContainerRef}>
+            {/* <div className="flex flex-grow flex-col p-2 px-3 w-full overflow-y-auto" ref={logContainerRef}>
                     {logs.map((log, index) => {
                         if (log.category != "log") {
                             return
                         }
                         return <Log key={`${log.time}-${index}`} type={log.type} time={log.time} content={log.values} />
                     })}
-            </div>
+            </div> */}
+            
+            <CustomScroll scrollbarColor={"#ffffff10"} thumbColor={colors.scrollbar.thumb} ref={logContainerRef} >
+                <div className="flex flex-col gap-2 p-2" >
+                    {logs.map((log, index) => {
+                        if (log.category != "log") {
+                            return
+                        }
+                        return <Log key={`${log.time}-${index}`} type={log.type} time={log.time} content={log.values} />
+                    })}
+                </div>
+            </CustomScroll>
         </div>
     )
 }

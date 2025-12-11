@@ -19,7 +19,7 @@ function SequencesCard({ isActive = false, sequence, setSelected = () => { } }) 
                 <div className="flex flex-col flex-1 min-w-0 gap-3">
                     {/* Nombre */}
                     <p
-                        className="truncate text-sm font-bold text-start"
+                        className=" text-sm font-bold text-start"
                         style={{ color: textColor }}
                     >
                         {sequence.name}

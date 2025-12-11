@@ -11,6 +11,7 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import UndoIcon from '@mui/icons-material/Undo';
+import CustomScroll from './CustomScroll';
 
 function Sequences() {
     const { joints, startSequence } = useRobotState()
@@ -53,11 +54,14 @@ function Sequences() {
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
         <div className="flex flex-1 flex-col min-h-0">
             {/* scrollable content */}
-            <div className="flex-1 min-h-0 overflow-auto flex flex-col gap-5 p-5">
+            <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
+
+            <div className="flex-1 min-h-0 flex flex-col gap-5 p-5">
                 {sequences.map(sequence => (
                     <SequencesCard key={sequence.name} sequence={sequence} setSelected={setSelectedeSequence} isActive={sequence.name == selectedeSequence ? true : false} />
                 ))}
             </div>
+            </CustomScroll>
             {isRecording
                 ? <div className='flex flex-col pb-4 gap-3 border-t'
                     style={{ borderColor: colors.border, color: colors.text.primary, }}>

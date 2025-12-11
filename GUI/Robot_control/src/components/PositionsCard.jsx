@@ -18,7 +18,7 @@ function PositionsCard({ isActive = false, name, joints, labels , setSelected = 
                 <div className="flex flex-col flex-1 min-w-0 gap-3">
                     {/* Nombre */}
                     <p
-                        className="truncate text-sm font-bold text-start"
+                        className=" text-sm font-bold text-start"
                         style={{ color: textColor }}
                     >
                         {name}
@@ -26,7 +26,7 @@ function PositionsCard({ isActive = false, name, joints, labels , setSelected = 
 
                     {/* Joints */}
                     <div
-                        className="truncate text-sm text-start"
+                        className=" text-sm text-start"
                         style={{ color: colors.text.primary }}
                         // title={position.joints.labels
                         //     .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)

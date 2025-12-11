@@ -192,5 +192,62 @@
         "label": "Paso 7"
       }
     ]
+  },
+  {
+    "name": "a",
+    "updated_at": "2025-12-11T23:16:35.568Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      }
+    ]
+  },
+  {
+    "name": "s",
+    "updated_at": "2025-12-11T23:16:40.691Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      }
+    ]
+  },
+  {
+    "name": "d",
+    "updated_at": "2025-12-11T23:16:44.554Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      }
+    ]
   }
 ]
