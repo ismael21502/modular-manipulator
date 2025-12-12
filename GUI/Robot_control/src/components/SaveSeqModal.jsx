@@ -90,6 +90,7 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                                             })
                                         }} />
                                     <DeleteIcon fontSize='small' className='button cursor-pointer'
+                                        color={colors.disabled}
                                         onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
                                         onMouseLeave={(e) => e.currentTarget.style.color = colors.disabled}
                                     />

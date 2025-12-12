@@ -16,36 +16,47 @@ function PositionsCard({ isActive = false, name, joints, labels , setSelected = 
                 style={{ backgroundColor }}
             >
                 <div className="flex flex-col flex-1 min-w-0 gap-3">
-                    {/* Nombre */}
-                    <p
-                        className=" text-sm font-bold text-start"
-                        style={{ color: textColor }}
-                    >
-                        {name}
-                    </p>
-
+                    <div className="flex flex-row w-full justify-between">
+                        {/* Nombre */}
+                        <p
+                            className=" text-md font-bold text-start"
+                            style={{ color: textColor }}
+                        >
+                            {name}
+                        </p>
+                        {isActive && (
+                            <div
+                                className="flex w-6 h-6 items-center justify-center rounded-full"
+                                style={{ backgroundColor: colors.primary }}
+                            >
+                                <DoneIcon style={{ color: "white", fontWeight: "bold" }} fontSize="small" />
+                            </div>
+                        )}
+                    </div>
                     {/* Joints */}
                     <div
-                        className=" text-sm text-start"
+                        className="flex flex-row flex-wrap gap-1 justify-between text-sm text-start"
                         style={{ color: colors.text.primary }}
                         // title={position.joints.labels
                         //     .map((label, i) => `${label}: ${position.joints.values[i]}${label === "G" ? "%" : "°"}`)
                         //     .join(" · ")}
                     >
-                        {joints
+                        {/* {joints
                             .map((joint, i) => `${labels[i]}: ${joint}${labels[i] === "G" ? "%" : "°"}`)
-                            .join(" ")}
+                            .join(" ")} */}
+                            {joints.map((joint, i) => (
+                                <div className={`flex flex-1 min-w-[25%] flex-col justify-between rounded-md p-2 border-1 text-xs text-center`}
+                                    style={{ 
+                                        backgroundColor:  colors.background , 
+                                    borderColor: colors.border}}>
+                                    <p style={{color: colors.text.secondary, fontWeight: 'bold'}}>{labels[i]}</p>
+                                    <p style={{ color: colors.text.primary }}>{joint}{labels[i] === "G" ? "%" : "°"}</p>
+                                </div>
+                            ))}
                     </div>
                 </div>
 
-                {isActive && (
-                    <div
-                        className="flex w-6 h-6 items-center justify-center rounded-full"
-                        style={{ backgroundColor: colors.primary }}
-                    >
-                        <DoneIcon style={{ color: "white", fontWeight: "bold" }} fontSize="small" />
-                    </div>
-                )}
+                
             </div>
         </button>
 

@@ -29,7 +29,7 @@ export const ThemeProvider = ({ children }) => {
 
             text: {
                 primary: mode === "light" ? "#3d3d3d" : "#f2f2f2",
-                secondary: mode === "light" ? "#2e3650" : "#424d70ff",
+                secondary: mode === "light" ? "#414a66ff" : "#424d70ff",
                 title: mode === "light" ? "#505a68" : "#c5cfdb",
             },
 
