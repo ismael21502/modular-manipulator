@@ -79,10 +79,16 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row gap-5 items-center">
                         <p>Nombre</p>
-                        <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1"
-                            style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                            value={name}
-                            onChange={(e) => { setName(e.target.value) }} />
+                        <div className="relative group">
+                            <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1 outline-none"
+                                style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
+                                value={name}
+                                onChange={(e) => { setName(e.target.value) }} />
+                            <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
+                                style={{ backgroundColor: colors.primary }}
+                            ></span>
+                        </div>
+                        
 
                     </div>
                     {showRequeriedName

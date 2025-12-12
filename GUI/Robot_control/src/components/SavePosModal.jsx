@@ -37,30 +37,26 @@ function SavePosModal({ isOpen, setIsOpen }) {
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row gap-5 items-center">
                         <p>Nombre</p>
-                        <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1"
-                            style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                            value={name}
-                            onChange={(e) => { setName(e.target.value) }} />
+                        <div className="relative group">
+                            <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1 outline-none"
+                                style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
+                                value={name}
+                                onChange={(e) => { setName(e.target.value) }} />
+                            <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
+                            style={{backgroundColor: colors.primary}}
+                            ></span>
+                        </div>
 
                     </div>
                     {showRequeriedName
                         ? <div className="flex flex-row gap-2 items-center"
                             style={{ color: colors.danger }}>
-
                             <InfoOutlineIcon fontSize="small" />
                             <p>Ingresa un nombre</p>
                         </div>
                         : null}
                 </div>
-                {/* <div className="flex flex-row flex-wrap gap-3 justify-between ">
-                    {jointConfig.map((joint, i) => (
-                        <div className="rounded-md py-1 px-3"
-                            style={{ color: colors.text.primary, border: '1px solid', borderColor: colors.border }}
-                            key={joint.id}>
-                            <p  >{joint.label}: {joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
-                        </div>
-                    ))}
-                </div> */}
+
                 <div className="flex flex-row flex-wrap w-full gap-2 text-sm" >
                     {jointConfig.map((joint, i) => (
                         <div key={joint.id} className="flex flex-1 min-w-[25%] flex-row p-2 rounded-md border-1 justify-center"

@@ -53,10 +53,16 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                 style={{borderColor: colors.border}}>
                     <div className="flex flex-row gap-5 items-center">
                         <p>Nombre</p>
-                        <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1"
-                            style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                            value={name}
-                            onChange={(e) => { setName(e.target.value) }} />
+                        <div className="relative group w-full">
+                            <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1 outline-none"
+                                style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
+                                value={name}
+                                onChange={(e) => { setName(e.target.value) }} />
+                            <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
+                                style={{ backgroundColor: colors.primary }}
+                            ></span>
+                        </div>
+                        
                     </div>
                     {showRequeriedName
                         ? <div className="flex flex-row gap-2 items-center"
@@ -79,18 +85,24 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
 
                                 <div className="flex flex-row gap-4 items-center">
                                     <p style={{ color: colors.primary }}>#{i + 1}</p>
-                                    <input type="text" placeholder="Nombre" className="w-full pr-2 py-1 border-b-1 font-bold"
-                                        style={{ borderColor: colors.border }}
-                                        value={localSteps[i].label}
-                                        onChange={(e) => {
-                                            setLocalSteps(prev => {
-                                                const updated = [...prev]
-                                                updated[i] = { ...updated[i], label: e.target.value }
-                                                return updated
-                                            })
-                                        }} />
+                                    <div className="relative group w-full">
+                                        <input type="text" placeholder="Nombre" className="w-full pr-2 py-1 border-b-1 font-bold outline-none"
+                                            style={{ borderColor: colors.border }}
+                                            value={localSteps[i].label}
+                                            onChange={(e) => {
+                                                setLocalSteps(prev => {
+                                                    const updated = [...prev]
+                                                    updated[i] = { ...updated[i], label: e.target.value }
+                                                    return updated
+                                                })
+                                            }} />
+                                        <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
+                                            style={{ backgroundColor: colors.primary }}
+                                        ></span>
+                                    </div>
+                                    
                                     <DeleteIcon fontSize='small' className='button cursor-pointer'
-                                        color={colors.disabled}
+                                        style={{color:colors.disabled}}
                                         onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
                                         onMouseLeave={(e) => e.currentTarget.style.color = colors.disabled}
                                     />

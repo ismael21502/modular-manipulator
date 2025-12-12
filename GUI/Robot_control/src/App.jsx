@@ -8,10 +8,12 @@ import Sequences from "./components/Sequences.jsx"
 import Header from "./components/Header.jsx"
 import { useTheme } from "./context/ThemeContext.jsx"
 import { useState } from "react"
+import Tab from "./components/Tab.jsx"
+import CustomScroll from "./components/CustomScroll.jsx"
 
 function App() {
   const { colors } = useTheme()
-  const [selectedMode, setSelectedMode] = useState("Posiciones")
+  const [selectedMode, setSelectedMode] = useState("positions")
   return (
     <div className="h-[100vh] flex flex-col transition-colors duration-150 ease-in-out"
       style={{ backgroundColor: colors.background }}>
@@ -21,35 +23,12 @@ function App() {
           {/* tabs */}
           <div className='w-full text-md flex flex-row text-center border-b'
             style={{ borderColor: colors.border, color: colors.text.title, fontWeight: 'bold' }}>
-            <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Posiciones") }}
-            >
-              <div
-                className={`w-full py-3`}
-                style={selectedMode === "Posiciones" ? {
-                  backgroundColor: `${colors.primary}1A`,
-                  color: colors.primary,
-                  borderBottom: '4px solid',
-                  borderColor: colors.primary,
-                  fontWeight: 'bold'
-                } : {}}>
-                <p>POSICIONES</p>
-              </div>
-            </button>
-            <button className='w-full cursor-pointer' onClick={() => { setSelectedMode("Secuencias") }}>
-              <div
-                className={`w-full py-3`}
-                style={selectedMode === "Secuencias" ? {
-                  backgroundColor: `${colors.primary}1A`,
-                  color: colors.primary,
-                  borderBottom: '4px solid',
-                  borderColor: colors.primary,
-                  fontWeight: 'bold'
-                } : {}}>
-                <p>SECUENCIAS</p>
-              </div>
-            </button>
+
+            <Tab isActive={"positions" === selectedMode} name={"positions"} label={"POSICIONES"} setSelected={setSelectedMode} />
+            <Tab isActive={"sequences" === selectedMode} name={"sequences"} label={"SECUENCIAS"} setSelected={setSelectedMode} />
+
           </div>
-          {selectedMode === "Posiciones"
+          {selectedMode === "positions"
             ? <Positions />
             : <Sequences />}
         </div>
@@ -63,14 +42,16 @@ function App() {
           </div>
         </div>
         <div className="flex-[1_1_25%] overflow-y-auto">
-          <CartesianControl />
-          <Gripper opening={0} handleChangeOpening={() => { }} />
-          <ManualControl joints={{
-            'J1': 0,
-            'J2': -90,
-            'J3': 90
-          }}
-            handleChangeJoint={() => { }} />
+          <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
+            <CartesianControl />
+            <Gripper opening={0} handleChangeOpening={() => { }} />
+            <ManualControl joints={{
+              'J1': 0,
+              'J2': -90,
+              'J3': 90
+            }}
+              handleChangeJoint={() => { }} />
+          </CustomScroll>
 
         </div>
       </div>
