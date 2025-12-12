@@ -39,6 +39,15 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
         if(text === "") return 0
         return parseInt(text)
     }
+
+    const deleteStep = (index) => {
+        setLocalSteps(prev => {
+            const updated = [...prev]
+            updated.splice(index, 1)
+            return updated
+        })
+        // console.log(localSteps[index])
+    }
     return (
         <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000 '
             onClick={() => { setIsOpen(false) }}>
@@ -78,7 +87,7 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                         <p style={{ color: colors.text.title, fontWeight: 'bold' }}>
                             PASOS DE LA SECUENCIA
                         </p>
-                        {steps.map((step, i) => (
+                        {localSteps.map((step, i) => (
                             <div className='flex flex-col gap-3 rounded-md p-3 border-1' key={i}
                                 style={{ borderColor: colors.border, backgroundColor: `${colors.primary}1A` }}>
                                 {/* <p style={{color: colors.text.title, fontWeight: 'bold'}}>{step.label}</p> */}
@@ -88,7 +97,7 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                                     <div className="relative group w-full">
                                         <input type="text" placeholder="Nombre" className="w-full pr-2 py-1 border-b-1 font-bold outline-none"
                                             style={{ borderColor: colors.border }}
-                                            value={localSteps[i].label}
+                                            value={step.label}
                                             onChange={(e) => {
                                                 setLocalSteps(prev => {
                                                     const updated = [...prev]
@@ -105,6 +114,7 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                                         style={{color:colors.disabled}}
                                         onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
                                         onMouseLeave={(e) => e.currentTarget.style.color = colors.disabled}
+                                        onClick={()=>deleteStep(i)}
                                     />
                                 </div>
                                 <div className="flex flex-row flex-wrap w-full gap-2 text-sm" >

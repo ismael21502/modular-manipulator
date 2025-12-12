@@ -35,7 +35,7 @@ function App() {
 
         <div className="flex-[2_1_50%] min-w-0 h-full">
           <div className="flex h-[65%]">
-            <RobotModel opening={0} />
+            <RobotModel />
           </div>
           <div className="flex h-[35%]">
             <Console />
@@ -44,13 +44,8 @@ function App() {
         <div className="flex-[1_1_25%] overflow-y-auto">
           <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
             <CartesianControl />
-            <Gripper opening={0} handleChangeOpening={() => { }} />
-            <ManualControl joints={{
-              'J1': 0,
-              'J2': -90,
-              'J3': 90
-            }}
-              handleChangeJoint={() => { }} />
+            <Gripper />
+            <ManualControl />
           </CustomScroll>
 
         </div>

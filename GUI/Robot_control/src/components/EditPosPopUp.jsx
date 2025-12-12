@@ -6,6 +6,7 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import * as Slider from "@radix-ui/react-slider";
+import validateNumber from "../utils/validate";
 
 function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
     if (isOpen != true) return null
@@ -31,38 +32,13 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
         updatePos(oldName, name, values)
         setIsopen(false)
     }
-    const handleChangeVal = (i, val, min, max) => {
-        const raw = Array.isArray(val) ? val[0] : val
-
-        if (raw === "-") {
-            setValues(prev => {
-                const newVals = [...prev]
-                newVals[i] = raw
-                return newVals
-            })
-            return
-        } else if (raw === ""){
-            setValues(prev => {
-                const newVals = [...prev]
-                newVals[i] = "0"
-                return newVals
-            })
-            return
-        }
-
-        const newValue = Number(raw);
-
-        // Si no es número válido → NO actualizar
-        if (!Number.isFinite(newValue)) {
-            return
-        }
-
-        // Clamp
-        const clamped = Math.min(Math.max(newValue, min), max)
-
+    
+    const handleChangeVal = (i,val,min,max) => {
+        const newVal = validateNumber(val,min,max)
+        if(newVal === undefined) return
         setValues(prev => {
             const newVals = [...prev]
-            newVals[i] = clamped
+            newVals[i] = newVal
             return newVals
         })
     }
@@ -111,7 +87,7 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
                             <div className="flex justify-between ">
                                 <p>{joint.label}</p>
                                 <div style={{color: colors.primary, fontWeight: 'bold'}}>
-                                    <input type="text" value={values[i]} className="w-10 text-end ml-2" onChange={(e) => { handleChangeVal(i, e.target.value, joint.min, joint.max) }} />
+                                    <input type="text" value={values[i]} className="w-10 text-end ml-2 outline-none" onChange={(e) => { handleChangeVal(i, e.target.value, joint.min, joint.max) }} />
                                     <span>{joint.unit == "deg" ? "°" : "%"}</span>
                                 </div>
                             </div>

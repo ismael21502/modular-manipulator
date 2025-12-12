@@ -4,6 +4,8 @@ import { useTheme } from "../context/ThemeContext";
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import ReplayIcon from '@mui/icons-material/Replay';
 import { useRobotState } from "../context/RobotState";
+import validateNumber from "../utils/validate";
+
 function ManualControl({ }) {
   const { colors } = useTheme()
   const { joints, jointConfig, setJoints } = useRobotState()
@@ -15,6 +17,17 @@ function ManualControl({ }) {
       return newJoints}
     )
   }
+
+  const handleChangeVal = (i, val, min, max) => {
+    const newVal = validateNumber(val, min, max)
+    if (newVal === undefined) return
+    setJoints(prev => {
+      const newVals = [...prev]
+      newVals[i] = newVal
+      return newVals
+    })
+  }
+
   return (
     <div className='flex flex-col flex-1 py-2'
       style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
@@ -23,13 +36,13 @@ function ManualControl({ }) {
           <AccessibilityNewIcon />
           <p>CONTROL ARTICULAR</p>
         </div>
-        <button>
+        {/* <button>
           <div className="flex flex-row gap-2 items-center text-xs cursor-pointer"
             style={{ color: colors.primary }}>
             <ReplayIcon sx={{ fontSize: 14 }} />
             <p>Set zero</p>
           </div>
-        </button>
+        </button> */}
       </div>
 
       <div className="flex flex-col py-2 px-5 w-full justify-between gap-6">
@@ -41,9 +54,9 @@ function ManualControl({ }) {
                 <div className="flex items-start">
                   <input
                     type="text"
-                    className="text-sm mb-3 w-[2.5rem] text-end mr-1 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+                    className="text-sm mb-3 w-[2.5rem] text-end mr-1 outline-none"
                     value={joints[i]}
-                    onChange={(e) => handleChangeJoint(joint, e.target.value)}
+                    onChange={(e) => handleChangeVal(i, e.target.value, joint.min, joint.max)}
                   />
 
                   <span>°</span>

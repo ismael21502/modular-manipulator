@@ -5,14 +5,22 @@ import BackHandIcon from '@mui/icons-material/BackHand';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useRobotState } from '../context/RobotState';
+import validateNumber from '../utils/validate';
 
 function Gripper({ }) {
     const { colors } = useTheme()
     const { joints, jointConfig, setJoints } = useRobotState()
     const gripperIndex = joints.length - 1
     const opening = joints[gripperIndex]
-    
-    //[ ] Hacer una función con validadores para el textField
+    const handleChangeVal = (val, min, max) => {
+        const newVal = validateNumber(val, min, max)
+        if (newVal === undefined) return
+        setJoints(prev => {
+            const newJoints = [...prev]
+            newJoints[gripperIndex] = newVal
+            return newJoints
+        })
+    }
     const handleChangeOpening = (val) => {
         setJoints(prev => {
             const newJoints = [...prev]
@@ -31,8 +39,8 @@ function Gripper({ }) {
                 </div>
                 <div className="flex items-center gap-1 text-sm"
                     style={{}}>
-                    <input type='text' className='w-[2rem] text-end' value={opening} onChange={(e) => handleChangeOpening(e.target.value)} />
-                    <span>{jointConfig[4].unit}</span>
+                    <input type='text' className='w-[2rem] text-end' value={opening} onChange={(e) => handleChangeVal(e.target.value, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)} />
+                    <span>{jointConfig[gripperIndex].unit}</span>
                 </div>
             </div>
             <div className="flex flex-col gap-4 py-2 px-5 w-full">

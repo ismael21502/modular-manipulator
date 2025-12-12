@@ -1,0 +1,18 @@
+Robot state indicator (moving, idle)
+Stop button (maybe before connection or after robot name)
+Testing screen (+-10° like in a 3D printer)
+-zero offset
+-reconnection
+
+Add to configuration:
+Soft-limits (por joint y por cartesiano)
+
+Speed override global (slider 0–200%)
+
+Parámetros del trapezoidal
+
+Host/puerto por defecto
+
+Theme
+
+(Opcional) selección del modelo 3D

@@ -45,7 +45,7 @@ function PositionsCard({ isActive = false, name, joints, labels , setSelected = 
                             .map((joint, i) => `${labels[i]}: ${joint}${labels[i] === "G" ? "%" : "°"}`)
                             .join(" ")} */}
                             {joints.map((joint, i) => (
-                                <div className={`flex flex-1 min-w-[25%] flex-col justify-between rounded-md p-2 border-1 text-xs text-center`}
+                                <div key={i} className={`flex flex-1 min-w-[25%] flex-col justify-between rounded-md p-2 border-1 text-xs text-center`}
                                     style={{ 
                                         backgroundColor:  colors.background , 
                                     borderColor: colors.border}}>

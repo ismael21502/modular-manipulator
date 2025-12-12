@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useRobotState } from '../context/RobotState';
 import { useWebSocket } from '../context/WebSocketContext';
 import { debounce } from 'lodash'
+import validateNumber from '../utils/validate';
 
 function CartesianControl() {
     const { colors } = useTheme()
@@ -33,18 +34,17 @@ function CartesianControl() {
             return newCartesian
         })
         
-        // setTempCoords(prev => ({ ...prev, [axisId]: newValue.toString() }))
-
-        // // Enviar por websocket
-        // if (ws?.current)
-        //     ws.current.send(JSON.stringify({ type: "cartesian", data: newCoords }))
     }
 
-    // const handleKeyDown = (axis, e) => {
-    //     if (e.key === "Enter") {
-    //         handleChange(axis, i, tempCoords[axis.id])
-    //     }
-    // }
+    const handleChangeVal = (i, val, min, max) => {
+        const newVal = validateNumber(val, min, max)
+        if (newVal === undefined) return
+        setCartesian(prev => {
+            const newVals = [...prev]
+            newVals[i] = newVal
+            return newVals
+        })
+    }
 
     const axes = { "X": "Lateral", "Y": "Profundidad", "Z": "Vertical" };
     return (
@@ -64,9 +64,9 @@ function CartesianControl() {
                             <div className='flex flex-row w-full justify-between text-sm'>
                                 <h3 className='text-center'>{axis.label} </h3>
                                 <div >
-                                    <input type='text' className='w-[3rem] text-end mr-2'
+                                    <input type='text' className='w-[3rem] text-end mr-2 outline-none'
                                         value={cartesian[i]}
-                                        onChange={(e) => handleChange(axis, i, e.target.value)}
+                                        onChange={(e) => handleChangeVal(i, e.target.value, axis.min, axis.max)}
                                         // onKeyDown={(e) => handleKeyDown(axis, i, e)} 
                                         />
                                     <span>{axis.unit}</span>

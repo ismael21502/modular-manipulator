@@ -43,7 +43,7 @@ export function Model({ url }) {
 
   return <primitive object={scene} />;
 }
-function RobotModel({ angles, opening }) {
+function RobotModel({ }) {
   const {colors} = useTheme()
   const max_X = 1
   const max_Y = 1
@@ -73,7 +73,7 @@ function RobotModel({ angles, opening }) {
         {/* Ejes XYZ */}
         {/* <axesHelper args={[1.5]} /> */}
 
-        <Model url="/Modbot.glb" angles={angles} opening={opening} />
+        <Model url="/Modbot.glb"/>
         <OrbitControls />
         
       </Canvas>
