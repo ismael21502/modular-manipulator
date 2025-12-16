@@ -244,6 +244,66 @@ export const WebSocketProvider = ({ children }) => {
             return { status: 'error' }
         }
     }
+    async function updateSeq(oldName, seqName, steps) {
+        if (!seqName) return false
+
+        if (ws.current?.readyState !== WebSocket.OPEN) {
+            setLogs(prev => [
+                ...prev,
+                {
+                    category: 'log',
+                    time: new Date().toISOString(),
+                    type: "ERROR",
+                    values: "No hay conexión con el backend"
+                }
+            ])
+            return false
+        }
+
+        try {
+            const res = await fetch(`http://${IP}:${port}/updateSeq`, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    oldName,
+                    name: seqName,
+                    steps
+                })
+            })
+
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`)
+            }
+
+            await loadSequences()
+
+            setLogs(prev => [
+                ...prev,
+                {
+                    category: 'log',
+                    time: new Date().toISOString(),
+                    type: 'INFO',
+                    values: 'Secuencia actualizada con éxito'
+                }
+            ])
+
+            return true
+
+        } catch (err) {
+            setLogs(prev => [
+                ...prev,
+                {
+                    category: 'log',
+                    time: new Date().toISOString(),
+                    type: "ERROR",
+                    values: `No fue posible actualizar la secuencia: ${err.message}`
+                }
+            ])
+
+            return false
+        }
+    }
+    
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
@@ -265,7 +325,7 @@ export const WebSocketProvider = ({ children }) => {
             positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
-            sequences, saveSeq, deleteSequence
+            sequences, saveSeq, deleteSequence, updateSeq
             }}>
             {children}
         </WebSocketContext.Provider>

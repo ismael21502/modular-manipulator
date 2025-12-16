@@ -1,22 +1,25 @@
 import React from 'react'
-import { useWebSocket } from '../context/WebSocketContext'
+import { useWebSocket } from '../../../context/WebSocketContext'
 import { useState } from 'react'
-import { useRobotState } from '../context/RobotState'
-import { useTheme } from '../context/ThemeContext'
+import { useRobotState } from '../../../context/RobotState'
+import { useTheme } from '../../../context/ThemeContext'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CustomScroll from './CustomScroll'
+import CustomScroll from '../../ui/scrolls/CustomScroll'
+import validateNumber from '../../../utils/validate'
 
-function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
-    if (isOpen != true) return null
-    const { saveSeq } = useWebSocket()
+// function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm, mode, seqName }) {
+function SeqModal({ onConfirm, sequence, mode, onClose }) {
+    const { saveSeq, updateSeq } = useWebSocket()
     const { jointConfig } = useRobotState()
-    const [name, setName] = useState("")
+    const [name, setName] = useState(sequence.name || "")
     const { colors } = useTheme()
     const [showRequeriedName, setShowRequiredName] = useState(false)
-    const [localSteps, setLocalSteps] = useState(steps.map(step => (step)))
+    const [localSteps, setLocalSteps] = useState(sequence.steps || [])
+
+    const title = mode === "edit" ? "Editar secuencia" : "Nueva secuencia"
 
     const handleConfirm = async () => {
         // [ ] Añadir feedback
@@ -25,18 +28,24 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
             return
         }
         setShowRequiredName(false)
-        const serverResponse = await saveSeq(name, localSteps)
+        let serverResponse = null
+        if (mode === "edit") {
+            serverResponse = await updateSeq(sequence.name, name, localSteps)
+        } else {
+            serverResponse = await saveSeq(name, localSteps)
+        }
+        // const serverResponse = await saveSeq(name, localSteps)
         if (serverResponse.status === "ok") {
-            setIsOpen(false)
+            onClose()
             onConfirm()
         } else {
-            setIsOpen(false)
+            onClose()
             //Revisar si hay errores
         }
     }
 
-    const validateTimeInputs = (text) =>{
-        if(text === "") return 0
+    const validateTimeInputs = (text) => {
+        if (text === "") return 0
         return parseInt(text)
     }
 
@@ -46,20 +55,19 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
             updated.splice(index, 1)
             return updated
         })
-        // console.log(localSteps[index])
     }
     return (
         <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000 '
-            onClick={() => { setIsOpen(false) }}>
+            onClick={() => onClose()}>
             <div className='w-[480px] h-[90%] rounded-lg flex flex-col'
                 style={{ backgroundColor: colors.background, color: colors.text.primary }}
                 onClick={(e) => e.stopPropagation()}>
                 <div className='p-4 pb-0'>
                     <p className="text-xl font-bold"
-                        style={{ color: colors.text.title }}>Nueva secuencia</p>
+                        style={{ color: colors.text.title }}>{title}</p>
                 </div>
                 <div className="flex flex-col gap-2 p-4 border-b-1"
-                style={{borderColor: colors.border}}>
+                    style={{ borderColor: colors.border }}>
                     <div className="flex flex-row gap-5 items-center">
                         <p>Nombre</p>
                         <div className="relative group w-full">
@@ -71,7 +79,7 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                                 style={{ backgroundColor: colors.primary }}
                             ></span>
                         </div>
-                        
+
                     </div>
                     {showRequeriedName
                         ? <div className="flex flex-row gap-2 items-center"
@@ -109,23 +117,51 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                                             style={{ backgroundColor: colors.primary }}
                                         ></span>
                                     </div>
-                                    
+
                                     <DeleteIcon fontSize='small' className='button cursor-pointer'
-                                        style={{color:colors.disabled}}
+                                        style={{ color: colors.disabled }}
                                         onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
                                         onMouseLeave={(e) => e.currentTarget.style.color = colors.disabled}
-                                        onClick={()=>deleteStep(i)}
+                                        onClick={() => deleteStep(i)}
                                     />
                                 </div>
                                 <div className="flex flex-row flex-wrap w-full gap-2 text-sm" >
-                                    {jointConfig.map((joint, i) => (
+                                    {jointConfig.map((joint, j) => (
                                         <div key={joint.id} className="flex flex-1 min-w-[25%] flex-row p-2 rounded-md border-1 justify-center"
                                             style={{ backgroundColor: colors.background, borderColor: colors.border }}>
                                             <div className="flex  flex-col justify-center gap-1">
                                                 <p className='text-center'
                                                     style={{ color: colors.text.title }}>{joint.label}</p>
-                                                <p className='text-center font-bold'
-                                                    style={{ color: colors.primary }}> {step.joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
+                                                {/* <p className='text-center font-bold'
+                                                    style={{ color: colors.primary }}> {step.joints[i]}{joint.unit === "%" ? "%" : "°"}</p> */}
+                                                <div className="flex w-full flex-row justify-center">
+                                                    <input type='text' value={step.joints[j]}
+                                                        onChange={(e) => {
+                                                            const val = validateNumber(e.target.value, joint.min, joint.max)
+                                                            if (val === undefined) return  // ignorar caracteres inválidos
+                                                            setLocalSteps(prev => {
+                                                                const updated = [...prev]
+                                                                updated[i] = {
+                                                                    ...updated[i],
+                                                                    joints: {
+                                                                        ...updated[i].joints,
+                                                                        [j]: val
+                                                                    }
+                                                                }
+                                                                return updated
+                                                            })
+                                                        }}
+                                                        className='text-end font-bold outline-none'
+                                                        style={{ color: colors.primary, width: `${Math.max((step.joints[j] ?? 0).toString().length, 1)}ch` }}
+                                                        onBlur={() => {
+                                                            if (step.joints[j] === "-") setLocalSteps(prev => {
+                                                                const updated = [...prev]
+                                                                updated[i] = { ...updated[i], joints: { ...updated[i].joints, [j]: 0 } }
+                                                                return updated
+                                                            })
+                                                        }} />
+                                                    <span style={{ fontWeight: 'bold', color: colors.primary }}>{joint.unit === "%" ? "%" : "°"}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -165,10 +201,10 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
                     </div>
                 </CustomScroll>
                 <div className="flex justify-between text-lg text-white p-4 border-t-1"
-                style={{borderColor: colors.border}}>
+                    style={{ borderColor: colors.border }}>
                     <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.dangerDark }}
-                        onClick={() => { setIsOpen(false) }}>
+                        onClick={onClose}>
                         <CloseIcon />
                         Cancelar
                     </button>
@@ -184,4 +220,4 @@ function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm }) {
     )
 }
 
-export default SaveSeqModal
+export default SeqModal

@@ -98,20 +98,20 @@
   },
   {
     "name": "Pick and place",
-    "updated_at": "2025-12-11T03:18:28.471Z",
+    "updated_at": "2025-12-15T16:51:31.140629",
     "steps": [
       {
         "type": "inline",
-        "joints": [
-          0,
-          -25,
-          65,
-          90,
-          0
-        ],
+        "joints": {
+          "0": 0,
+          "1": -25,
+          "2": 65,
+          "3": 90,
+          "4": 0
+        },
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 1"
+        "label": "Home"
       },
       {
         "type": "inline",
@@ -124,7 +124,7 @@
         ],
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 2"
+        "label": "Approach"
       },
       {
         "type": "inline",
@@ -137,7 +137,7 @@
         ],
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 3"
+        "label": "Pick"
       },
       {
         "type": "inline",
@@ -150,7 +150,7 @@
         ],
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 4"
+        "label": "Lift"
       },
       {
         "type": "inline",
@@ -163,7 +163,7 @@
         ],
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 5"
+        "label": "Turn"
       },
       {
         "type": "inline",
@@ -176,7 +176,7 @@
         ],
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 6"
+        "label": "Place"
       },
       {
         "type": "inline",
@@ -189,7 +189,7 @@
         ],
         "delay": 200,
         "duration": 1000,
-        "label": "Paso 7"
+        "label": "Release"
       }
     ]
   }

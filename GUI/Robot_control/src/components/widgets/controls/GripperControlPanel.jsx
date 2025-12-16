@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import * as Slider from "@radix-ui/react-slider";
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 import BackHandIcon from '@mui/icons-material/BackHand';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useRobotState } from '../context/RobotState';
-import validateNumber from '../utils/validate';
+import { useRobotState } from '../../../context/RobotState';
+import validateNumber from '../../../utils/validate';
 
 function Gripper({ }) {
     const { colors } = useTheme()
@@ -39,7 +39,7 @@ function Gripper({ }) {
                 </div>
                 <div className="flex items-center gap-1 text-sm"
                     style={{}}>
-                    <input type='text' className='w-[2rem] text-end' value={opening} onChange={(e) => handleChangeVal(e.target.value, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)} />
+                    <input type='text' className='w-[2rem] text-end outline-none' value={opening} onChange={(e) => handleChangeVal(e.target.value, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)} />
                     <span>{jointConfig[gripperIndex].unit}</span>
                 </div>
             </div>

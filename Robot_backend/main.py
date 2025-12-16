@@ -60,7 +60,6 @@ async def get_sequences():
     except Exception as e:
         print("Error leyendo positions.json:", e)
         return []
-    
 @app.post("/saveSeq")
 async def save_data(newData: dict):
     try:
@@ -77,7 +76,42 @@ async def save_data(newData: dict):
         json.dump(data, f, indent=2)
 
     return {"status": "ok"}
+@app.post("/updateSeq")
+async def update_sequence(sequence: dict):
+    try:
+        with open("sequences.json", "r") as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = []
+    for item in data:
+        if item['name'] == sequence['oldName']:
+            item['name'] = sequence['name']
+            item['updated_at'] = datetime.now().isoformat()
+            item['steps'] = sequence['steps']
+            with open("sequences.json", "w") as f:
+                json.dump(data, f, indent=2)
 
+            return {'status': 'ok', 'message': f"Secuencia '{item['name']}' actualizada"}
+        
+    return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
+@app.post("/deleteSeq")
+async def delete_sequence(item: dict):
+    try:
+        with open("sequences.json", "r") as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = []
+    if "name" not in item:
+        return {"status": "error", "message": "Falta el campo 'name'."}
+    original_length = len(data)
+    data = [seq for seq in data if seq["name"] != item["name"]]
+
+    if len(data) < original_length:
+        with open("sequences.json", "w") as f:
+            json.dump(data, f, indent=2)
+        return {"status": "ok", "message": f"Secuencia '{item['name']}' eliminada."}
+    else:
+        return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
 @app.post("/update")
 async def update_position(position: dict):
     try:
@@ -97,7 +131,6 @@ async def update_position(position: dict):
         
     return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
    
-    
 @app.post("/delete")
 async def delete_position(item: dict):
     try:
@@ -115,24 +148,7 @@ async def delete_position(item: dict):
         return {"status": "ok", "message": f"Posición '{item['name']}' eliminada."}
     else:
         return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
-@app.post("/deleteSeq")
-async def delete_sequence(item: dict):
-    try:
-        with open("sequences.json", "r") as f:
-            data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        data = []
-    if "name" not in item:
-        return {"status": "error", "message": "Falta el campo 'name'."}
-    original_length = len(data)
-    data = [seq for seq in data if seq["name"] != item["name"]]
 
-    if len(data) < original_length:
-        with open("sequences.json", "w") as f:
-            json.dump(data, f, indent=2)
-        return {"status": "ok", "message": f"Secuencia '{item['name']}' eliminada."}
-    else:
-        return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
 @app.get("/positions")
 async def get_positions():
     import os, json

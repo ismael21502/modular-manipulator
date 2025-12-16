@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTheme } from '../context/ThemeContext.jsx'
+import { useTheme } from '../../../context/ThemeContext.jsx'
 
 function Tab({ isActive = false, name, label, setSelected = () => { } }) {
     const { colors } = useTheme()

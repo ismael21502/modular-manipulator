@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import * as Slider from "@radix-ui/react-slider";
 import OpenWithIcon from '@mui/icons-material/OpenWith';
-import { useTheme } from '../context/ThemeContext';
-import { useRobotState } from '../context/RobotState';
-import { useWebSocket } from '../context/WebSocketContext';
+import { useTheme } from '../../../context/ThemeContext';
+import { useRobotState } from '../../../context/RobotState';
+import { useWebSocket } from '../../../context/WebSocketContext';
 import { debounce } from 'lodash'
-import validateNumber from '../utils/validate';
+import validateNumber from '../../../utils/validate';
 
 function CartesianControl() {
     const { colors } = useTheme()

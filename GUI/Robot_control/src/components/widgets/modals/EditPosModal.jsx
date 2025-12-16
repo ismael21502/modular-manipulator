@@ -1,14 +1,14 @@
-import { useTheme } from "../context/ThemeContext"
+import { useTheme } from "../../../context/ThemeContext"
 import { useEffect, useState } from "react"
-import { useWebSocket } from "../context/WebSocketContext"
-import { useRobotState } from "../context/RobotState"
+import { useWebSocket } from "../../../context/WebSocketContext"
+import { useRobotState } from "../../../context/RobotState"
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import * as Slider from "@radix-ui/react-slider";
-import validateNumber from "../utils/validate";
+import validateNumber from "../../../utils/validate";
 
-function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
+function EditPosModal({ isOpen, setIsopen, selectedPos }) {
     if (isOpen != true) return null
     const { positions, updatePos } = useWebSocket()
     const oldName = selectedPos
@@ -137,4 +137,4 @@ function EditPosPopUp({ isOpen, setIsopen, selectedPos }) {
     )
 }
 
-export default EditPosPopUp
+export default EditPosModal

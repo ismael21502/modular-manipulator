@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import * as Select from "@radix-ui/react-select";
-import SavePosModal from './SavePosModal';
+import SavePosModal from '../modals/SavePosModal';
 import PositionsCard from './PositionsCard';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import EditIcon from '@mui/icons-material/Edit';
-import { useTheme } from '../context/ThemeContext';
-import { useWebSocket } from '../context/WebSocketContext';
-import { useRobotState } from '../context/RobotState';
-import EditPosPopUp from './EditPosPopUp';
-import CustomScroll from './CustomScroll';
+import { useTheme } from '../../../context/ThemeContext';
+import { useWebSocket } from '../../../context/WebSocketContext';
+import { useRobotState } from '../../../context/RobotState';
+import EditPosModal from '../modals/EditPosModal';
+import CustomScroll from '../../ui/scrolls/CustomScroll';
 
 function Positions() {
     const { positions, deletePos } = useWebSocket()
@@ -89,7 +88,7 @@ function Positions() {
             <SavePosModal
                 isOpen={showSavePopUp}
                 setIsOpen={setShowSavePopUp} />
-            <EditPosPopUp
+            <EditPosModal
                 isOpen={showEditPopUp}
                 setIsopen={setShowEditPopUp}
                 selectedPos={selectedPos} />

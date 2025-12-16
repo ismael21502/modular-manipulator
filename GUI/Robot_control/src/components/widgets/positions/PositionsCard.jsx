@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import DoneIcon from '@mui/icons-material/Done';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 function PositionsCard({ isActive = false, name, joints, labels , setSelected = () =>{} }) {
     const { colors } = useTheme()

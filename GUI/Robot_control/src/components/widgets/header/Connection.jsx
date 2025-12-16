@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import LinkIcon from '@mui/icons-material/Link';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
-import { useTheme } from '../context/ThemeContext';
-import { useWebSocket } from "../context/WebSocketContext.jsx"
-import ActiviyIndicator from './LoadingIndicator.jsx';
+import { useTheme } from '../../../context/ThemeContext.jsx';
+import { useWebSocket } from "../../../context/WebSocketContext.jsx"
+import ActiviyIndicator from '../../ui/indicators/LoadingIndicator.jsx';
 
 function Connection() {
     const { colors, mode } = useTheme()

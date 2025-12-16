@@ -2,11 +2,11 @@ import { useRef, useEffect } from 'react';
 import Log from './Log';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import TerminalIcon from '@mui/icons-material/Terminal';
-import { useTheme } from '../context/ThemeContext';
-import { useWebSocket } from '../context/WebSocketContext';
-import CustomScroll from './CustomScroll';
+import { useTheme } from '../../../context/ThemeContext';
+import { useWebSocket } from '../../../context/WebSocketContext';
+import CustomScroll from '../../ui/scrolls/CustomScroll';
 
-function Console({ }) {
+function Terminal({ }) {
     const { colors } = useTheme()
     const { logs, setLogs } = useWebSocket()
     const logContainerRef = useRef(null)
@@ -24,7 +24,7 @@ function Console({ }) {
         }
     }, [logs])
     
-    function clearConsole(e) {
+    function clearTerminal(e) {
         setLogs([])
     }
     return (
@@ -37,7 +37,7 @@ function Console({ }) {
                     <p>TERMINAL</p>
                 </div>
 
-                <button onClick={clearConsole}>
+                <button onClick={clearTerminal}>
                     <div className='flex flex-row gap-2 cursor-pointer text-gray-400 items-center'>
                         <ClearAllIcon fontSize='small' />
                         <p className='text-sm'>Limpiar consola</p>
@@ -68,4 +68,4 @@ function Console({ }) {
     )
 }
 
-export default Console
+export default Terminal

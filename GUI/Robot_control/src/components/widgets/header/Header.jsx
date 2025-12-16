@@ -1,10 +1,10 @@
 import React from 'react'
 import Connection from './Connection'
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 import SettingsIcon from '@mui/icons-material/Settings';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded'; 
+import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'; 
 import BlockIcon from '@mui/icons-material/Block';
 import { color } from '@mui/system';
 
@@ -43,10 +43,10 @@ function Header({ title }) {
         <Connection />
         {mode === "light"
           ? <button className='cursor-pointer' style={{ color: colors.text.primary }} onClick={() => { setMode("dark") }}>
-            <DarkModeIcon fontSize='large' />
+            <DarkModeRoundedIcon fontSize='large' />
           </button>
           : <button className='cursor-pointer' style={{ color: colors.text.primary }} onClick={() => { setMode("light") }}>
-            <LightModeIcon fontSize='large' />
+            <LightModeRoundedIcon fontSize='large' />
           </button>}
         <button className='cursor-pointer' style={{ color: colors.text.primary }}>
           <SettingsIcon fontSize='large' />

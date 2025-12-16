@@ -3,9 +3,9 @@ import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
-import { useRobotState } from '../context/RobotState';
-import AxisWidget from './AxisWidget';
+import { useTheme } from '../../../context/ThemeContext';
+import { useRobotState } from '../../../context/RobotState';
+// import AxisWidget from './AxisWidget';
 
 export function Model({ url }) {
   const { scene } = useGLTF(url)

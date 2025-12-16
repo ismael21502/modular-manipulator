@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import SaveSeqModal from './SaveSeqModal';
+import SeqModal from '../modals/SeqModal';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import EditIcon from '@mui/icons-material/Edit';
-import { useTheme } from '../context/ThemeContext';
-import { useWebSocket } from '../context/WebSocketContext';
-import { useRobotState } from '../context/RobotState';
+import { useTheme } from '../../../context/ThemeContext';
+import { useWebSocket } from '../../../context/WebSocketContext';
+import { useRobotState } from '../../../context/RobotState';
 import SequencesCard from './SequencesCard';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import UndoIcon from '@mui/icons-material/Undo';
-import CustomScroll from './CustomScroll';
+import CustomScroll from '../../ui/scrolls/CustomScroll';
 
 function Sequences() {
     const { joints, startSequence } = useRobotState()
@@ -23,7 +23,8 @@ function Sequences() {
     const [isRecording, setIsRecording] = useState(false)
     const [steps, setSteps] = useState([])
     const [showSaveModal, setShowSaveModal] = useState(false)
-
+    const [modalMode, setModalMode] = useState("Nueva secuencia")
+    const [modalSequence, setModalSequence] = useState(null)
     const captureStep = () => { //Revisar si es un nombre apropiado
         setSteps(prev => [
             ...prev,
@@ -40,15 +41,36 @@ function Sequences() {
         if(steps.length == 0) return
         setSteps(prev => prev.slice(0, -1))
     }
-    const saveSequence = () =>{
-        //Modal de guardado
-        if(steps.length == 0) return
-        setShowSaveModal(true)
-        // setSteps([])
-    }
+    
     const closeModal = () => {
         setSteps([])
         setIsRecording(false)
+        // setShowSaveModal(false)
+    }
+
+    const handleDelete = () => {
+        setSelectedeSequence("")
+        deleteSequence(selectedeSequence)
+    }
+
+    const handleEdit = () => {
+        setModalMode("edit")
+        // setSteps(sequences.find(seq => seq.name === selectedeSequence).steps)
+        setModalSequence(sequences.find(seq => seq.name === selectedeSequence))
+        setShowSaveModal(true)
+    }
+    const saveSequence = () => {
+        //Modal de guardado
+        if (steps.length == 0) return
+        const newSequence = {
+            name: "",
+            updatedAt: new Date().toISOString(),
+            steps: steps
+        }
+        setShowSaveModal(true)
+        setModalMode("save")
+        setModalSequence(newSequence)
+        // setSteps([])
     }
     return (
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
@@ -112,13 +134,14 @@ function Sequences() {
                     {selectedeSequence !== ""
                         ? <div className='flex flex-row justify-between gap-3 '>
                             <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                                style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}>
+                                style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}
+                                onClick={() => handleEdit()}>
                                 <EditIcon />
                                 <p>Editar</p>
                             </button>
                             <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                                 style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
-                                onClick={() => { selectedeSequence !== "" ? deleteSequence(selectedeSequence): {} }}>
+                                onClick={() => { selectedeSequence !== "" ? handleDelete(): {} }}>
                                 <DeleteIcon />
                                 <p>Borrar</p>
                             </button>
@@ -143,11 +166,11 @@ function Sequences() {
                             </button>
                         </div>
                         : null}
-
-
                 </div>
             }
-            <SaveSeqModal isOpen={showSaveModal} setIsOpen={setShowSaveModal} steps={steps} onConfirm={closeModal}/>
+            {showSaveModal 
+                ? <SeqModal onConfirm={closeModal} sequence={modalSequence} mode={modalMode} onClose={() => setShowSaveModal(false)}/>
+            :<></>}
         </div>
     )
 }

@@ -1,7 +1,8 @@
 const validateNumber = (val, min, max) => {
-    const raw = Array.isArray(val) ? val[0] : val
-    
-    if (raw.includes("-") & raw[0] !== "-") {
+    // const raw = Array.isArray(val) ? val[0] : val
+    const raw = String(Array.isArray(val) ? val[0] : val)
+
+    if (raw.includes("-") && raw[0] !== "-") {
         return "-"
     } 
 
