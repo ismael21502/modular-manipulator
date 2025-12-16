@@ -21,7 +21,7 @@ function SavePosModal({ isOpen, setIsOpen }) {
             return
         }
         setShowRequiredName(false)
-        savePos(name)
+        savePos(name, joints)
         setIsOpen(false)
     }
     return (

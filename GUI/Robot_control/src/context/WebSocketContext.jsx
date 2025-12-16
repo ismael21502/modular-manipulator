@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRobotState } from "./RobotState";
+import { useRobotConfig } from "./RobotConfig";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { joints, setJoints } = useRobotState()
-    const ws = useRef(null);
-    const [isConnected, setIsConnected] = useState(false);
+    const { setJoints, setCoords } = useRobotState()
+    const { setRobotConfig } = useRobotConfig()
+    const ws = useRef(null)
+    const [isConnected, setIsConnected] = useState(false)
     const [logs, setLogs] = useState([])
     const [positions, setPositions] = useState([])
     const [IP, setIP] = useState("localhost")
@@ -13,7 +15,31 @@ export const WebSocketProvider = ({ children }) => {
     const [sequences, setSequences] = useState([])
     const [isConnecting, setIsConnecting] = useState(false)
 
-    const connect = () => {
+    useEffect(() => {
+        initializeWebSocket()
+        
+        return () => ws.current?.close()
+    }, [])
+
+    const getRobotConfig = async () => {
+        if (ws.current?.readyState !== WebSocket.OPEN) {
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "Error obteniendo configuración del robot: no hay conexión con el servidor" }])
+            return null
+        }
+        try {
+            const res = await fetch(`http://${IP}:${port}/robot_config`)
+            if (res.ok) {
+                const data = await res.json()
+                return data
+            } else {
+                throw new Error(`HTTP ${res.status}`)
+            }
+        } catch (err) {
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error obteniendo configuración del robot: ${err}` }])
+        }
+    }
+    
+    const initializeWebSocket = () => {
         // Cerrar la conexión previa si existe y no está cerrada
         if (ws.current && ws.current.readyState !== WebSocket.CLOSED) {
             ws.current.close()
@@ -23,9 +49,10 @@ export const WebSocketProvider = ({ children }) => {
         let connectionAttempted = false; // Flag para controlar el estado de conexión
 
         // Funciones de manejo de eventos
-        const handleOpen = () => {
+        const handleOpen = async () => {
             connectionAttempted = true; // La conexión se ha establecido correctamente
-
+            const robot_config = await getRobotConfig()
+            setRobotConfig(robot_config)
             setIsConnected(true)
             setIsConnecting(false)
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Conexión establecida" }])
@@ -56,8 +83,9 @@ export const WebSocketProvider = ({ children }) => {
         const handleMessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                if (data.type === "JOINTS") setJoints(data.values)
-                else if (data.type === "COORDS") setCoords(data.values)
+                // if (data.type === "JOINTS") setJoints(data.values)
+                if(data.type === "JOINTS") setJoints(data.values)
+                else if (data.type === "COORDS") setCoords(data.values) //Dejar esto con callbacks también
                 // setLogs(prev => [...prev, data])
             } catch {
                 console.log("Mensaje no JSON:", event.data)
@@ -134,7 +162,7 @@ export const WebSocketProvider = ({ children }) => {
         })
             .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible actualizar la posición: ${err}` }]))
     }
-    function savePos(newPosName) {
+    function savePos(newPosName, joints) {
         if (!newPosName) return
         if(ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
@@ -304,28 +332,23 @@ export const WebSocketProvider = ({ children }) => {
         }
     }
     
+    
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
     } 
 
-    useEffect(() => {
-        connect()
-
-        return () => ws.current?.close()
-    }, [])
-
     return (
         <WebSocketContext.Provider value={{ 
             ws, 
             isConnected, isConnecting,
-            connect, disconnect, send, 
+            initializeWebSocket, disconnect, send, 
             logs, setLogs, 
             positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
-            sequences, saveSeq, deleteSequence, updateSeq
+            sequences, saveSeq, deleteSequence, updateSeq,
             }}>
             {children}
         </WebSocketContext.Provider>

@@ -74,8 +74,8 @@ async def save_data(newData: dict):
     data.append(newData)
     with open("sequences.json", "w") as f:
         json.dump(data, f, indent=2)
-
     return {"status": "ok"}
+
 @app.post("/updateSeq")
 async def update_sequence(sequence: dict):
     try:
@@ -92,8 +92,8 @@ async def update_sequence(sequence: dict):
                 json.dump(data, f, indent=2)
 
             return {'status': 'ok', 'message': f"Secuencia '{item['name']}' actualizada"}
-        
     return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
+
 @app.post("/deleteSeq")
 async def delete_sequence(item: dict):
     try:
@@ -112,6 +112,7 @@ async def delete_sequence(item: dict):
         return {"status": "ok", "message": f"Secuencia '{item['name']}' eliminada."}
     else:
         return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
+    
 @app.post("/update")
 async def update_position(position: dict):
     try:
@@ -126,9 +127,7 @@ async def update_position(position: dict):
             print("DATA: ",data)
             with open("positions.json", "w") as f:
                 json.dump(data, f, indent=2)
-
             return {'status': 'ok', 'message': f"Posición '{item['name']}' actualizada"}
-        
     return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
    
 @app.post("/delete")
@@ -160,6 +159,17 @@ async def get_positions():
     except Exception as e:
         print("Error leyendo positions.json:", e)
         return []
+    
+@app.get("/robot_config")
+async def get_robot_config():
+    try:
+        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robotConfig.json")
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    except Exception as e:
+        print("Error leyendo robotConfig.json:", e)
+        return {}
     
 async def process_gui_command(ws: WebSocket, data: dict):
     if data.get("type") == "cartesian_move":

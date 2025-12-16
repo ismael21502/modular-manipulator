@@ -192,5 +192,76 @@
         "label": "Release"
       }
     ]
+  },
+  {
+    "name": "Ola",
+    "updated_at": "2025-12-15T22:22:42.301243",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": {
+          "0": 0,
+          "1": -45,
+          "2": -45,
+          "3": -30,
+          "4": 100
+        },
+        "delay": 0,
+        "duration": 1000,
+        "label": "Paso 1"
+      },
+      {
+        "type": "inline",
+        "joints": {
+          "0": 45,
+          "1": 45,
+          "2": 45,
+          "3": 30,
+          "4": 100
+        },
+        "delay": 0,
+        "duration": 1000,
+        "label": "Paso 2"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          90,
+          -45,
+          -45,
+          -30,
+          100
+        ],
+        "delay": 0,
+        "duration": 1000,
+        "label": "Paso 3"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          135,
+          45,
+          45,
+          30,
+          100
+        ],
+        "delay": 0,
+        "duration": 1000,
+        "label": "Paso 4"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          180,
+          -45,
+          -45,
+          -30,
+          100
+        ],
+        "delay": 0,
+        "duration": 1000,
+        "label": "Paso 5"
+      }
+    ]
   }
 ]

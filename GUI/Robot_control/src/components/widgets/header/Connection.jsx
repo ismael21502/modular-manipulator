@@ -7,7 +7,7 @@ import ActiviyIndicator from '../../ui/indicators/LoadingIndicator.jsx';
 
 function Connection() {
     const { colors, mode } = useTheme()
-    const { isConnected, isConnecting, connect, disconnect, port, setPort, IP, setIP } = useWebSocket()
+    const { isConnected, isConnecting, initializeWebSocket, disconnect, port, setPort, IP, setIP } = useWebSocket()
     const onIPChange = (newIP) => {
         setIP(newIP)
     }
@@ -28,7 +28,7 @@ function Connection() {
             <button onClick={() => {
                 isConnected
                     ? disconnect()
-                    : connect()
+                    : initializeWebSocket()
             }}>
                 <div className="button flex rounded-md px-2 py-1 items-center gap-1 cursor-pointer text-white"
                     style={isConnected ? { backgroundColor: colors.danger } :  { backgroundColor: mode === "light" ? "#1e293b" : "#2b384e" }}>
