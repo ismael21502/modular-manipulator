@@ -16,3 +16,15 @@ Host/puerto por defecto
 Theme
 
 (Opcional) selección del modelo 3D
+
+robotConfig.json validation with zod/yup
+
+Considerate to make a linear gripper
+Take joint values in "moveRobot" function from the backend and add a simulation mode.
+
+Make edit sequence function
+Make pause movement function
+
+Now all the joints are revolute. I want to be able to use also linear, continuous, etc.
+
+maybe separate desired state vs currentState in the sliders

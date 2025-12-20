@@ -9,6 +9,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomScroll from '../../ui/scrolls/CustomScroll'
 import validateNumber from '../../../utils/validate'
+import UnderlinedInput from '../../ui/inputs/underlinedInput'
+import InputWithSuffix from '../../ui/inputs/InputWithSuffix'
 
 // function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm, mode, seqName }) {
 function SeqModal({ onConfirm, sequence, mode, onClose }) {
@@ -70,16 +72,14 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                     style={{ borderColor: colors.border }}>
                     <div className="flex flex-row gap-5 items-center">
                         <p>Nombre</p>
-                        <div className="relative group w-full">
-                            <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1 outline-none"
-                                style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                                value={name}
-                                onChange={(e) => { setName(e.target.value) }} />
-                            <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
-                                style={{ backgroundColor: colors.primary }}
-                            ></span>
-                        </div>
-
+                        <UnderlinedInput
+                            value={name}
+                            placeholder="Ingresa el nombre"
+                            unselectedColor={showRequeriedName ? colors.danger : colors.border}
+                            selectedColor={colors.primary}
+                            onChange={(e) => { setName(e.target.value) }}
+                            className="w-full p-2"
+                        />
                     </div>
                     {showRequeriedName
                         ? <div className="flex flex-row gap-2 items-center"
@@ -99,25 +99,22 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                             <div className='flex flex-col gap-3 rounded-md p-3 border-1' key={i}
                                 style={{ borderColor: colors.border, backgroundColor: `${colors.primary}1A` }}>
                                 {/* <p style={{color: colors.text.title, fontWeight: 'bold'}}>{step.label}</p> */}
-
                                 <div className="flex flex-row gap-4 items-center">
                                     <p style={{ color: colors.primary }}>#{i + 1}</p>
-                                    <div className="relative group w-full">
-                                        <input type="text" placeholder="Nombre" className="w-full pr-2 py-1 border-b-1 font-bold outline-none"
-                                            style={{ borderColor: colors.border }}
-                                            value={step.label}
-                                            onChange={(e) => {
-                                                setLocalSteps(prev => {
-                                                    const updated = [...prev]
-                                                    updated[i] = { ...updated[i], label: e.target.value }
-                                                    return updated
-                                                })
-                                            }} />
-                                        <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
-                                            style={{ backgroundColor: colors.primary }}
-                                        ></span>
-                                    </div>
-
+                                    <UnderlinedInput
+                                        value={step.label}
+                                        placeholder="Nombre"
+                                        unselectedColor={showRequeriedName ? colors.danger : colors.border}
+                                        selectedColor={colors.primary}
+                                        onChange={(e) => {
+                                            setLocalSteps(prev => {
+                                                const updated = [...prev]
+                                                updated[i] = { ...updated[i], label: e.target.value }
+                                                return updated
+                                            })
+                                        }}
+                                        className="w-full py-1 font-bold"
+                                    />
                                     <DeleteIcon fontSize='small' className='button cursor-pointer'
                                         style={{ color: colors.disabled }}
                                         onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
@@ -168,7 +165,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                 </div>
                                 <div className="flex flex-row items-center gap-2 text-sm">
                                     <p>Duración: </p>
-                                    <input type="text" placeholder="Duración" className="px-2 py-1 w-15 border-1 rounded-md"
+                                    {/* <input type="text" placeholder="Duración" className="px-2 py-1 w-15 border-1 rounded-md"
                                         // style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
                                         style={{ borderColor: colors.border, backgroundColor: colors.background }}
                                         value={localSteps[i].duration}
@@ -179,10 +176,24 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                                 updated[i] = { ...updated[i], duration: validateTimeInputs(e.target.value) }
                                                 return updated
                                             })
-                                        }} />
+                                        }} /> */}
+                                    <InputWithSuffix
+                                        className='rounded-sm px-2 py-1'
+                                        value={localSteps[i].duration}
+                                        suffix={"ms"}
+                                        onChange={(e) => {
+                                            setLocalSteps(prev => {
+                                                const updated = [...prev]
+                                                // Poner validaciones aquí
+                                                updated[i] = { ...updated[i], duration: validateTimeInputs(e.target.value) }
+                                                return updated
+                                            })
+                                        }}
+                                        style={{ backgroundColor: colors.background }}
+                                    />
                                     {/* <p>ms</p> */}
                                     <p>Pausa: </p>
-                                    <input type="text" placeholder="Pausa" className="px-2 py-1 w-15 border-1 rounded-md"
+                                    {/* <input type="text" placeholder="Pausa" className="px-2 py-1 w-15 border-1 rounded-md"
                                         // style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
                                         style={{ borderColor: colors.border, backgroundColor: colors.background }}
                                         value={localSteps[i].delay}
@@ -193,7 +204,21 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                                 updated[i] = { ...updated[i], delay: validateTimeInputs(e.target.value) }
                                                 return updated
                                             })
-                                        }} />
+                                        }} /> */}
+                                    <InputWithSuffix
+                                        className='rounded-sm px-2 py-1'
+                                        value={localSteps[i].delay}
+                                        suffix={"ms"}
+                                        onChange={(e) => {
+                                            setLocalSteps(prev => {
+                                                const updated = [...prev]
+                                                // Poner validaciones aquí
+                                                updated[i] = { ...updated[i], delay: validateTimeInputs(e.target.value) }
+                                                return updated
+                                            })
+                                        }}
+                                        style={{ backgroundColor: colors.background }}
+                                    />
                                     {/* <p>ms</p> */}
                                 </div>
                             </div>

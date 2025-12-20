@@ -26,6 +26,23 @@
 .button:hover {
   transform: scale(1.01);
 }
+
+.inputBorder {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--cardBorder); /* var(--border) */
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.group:hover .inputBorder {
+  border-color: var(--cardHover); /* var(--border-hover) */
+}
+
+.group:focus-within .inputBorder {
+  border-color: var(--cardActiveBorder); /* var(--border-focus) */
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

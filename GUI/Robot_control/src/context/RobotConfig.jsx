@@ -8,7 +8,7 @@ export const RobotConfigProvider = ({ children }) => {
             {
                 "id": "j1",
                 "label": "J1",
-                "type": "rotational",
+                "type": "revolute",
                 "min": -180,
                 "max": 180,
                 "default": 0,

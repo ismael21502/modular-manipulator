@@ -4,7 +4,7 @@
         {
             "id": "j1",
             "label": "J1 (Base)",
-            "type": "rotational",
+            "type": "revolute",
             "min": -180,
             "max": 180,
             "default": 0,
@@ -13,7 +13,7 @@
         {
             "id": "j2",
             "label": "J2 (Hombro)",
-            "type": "rotational",
+            "type": "revolute",
             "min": -90,
             "max": 90,
             "default": 0,
@@ -22,7 +22,7 @@
         {
             "id": "j3",
             "label": "J3 (Codo)",
-            "type": "rotational",
+            "type": "revolute",
             "min": -90,
             "max": 90,
             "default": 0,
@@ -31,7 +31,7 @@
         {
             "id": "j4",
             "label": "J4 (Muñeca)",
-            "type": "rotational",
+            "type": "revolute",
             "min": -180,
             "max": 180,
             "default": 0,
@@ -40,7 +40,7 @@
         {
             "id": "gripper",
             "label": "Gripper",
-            "type": "linear",
+            "type": "revolute",
             "min": 0,
             "max": 100,
             "default": 0,

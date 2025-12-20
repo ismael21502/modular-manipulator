@@ -5,6 +5,7 @@ import { useRobotState } from "../../../context/RobotState"
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import UnderlinedInput from "../../ui/inputs/underlinedInput";
 
 function SavePosModal({ isOpen, setIsOpen }) {
 
@@ -37,16 +38,15 @@ function SavePosModal({ isOpen, setIsOpen }) {
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row gap-5 items-center">
                         <p>Nombre</p>
-                        <div className="relative group">
-                            <input type="text" placeholder="Ingresa el nombre" className="w-full p-2 border-b-1 outline-none"
-                                style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                                value={name}
-                                onChange={(e) => { setName(e.target.value) }} />
-                            <span className="absolute left-0 bottom-0 h-0.5 w-0 transition-all duration-300 group-focus-within:w-full"
-                            style={{backgroundColor: colors.primary}}
-                            ></span>
-                        </div>
-
+                        <UnderlinedInput
+                            value={name}
+                            placeholder="Ingresa el nombre"
+                            unselectedColor={showRequeriedName ? colors.danger : colors.border}
+                            selectedColor={colors.primary}
+                            onChange={(e) => { setName(e.target.value) }}
+                            className="w-full py-1"
+                            style={showRequeriedName ? { borderColor: colors.danger } : { borderColor: colors.border }}
+                        />
                     </div>
                     {showRequeriedName
                         ? <div className="flex flex-row gap-2 items-center"
