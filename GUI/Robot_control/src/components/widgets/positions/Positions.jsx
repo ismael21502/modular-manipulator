@@ -10,11 +10,12 @@ import { useWebSocket } from '../../../context/WebSocketContext';
 import { useRobotState } from '../../../context/RobotState';
 import EditPosModal from '../modals/EditPosModal';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
+import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
 
 function Positions() {
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
-    const { jointConfig, moveRobot } = useRobotState()
+    const { jointConfig, startPosition, isPlaying } = useRobotState()
 
     const [showSavePopUp, setShowSavePopUp] = useState(false)
     const [showEditPopUp, setShowEditPopUp] = useState(false)
@@ -23,7 +24,7 @@ function Positions() {
 
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
-        if (target) moveRobot(target.values);
+        if (target) startPosition(target.values);
     }
 
     const handleSaving = () => {
@@ -38,22 +39,22 @@ function Positions() {
         // bg - [#1F1F1F] border-[#4A4A4A] bg-[#2B2B2B] text-white
         <div className="flex flex-1 flex-col min-h-0">
             {/* scrollable content */}
-            
-                <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
+
+            <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
                 <div className="flex-1 min-h-0 overflow-hidden flex flex-col gap-5 p-5">
                     {positions.map((position, i) => (
                         <PositionsCard key={position.name} name={position.name} joints={position.values} labels={jointConfig.map(joint => joint.label)} setSelected={setSelectedPos} isActive={position.name == selectedPos ? true : false} />
                     ))}
                 </div>
-                </CustomScroll>
-           
+            </CustomScroll>
+
             <div className='flex flex-col p-4 gap-3 border-t'
                 style={{ borderColor: colors.border, color: colors.text.primary }}>
                 {selectedPos !== ""
                     ? <div className='flex flex-row justify-between gap-3 '>
                         <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}
-                            onClick={() => {handleEditing()}}>
+                            onClick={() => { handleEditing() }}>
                             <EditIcon />
                             <p>Editar</p>
                         </button>
@@ -76,11 +77,19 @@ function Positions() {
                 </div>
                 {selectedPos !== ""
                     ? <div className='flex text-white'>
-                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
+                        <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-3 rounded-md`}
                             style={{ backgroundColor: colors.primaryDark }}
                             onClick={sendPos}>
-                            <PlayArrowRoundedIcon />
-                            <p>Reproducir movimiento</p>
+                            {isPlaying
+                                ? <>
+                                    <LoadingIndicator />
+                                    <p>Reproduciendo movimiento</p>
+                                </>
+                                : <>
+                                    <PlayArrowRoundedIcon />
+                                    <p>Reproducir movimiento</p>
+                                </>}
+
                         </button>
                     </div>
                     : null}

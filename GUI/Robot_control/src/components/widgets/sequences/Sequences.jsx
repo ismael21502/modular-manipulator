@@ -12,9 +12,10 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import UndoIcon from '@mui/icons-material/Undo';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
+import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
 
 function Sequences() {
-    const { joints, startSequence } = useRobotState()
+    const { joints, startSequence, isPlaying } = useRobotState()
     const { sequences, deleteSequence } = useWebSocket()
     //Posible formato de referencia de posiciones
     // { "type": "ref", "positionId": "home", "delay": 500 },
@@ -33,15 +34,15 @@ function Sequences() {
                 joints: joints,
                 delay: 200, //ms
                 duration: 1000, // ms 
-                label: `Paso ${steps.length+1}`  // opcional
+                label: `Paso ${steps.length + 1}`  // opcional
             }
         ])
     }
     const deleteStep = () => {
-        if(steps.length == 0) return
+        if (steps.length == 0) return
         setSteps(prev => prev.slice(0, -1))
     }
-    
+
     const closeModal = () => {
         setSteps([])
         setIsRecording(false)
@@ -78,11 +79,11 @@ function Sequences() {
             {/* scrollable content */}
             <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
 
-            <div className="flex-1 min-h-0 flex flex-col gap-5 p-5">
-                {sequences.map(sequence => (
-                    <SequencesCard key={sequence.name} sequence={sequence} setSelected={setSelectedeSequence} isActive={sequence.name == selectedeSequence ? true : false} />
-                ))}
-            </div>
+                <div className="flex-1 min-h-0 flex flex-col gap-5 p-5">
+                    {sequences.map(sequence => (
+                        <SequencesCard key={sequence.name} sequence={sequence} setSelected={setSelectedeSequence} isActive={sequence.name == selectedeSequence ? true : false} />
+                    ))}
+                </div>
             </CustomScroll>
             {isRecording
                 ? <div className='flex flex-col pb-4 gap-3 border-t'
@@ -91,7 +92,7 @@ function Sequences() {
                         style={{ backgroundColor: `${colors.danger}23`, color: colors.danger, borderBottom: "1px solid", borderColor: colors.border }}>
                         <div className='flex flex-row gap-2 items-center font-bold'>
                             <div className="rounded-full w-3 h-3 animate-pulse-rec"
-                            style={{backgroundColor: colors.danger}}>
+                                style={{ backgroundColor: colors.danger }}>
                             </div>
                             <p>Grabando ({steps.length} {steps.length == 1 ? "paso" : "pasos"}) </p>
                         </div>
@@ -105,24 +106,24 @@ function Sequences() {
                         </div>
                     </div>
                     <div className='flex w-full px-4 gap-3'>
-                            <button className='button flex flex-1 p-2 justify-center gap-2 cursor-pointer rounded-md border-1'
-                                style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}23` }}
-                                onClick={captureStep}>
-                                <AddCircleIcon />
-                                <p>Capturar paso</p>
-                            </button>
-                            <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
-                                style={{ borderColor: colors.accent, color: colors.accent, backgroundColor: `${colors.accent}1A` }}
-                                onClick={deleteStep}>
-                                    {/* Revisar el color de esto */}
-                                <UndoIcon />
-                                <p>Deshacer</p>
-                            </button>
+                        <button className='button flex flex-1 p-2 justify-center gap-2 cursor-pointer rounded-md border-1'
+                            style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}23` }}
+                            onClick={captureStep}>
+                            <AddCircleIcon />
+                            <p>Capturar paso</p>
+                        </button>
+                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                            style={{ borderColor: colors.accent, color: colors.accent, backgroundColor: `${colors.accent}1A` }}
+                            onClick={deleteStep}>
+                            {/* Revisar el color de esto */}
+                            <UndoIcon />
+                            <p>Deshacer</p>
+                        </button>
                     </div>
                     <div className='flex w-full px-4'
                     >
-                        <button className={`${steps.length > 0 ? "button cursor-pointer": "" } flex flex-1 p-2 justify-center gap-2 rounded-md text-white`}
-                            style={{ backgroundColor:  steps.length > 0 ? colors.dangerDark: colors.disabled }}
+                        <button className={`${steps.length > 0 ? "button cursor-pointer" : ""} flex flex-1 p-2 justify-center gap-2 rounded-md text-white`}
+                            style={{ backgroundColor: steps.length > 0 ? colors.dangerDark : colors.disabled }}
                             onClick={saveSequence}>
                             <StopCircleIcon />
                             <p>Terminar </p>
@@ -141,7 +142,7 @@ function Sequences() {
                             </button>
                             <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                                 style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
-                                onClick={() => { selectedeSequence !== "" ? handleDelete(): {} }}>
+                                onClick={() => { selectedeSequence !== "" ? handleDelete() : {} }}>
                                 <DeleteIcon />
                                 <p>Borrar</p>
                             </button>
@@ -158,19 +159,27 @@ function Sequences() {
                     </div>
                     {selectedeSequence !== ""
                         ? <div className='flex text-white'>
-                            <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md'
-                                style={{ backgroundColor: colors.primaryDark }}
-                                onClick={() => { startSequence(selectedeSequence, sequences) }}>
-                                <PlayArrowRoundedIcon />
-                                <p>Ejecutar secuencia</p>
+                            <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-2 rounded-md`}
+                                style={{ backgroundColor: colors.primaryDark}}
+                                onClick={() => { isPlaying ? {} : startSequence(selectedeSequence, sequences) }}>
+                                {isPlaying
+                                    ? <>
+                                        <LoadingIndicator />
+                                        <p>Reproduciendo secuencia</p>
+                                    </>
+                                    : <>
+                                        <PlayArrowRoundedIcon />
+                                        <p>Ejecutar secuencia</p>
+                                    </>
+                                }
                             </button>
                         </div>
                         : null}
                 </div>
             }
-            {showSaveModal 
-                ? <SeqModal onConfirm={closeModal} sequence={modalSequence} mode={modalMode} onClose={() => setShowSaveModal(false)}/>
-            :<></>}
+            {showSaveModal
+                ? <SeqModal onConfirm={closeModal} sequence={modalSequence} mode={modalMode} onClose={() => setShowSaveModal(false)} />
+                : <></>}
         </div>
     )
 }

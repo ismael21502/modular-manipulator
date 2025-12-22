@@ -12,9 +12,11 @@ export const RobotStateProvider = ({ children }) => {
     )
     const jointsRef = useRef(joints)
     const [isPlaying, setIsPlaying] = useState(false)
+    
     useEffect(() => {
         jointsRef.current = joints
     }, [joints])
+
     useEffect(() =>{
         setJoints(
             robotConfig.joints.map(joint => joint.default ?? 0)
@@ -72,15 +74,15 @@ export const RobotStateProvider = ({ children }) => {
         }
         setIsPlaying(false)
     }
-    // const startSequence = async (sequence) => {
-    //     for (const step of sequence.steps) {
-    //         await moveRobot(step.joints)
-    //         await delay(step.delay)
-    //     }
-    // }
+    
+    const startPosition = async (targetValues) => {
+        setIsPlaying(true)
+        if (targetValues) await moveRobot(targetValues)
+        setIsPlaying(false)
+    }
 
     return (
-        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, cartesian, setCartesian, cartesianConfig, moveRobot, startSequence }}>
+        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying }}>
             {children}
         </RobotStateContext.Provider>
     )
