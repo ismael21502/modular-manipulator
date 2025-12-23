@@ -79,7 +79,7 @@ function Positions() {
                     ? <div className='flex text-white'>
                         <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-3 rounded-md`}
                             style={{ backgroundColor: colors.primaryDark }}
-                            onClick={sendPos}>
+                            onClick={isPlaying ? ()=>{} : sendPos}>
                             {isPlaying
                                 ? <>
                                     <LoadingIndicator />

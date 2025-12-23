@@ -10,43 +10,65 @@ import validateNumber from '../../../utils/validate';
 function CartesianControl() {
     const { colors } = useTheme()
     // const [tempCoords, setTempCoords] = useState({ X: "0", Y: "0", Z: "0" });
-    const {send} = useWebSocket()
+    const { send } = useWebSocket()
     const { cartesian, setCartesian, cartesianConfig } = useRobotState()
+
+    const [tempValues, setTempValues] = useState(cartesianConfig.map(axis => {
+        return axis.default
+    }))
 
     const debouncedSend = debounce((value, unit) => {
         send({ type: "cartesian_move", values: value, unit: unit});
     }, 300)
 
-    const handleChange = (axis, i, input) => {
-        const axisId = axis.id
-        let newValue = Array.isArray(input) ? input[0] : parseFloat(input)
-        if (isNaN(newValue)) newValue = 0
+    useEffect(() => {
+        setTempValues(cartesian)
+        
+    }, [cartesian])
 
-        // Limitar rango según config
-        if (newValue > axis.max) newValue = axis.max
-        if (newValue < axis.min) newValue = axis.min
-
+    const handleChangeSlider = (i, val, axis) => {
         setCartesian(prev => {
             const newCartesian = [...prev]
-            newCartesian[i] = newValue
+            newCartesian[i] = val[0]
             // const dataToSend = {type: "cartesian_move", values: newCartesian, unit: axis.unit} //Enviar frame de referencia? Enviar speed?
             debouncedSend(newCartesian, axis.unit)
             return newCartesian
         })
-        
+
     }
 
-    const handleChangeVal = (i, val, min, max) => {
+    const handleChangeInput = (i, val, min, max) => {
         const newVal = validateNumber(val, min, max)
         if (newVal === undefined) return
-        setCartesian(prev => {
-            const newVals = [...prev]
-            newVals[i] = newVal
-            return newVals
+        setTempValues((prev) => {
+            const newValues = [...prev]
+            newValues[i] = newVal
+            return newValues
         })
+        // setVal(i, newVal)
     }
 
-    const axes = { "X": "Lateral", "Y": "Profundidad", "Z": "Vertical" };
+    const setVal = (i, val) => {
+        setCartesian(prev => {
+            const newVals = [...prev]
+            newVals[i] = val
+            return newVals
+        })
+        setTempValues(
+            prev => {
+                const newVals = [...prev]
+                newVals[i] = val
+                return newVals
+            }
+        )
+    }
+
+    const commitVal = (i, val, min, max) => {
+        const valid = validateNumber(val, min, max)
+        if (valid === undefined) return
+        setVal(i, valid)
+    }
+
     return (
         <div className='flex flex-1 flex-col py-2'
             style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
@@ -65,10 +87,22 @@ function CartesianControl() {
                                 <h3 className='text-center'>{axis.label} </h3>
                                 <div >
                                     <input type='text' className='w-[3rem] text-end mr-2 outline-none'
-                                        value={cartesian[i]}
-                                        onChange={(e) => handleChangeVal(i, e.target.value, axis.min, axis.max)}
+                                        value={tempValues[i] ?? ""}
+                                        onChange={(e) => handleChangeInput(i, e.target.value, axis.min, axis.max)}
                                         // onKeyDown={(e) => handleKeyDown(axis, i, e)} 
-                                        />
+                                        onBlur={(e) => {
+                                            if (e.target.value === "-") {
+                                                commitVal(i, axis.default, axis.min, axis.max)
+                                            } else {
+                                                commitVal(i, e.target.value, axis.min, axis.max)
+                                            }
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                commitVal(i, e.target.value !== '-' ? e.target.value : axis.default, axis.min, axis.max)
+                                            }
+                                        }}
+                                    />
                                     <span>{axis.unit}</span>
                                 </div>
                             </div>
@@ -78,16 +112,20 @@ function CartesianControl() {
                                 min={axis.min}
                                 max={axis.max}
                                 step={1}
-                                onValueChange={(val) => handleChange(axis, i, val)}
-                                value={[cartesian[i]]}
+                                onValueChange={(val) => handleChangeSlider(i, val, axis)}
+                                value={[tempValues[i]]}
                             >
                                 <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
                                     style={{ backgroundColor: colors.border }}>
-                                    <Slider.Range className="absolute rounded-full h-full"
+                                    <Slider.Range className={`absolute rounded-full h-full ${tempValues[i] === cartesian[i] ? '' : 'opacity-0'}`}
                                         style={{ backgroundColor: colors.axes[axis.id] }} />
                                 </Slider.Track>
-                                <Slider.Thumb className="block w-4 h-4 rounded-full hover:cursor-pointer"
-                                    style={{ backgroundColor: colors.axes[axis.id] }} />
+                                <Slider.Thumb className="block w-4 h-4 rounded-full outline-none hover:cursor-pointer"
+                                    style={{
+                                        backgroundColor: colors.axes[axis.id],
+                                        outline: tempValues[i] === cartesian[i] ? 'none' : `2px dashed ${colors.axes[axis.id]}`,
+                                        outlineOffset: tempValues[i] === cartesian[i] ? 0 : 2,
+                                    }} />
                             </Slider.Root>
                         </div>
                 ))}

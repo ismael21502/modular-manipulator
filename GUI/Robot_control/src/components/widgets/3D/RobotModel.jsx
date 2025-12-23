@@ -10,7 +10,6 @@ import { useRobotState } from '../../../context/RobotState';
 export function Model({ url }) {
   const { scene } = useGLTF(url)
   const { joints } = useRobotState()
-
   const degToRad = (deg) => deg * Math.PI / 180;
   useEffect(() => {
     const maxOpeningDeg = 77 / 100

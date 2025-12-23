@@ -11,24 +11,37 @@ function Gripper({ }) {
     const { colors } = useTheme()
     const { joints, jointConfig, setJoints } = useRobotState()
     const gripperIndex = joints.length - 1
-    const opening = joints[gripperIndex]
-    const handleChangeVal = (val, min, max) => {
+    const [tempVal, setTempVal] = useState(jointConfig[gripperIndex].default)
+
+    useEffect(() => {
+        setTempVal(joints[gripperIndex])
+    }, [joints[gripperIndex]])
+
+    const handleChangeInput = (val, min, max) => {
         const newVal = validateNumber(val, min, max)
         if (newVal === undefined) return
-        setJoints(prev => {
-            const newJoints = [...prev]
-            newJoints[gripperIndex] = newVal
-            return newJoints
-        })
+        setTempVal(newVal)
     }
-    const handleChangeOpening = (val) => {
-        setJoints(prev => {
-            const newJoints = [...prev]
-            newJoints[gripperIndex] = val[0]
-            return newJoints
 
-        })
+    const handleChangeSlider = (val) => {
+        setVal(val[0])
     }
+
+    const setVal = (val) => {
+        setJoints(prev => {
+            const updated = [...prev]
+            updated[gripperIndex] = val
+            return updated
+        })
+        setTempVal(val)
+    }
+
+    const commitVal = (val, min, max) => {
+        const valid = validateNumber(val, min, max)
+        if (valid === undefined) return
+        setVal(val)
+    }
+
     return (
         <div className='flex flex-col flex-1 py-2'
             style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
@@ -39,7 +52,25 @@ function Gripper({ }) {
                 </div>
                 <div className="flex items-center gap-1 text-sm"
                     style={{}}>
-                    <input type='text' className='w-[2rem] text-end outline-none' value={opening} onChange={(e) => handleChangeVal(e.target.value, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)} />
+                    <input
+                        type='text'
+                        className='w-[2rem] text-end outline-none'
+                        value={tempVal}
+                        onChange={(e) => handleChangeInput(e.target.value, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)}
+                        onBlur={(e) => {
+                            if (e.target.value === "-") {
+                                commitVal(jointConfig[gripperIndex].default, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
+                            } else {
+                                commitVal(tempVal, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                commitVal(tempVal, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
+                                // e.target.blur()
+                            }
+                        }}
+                    />
                     <span>{jointConfig[gripperIndex].unit}</span>
                 </div>
             </div>
@@ -52,16 +83,20 @@ function Gripper({ }) {
                         min={jointConfig[gripperIndex].min}
                         max={jointConfig[gripperIndex].max}
                         step={1}
-                        value={[opening]}
-                        onValueChange={handleChangeOpening}
+                        value={[tempVal]}
+                        onValueChange={handleChangeSlider}
                     >
-                        <Slider.Track className="bg-[#2B2B2B] relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
+                        <Slider.Track className={`bg-[#2B2B2B] relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer`}
                             style={{ backgroundColor: colors.border }}>
-                            <Slider.Range className="absolute rounded-full h-full h-full"
-                                style={{ backgroundColor: colors.primaryDark }} />
+                            <Slider.Range className={`absolute rounded-full h-full h-full ${tempVal === joints[gripperIndex] ? '' : 'opacity-0'}`}
+                                style={{ backgroundColor: colors.primary }} />
                         </Slider.Track>
-                        <Slider.Thumb className="block w-4 h-4 rounded-full hover:cursor-pointer"
-                            style={{ backgroundColor: colors.primary }} />
+                        <Slider.Thumb className={`block w-4 h-4 rounded-full hover:cursor-pointer`}
+                            style={{
+                                backgroundColor: colors.primary,
+                                outline: tempVal === joints[gripperIndex] ? 'none' : `2px dashed ${colors.primary}`,
+                                outlineOffset: tempVal === joints[gripperIndex] ? 0 : 2,
+                            }} />
                     </Slider.Root>
                     {/* 3CD6D6 */}
                     <LockOutlinedIcon fontSize='small' />

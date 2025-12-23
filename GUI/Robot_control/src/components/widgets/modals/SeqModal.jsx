@@ -128,9 +128,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                             style={{ backgroundColor: colors.background, borderColor: colors.border }}>
                                             <div className="flex  flex-col justify-center gap-1">
                                                 <p className='text-center'
-                                                    style={{ color: colors.text.title }}>{joint.label}</p>
-                                                {/* <p className='text-center font-bold'
-                                                    style={{ color: colors.primary }}> {step.joints[i]}{joint.unit === "%" ? "%" : "°"}</p> */}
+                                                    style={{ color: colors.text.title }}>{joint.label}</p>                                                
                                                 <div className="flex w-full flex-row justify-center">
                                                     <input type='text' value={step.joints[j]}
                                                         onChange={(e) => {
@@ -153,7 +151,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                                         onBlur={() => {
                                                             if (step.joints[j] === "-") setLocalSteps(prev => {
                                                                 const updated = [...prev]
-                                                                updated[i] = { ...updated[i], joints: { ...updated[i].joints, [j]: 0 } }
+                                                                updated[i] = { ...updated[i], joints: { ...updated[i].joints, [j]: joint.default } }
                                                                 return updated
                                                             })
                                                         }} />
@@ -165,18 +163,6 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                 </div>
                                 <div className="flex flex-row items-center gap-2 text-sm">
                                     <p>Duración: </p>
-                                    {/* <input type="text" placeholder="Duración" className="px-2 py-1 w-15 border-1 rounded-md"
-                                        // style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                                        style={{ borderColor: colors.border, backgroundColor: colors.background }}
-                                        value={localSteps[i].duration}
-                                        onChange={(e) => {
-                                            setLocalSteps(prev => {
-                                                const updated = [...prev]
-                                                // Poner validaciones aquí
-                                                updated[i] = { ...updated[i], duration: validateTimeInputs(e.target.value) }
-                                                return updated
-                                            })
-                                        }} /> */}
                                     <InputWithSuffix
                                         className='rounded-sm px-2 py-1'
                                         value={localSteps[i].duration}
@@ -191,20 +177,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                         }}
                                         style={{ backgroundColor: colors.background }}
                                     />
-                                    {/* <p>ms</p> */}
                                     <p>Pausa: </p>
-                                    {/* <input type="text" placeholder="Pausa" className="px-2 py-1 w-15 border-1 rounded-md"
-                                        // style={{ borderColor: showRequeriedName ? colors.danger : colors.border }}
-                                        style={{ borderColor: colors.border, backgroundColor: colors.background }}
-                                        value={localSteps[i].delay}
-                                        onChange={(e) => {
-                                            setLocalSteps(prev => {
-                                                const updated = [...prev]
-                                                // Poner validaciones aquí
-                                                updated[i] = { ...updated[i], delay: validateTimeInputs(e.target.value) }
-                                                return updated
-                                            })
-                                        }} /> */}
                                     <InputWithSuffix
                                         className='rounded-sm px-2 py-1'
                                         value={localSteps[i].delay}

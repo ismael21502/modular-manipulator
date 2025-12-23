@@ -7,7 +7,7 @@ function InputWithSuffix({
     style = {},
 }) {
     return (
-        <div className={`relative group ${className}`}
+        <div className={`flex relative group items-center ${className}`}
             style={{ ...style }}>
             <div className={`relative inline-block `}>
                 <span

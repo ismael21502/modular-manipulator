@@ -161,7 +161,7 @@ function Sequences() {
                         ? <div className='flex text-white'>
                             <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-2 rounded-md`}
                                 style={{ backgroundColor: colors.primaryDark}}
-                                onClick={() => { isPlaying ? {} : startSequence(selectedeSequence, sequences) }}>
+                                onClick={() => { isPlaying ? () => { } : startSequence(selectedeSequence, sequences) }}>
                                 {isPlaying
                                     ? <>
                                         <LoadingIndicator />
