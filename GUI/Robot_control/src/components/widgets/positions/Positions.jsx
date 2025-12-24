@@ -11,7 +11,7 @@ import { useRobotState } from '../../../context/RobotState';
 import EditPosModal from '../modals/EditPosModal';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
 import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
-
+import PopUp from '../../ui/popUps/PopUp'
 function Positions() {
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
@@ -21,6 +21,7 @@ function Positions() {
     const [showEditPopUp, setShowEditPopUp] = useState(false)
     const [selectedPos, setSelectedPos] = useState("")
 
+    const [popUp, setPopUp] = useState(null)
 
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
@@ -33,6 +34,22 @@ function Positions() {
 
     const handleEditing = () => {
         setShowEditPopUp(true)
+    }
+
+    const handleDelete = () => {
+        setPopUp({
+            type: "danger",
+            title: "Eliminar posición",
+            message: `¿Estás seguro que deseas eliminar ${selectedPos}?`,
+            onConfirm: () => {
+                deletePos(selectedPos)
+                setSelectedPos("")
+                setPopUp(null)
+            },
+            onCancel: () => {
+                setPopUp(null)
+            }
+        })
     }
 
     return (
@@ -60,7 +77,7 @@ function Positions() {
                         </button>
                         <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
-                            onClick={() => { deletePos(selectedPos), setSelectedPos("") }}>
+                            onClick={handleDelete}>
                             <DeleteIcon />
                             <p>Borrar</p>
                         </button>
@@ -79,7 +96,7 @@ function Positions() {
                     ? <div className='flex text-white'>
                         <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-3 rounded-md`}
                             style={{ backgroundColor: colors.primaryDark }}
-                            onClick={isPlaying ? ()=>{} : sendPos}>
+                            onClick={isPlaying ? () => { } : sendPos}>
                             {isPlaying
                                 ? <>
                                     <LoadingIndicator />
@@ -101,6 +118,16 @@ function Positions() {
                 isOpen={showEditPopUp}
                 setIsopen={setShowEditPopUp}
                 selectedPos={selectedPos} />
+            {popUp && (
+                <PopUp
+                    open
+                    type={popUp.type}
+                    title={popUp.title}
+                    message={popUp.message}
+                    onConfirm={popUp.onConfirm}
+                    onCancel={popUp.onCancel}
+                />
+            )}
         </div>
     )
 }

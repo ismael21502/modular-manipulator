@@ -13,6 +13,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import UndoIcon from '@mui/icons-material/Undo';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
 import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
+import PopUp from '../../ui/popUps/PopUp';
 
 function Sequences() {
     const { joints, startSequence, isPlaying } = useRobotState()
@@ -26,6 +27,8 @@ function Sequences() {
     const [showSaveModal, setShowSaveModal] = useState(false)
     const [modalMode, setModalMode] = useState("Nueva secuencia")
     const [modalSequence, setModalSequence] = useState(null)
+
+    const [popUp, setPopUp] = useState(null)
     const captureStep = () => { //Revisar si es un nombre apropiado
         setSteps(prev => [
             ...prev,
@@ -50,8 +53,20 @@ function Sequences() {
     }
 
     const handleDelete = () => {
-        setSelectedeSequence("")
-        deleteSequence(selectedeSequence)
+        setPopUp({
+            type: "danger",
+            title: "Eliminar secuencia",
+            message: `¿Estás seguro que deseas eliminar ${selectedeSequence}?`,
+            onConfirm: () => {
+                setSelectedeSequence("")
+                deleteSequence(selectedeSequence)
+                setPopUp(null)
+            },
+            onCancel: () => {
+                setPopUp(null)
+            }
+        })
+        
     }
 
     const handleEdit = () => {
@@ -160,7 +175,7 @@ function Sequences() {
                     {selectedeSequence !== ""
                         ? <div className='flex text-white'>
                             <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-2 rounded-md`}
-                                style={{ backgroundColor: colors.primaryDark}}
+                                style={{ backgroundColor: colors.primaryDark }}
                                 onClick={() => { isPlaying ? () => { } : startSequence(selectedeSequence, sequences) }}>
                                 {isPlaying
                                     ? <>
@@ -180,6 +195,16 @@ function Sequences() {
             {showSaveModal
                 ? <SeqModal onConfirm={closeModal} sequence={modalSequence} mode={modalMode} onClose={() => setShowSaveModal(false)} />
                 : <></>}
+            {popUp && (
+                <PopUp
+                    open
+                    type={popUp.type}
+                    title={popUp.title}
+                    message={popUp.message}
+                    onConfirm={popUp.onConfirm}
+                    onCancel={popUp.onCancel}
+                />
+            )}
         </div>
     )
 }

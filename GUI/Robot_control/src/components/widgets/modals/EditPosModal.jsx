@@ -111,13 +111,13 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                     ))}
                 </div>
                 <div className="flex justify-between text-lg text-white">
-                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md'
                         style={{ backgroundColor: colors.dangerDark }}
                         onClick={() => { setIsopen(false) }}>
                         <CloseIcon />
                         Cancelar
                     </button>
-                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md'
                         style={{ backgroundColor: colors.primary }}
                         onClick={handleConfirm}>
                         <CheckIcon />
