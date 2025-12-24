@@ -96,7 +96,7 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                                     <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
                                         style={{ backgroundColor: colors.border }}>
                                         <Slider.Range className="absolute rounded-full h-full h-full"
-                                            style={{ backgroundColor: colors.primaryDark }} />
+                                            style={{ backgroundColor: colors.primary }} />
                                     </Slider.Track>
                                     <Slider.Thumb className="block w-4 h-4 rounded-full hover:cursor-pointer"
                                         style={{ backgroundColor: colors.primary }} />

@@ -207,7 +207,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                         Cancelar
                     </button>
                     <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
-                        style={{ backgroundColor: colors.primaryDark }}
+                        style={{ backgroundColor: colors.primary }}
                         onClick={handleConfirm}>
                         <CheckIcon />
                         Confirmar
