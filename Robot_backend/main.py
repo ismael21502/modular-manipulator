@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import os
 import time
 from InverseKinematics import Inverse_Kinematics
+from ForwardKinematics import fk_func
+
 
 app = FastAPI()
 app.add_middleware(
@@ -124,7 +126,6 @@ async def update_position(position: dict):
         if item['name'] == position['oldName']:
             item['name'] = position['name']
             item['values'] = position['values']
-            print("DATA: ",data)
             with open("positions.json", "w") as f:
                 json.dump(data, f, indent=2)
             return {'status': 'ok', 'message': f"Posición '{item['name']}' actualizada"}
@@ -173,10 +174,15 @@ async def get_robot_config():
     
 async def process_gui_command(ws: WebSocket, data: dict):
     if data.get("type") == "cartesian_move":
-        ik_values = await calculate_ik(data.get("values"), data.get("unit"))
+        ik_values = await calculate_ik(data.get("values"))
         await send_log(ws, "state", "JOINTS", ik_values)
+    elif data.get("type") == "articular_move":
+        fk_values = await calculate_fk(data.get("values"))
+        await send_log(ws, "state", "COORDS", fk_values)
+        # print(fk_values)
+        
 
-async def calculate_ik(cartesian_values: list[int], input_unit: str, output_unit = "deg"):
+async def calculate_ik(cartesian_values: list[int]):
     x, y, z, _, _, _ = cartesian_values
     x /= 1000
     y /= 1000
@@ -184,6 +190,20 @@ async def calculate_ik(cartesian_values: list[int], input_unit: str, output_unit
     values = Inverse_Kinematics(x,y,z)
     result = values
     return result 
+
+async def calculate_fk(articular_values: list[int]):
+    L1 = 0.02  # altura del primer eslabón (ajusta según tu modelo)
+    L2 = 0.043
+    L3 = 0.043
+    L4 = 0.08
+
+    x, y, z = fk_func(
+                    L1, L2, L3,
+                    math.radians(articular_values[0]),
+                    math.radians(articular_values[1]) - math.pi/2, #Offset porque zero debe ser extendido hacia arriba
+                    math.radians(articular_values[2])
+                )
+    return [int(x*1000),int(y*1000),int(z*1000),0,0,0]
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):

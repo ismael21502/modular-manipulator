@@ -24,32 +24,17 @@ function Header({ title }) {
         </p>
       </div>
 
-      <div className='flex flex-row gap-4 items-center'>
-        {/* <div className="flex flex-row rounded-md border-1 px-2 py-1 items-center gap-2"
-        style={{color: colors.text.title, borderColor: colors.border, backgroundColor: `${colors.border}5E`}}>
-          <div className="rounded-full w-3 h-3 animate-pulse-rec"
-            style={{ backgroundColor: true? colors.success :colors.dangerDark }}/>
-          <p>En espera</p>
-        </div>
-        <button className='cursor-pointer'
-        // Stop function
-        onClick={()=>{}}> 
-          <div className="button flex flex-row gap-2 rounded-md border-1 py-1 px-2"
-            style={{ borderColor: colors.dangerDark, color: colors.dangerDark, backgroundColor: `${colors.dangerDark}0F` }}>
-            <BlockIcon style={{ color: colors.dangerDark }} />
-            <p>Detener</p>
-          </div>
-        </button> */}
+      <div className='flex flex-row gap-4 items-center pr-2'>
         <Connection />
         {mode === "light"
           ? <button className='cursor-pointer' style={{ color: colors.text.primary }} onClick={() => { setMode("dark") }}>
-            <DarkModeRoundedIcon fontSize='large' />
+            <DarkModeRoundedIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' />
           </button>
           : <button className='cursor-pointer' style={{ color: colors.text.primary }} onClick={() => { setMode("light") }}>
-            <LightModeRoundedIcon fontSize='large' />
+            <LightModeRoundedIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' />
           </button>}
         <button className='cursor-pointer' style={{ color: colors.text.primary }}>
-          <SettingsIcon fontSize='large' />
+          <SettingsIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' />
         </button>
       </div>
     </div>

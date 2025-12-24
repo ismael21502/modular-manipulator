@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRobotState } from "./RobotState";
 import { useRobotConfig } from "./RobotConfig";
+
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { setJoints, setCoords } = useRobotState()
+    const { setJoints, setCartesian } = useRobotState()
     const { setRobotConfig } = useRobotConfig()
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)
@@ -17,7 +18,6 @@ export const WebSocketProvider = ({ children }) => {
 
     useEffect(() => {
         initializeWebSocket()
-        
         return () => ws.current?.close()
     }, [])
 
@@ -38,7 +38,7 @@ export const WebSocketProvider = ({ children }) => {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error obteniendo configuración del robot: ${err}` }])
         }
     }
-    
+
     const initializeWebSocket = () => {
         // Cerrar la conexión previa si existe y no está cerrada
         if (ws.current && ws.current.readyState !== WebSocket.CLOSED) {
@@ -82,10 +82,15 @@ export const WebSocketProvider = ({ children }) => {
         }
         const handleMessage = (event) => {
             try {
-                const data = JSON.parse(event.data);
+                let data;
+                if (typeof event.data === "string") {
+                    data = JSON.parse(event.data);
+                } else {
+                    data = event.data;
+                }
                 // if (data.type === "JOINTS") setJoints(data.values)
-                if(data.type === "JOINTS") setJoints(data.values)
-                else if (data.type === "COORDS") setCoords(data.values) //Dejar esto con callbacks también
+                if (data.type === "JOINTS") setJoints(data.values)
+                else if (data.type === "COORDS") setCartesian(data.values) //Dejar esto con callbacks también
                 // setLogs(prev => [...prev, data])
             } catch {
                 console.log("Mensaje no JSON:", event.data)
@@ -142,36 +147,36 @@ export const WebSocketProvider = ({ children }) => {
         }
     }
     function updatePos(oldName, posName, values) {
-        if(!posName) return
+        if (!posName) return
         if (ws.current?.readyState !== WebSocket.OPEN) {
-            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type:"ERROR", values: "No hay conexión con el backend" } ])
+            setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el backend" }])
             return
         }
-        fetch(`http://${IP}:${port}/update`,{
+        fetch(`http://${IP}:${port}/update`, {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({oldName: oldName, name: posName, values: values})
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldName: oldName, name: posName, values: values })
         })
-        .then(data => {
-            if(data.ok){
-                loadPositions()
-                setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: 'INFO', values: 'Posición actualizada con éxito'}])
-            } else{
-                setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: 'ERROR', values: 'La posición no fue actualizada' }])
-            }
-        })
+            .then(data => {
+                if (data.ok) {
+                    loadPositions()
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: 'INFO', values: 'Posición actualizada con éxito' }])
+                } else {
+                    setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: 'ERROR', values: 'La posición no fue actualizada' }])
+                }
+            })
             .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible actualizar la posición: ${err}` }]))
     }
     function savePos(newPosName, joints) {
         if (!newPosName) return
-        if(ws.current?.readyState !== WebSocket.OPEN) {
+        if (ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
             return
         }
         fetch(`http://${IP}:${port}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newPosName, values: joints  }),
+            body: JSON.stringify({ name: newPosName, values: joints }),
         })
             .then(data => {
                 if (data.ok) {
@@ -198,7 +203,7 @@ export const WebSocketProvider = ({ children }) => {
                     setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error del servidor: ${data.status}` }])
                 }
             })
-            .catch(err => setLogs(prev => [...prev, { category: 'log',  time: new Date().toISOString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
+            .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
     }
     const deleteSequence = (sequenceName) => {
         fetch(`http://${IP}:${port}/deleteSeq`, {
@@ -250,13 +255,13 @@ export const WebSocketProvider = ({ children }) => {
         }
     }
     const saveSeq = async (name, steps) => {
-        if(!name) return
+        if (!name) return
         if (ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
             return { status: 'error' }
         }
         // console.log(JSON.stringify({ name: name, updated_at: new Date().toISOString(), steps: steps }))
-        try{
+        try {
             const res = await fetch(`http://${IP}:${port}/saveSeq`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -268,7 +273,7 @@ export const WebSocketProvider = ({ children }) => {
             } else {
                 return { status: 'error' }
             }
-        }catch{
+        } catch {
             return { status: 'error' }
         }
     }
@@ -331,25 +336,25 @@ export const WebSocketProvider = ({ children }) => {
             return false
         }
     }
-    
-    
+
+
     const send = (obj) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
-    } 
+    }
 
     return (
-        <WebSocketContext.Provider value={{ 
-            ws, 
+        <WebSocketContext.Provider value={{
+            ws,
             isConnected, isConnecting,
-            initializeWebSocket, disconnect, send, 
-            logs, setLogs, 
+            initializeWebSocket, disconnect, send,
+            logs, setLogs,
             positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
             sequences, saveSeq, deleteSequence, updateSeq,
-            }}>
+        }}>
             {children}
         </WebSocketContext.Provider>
     )

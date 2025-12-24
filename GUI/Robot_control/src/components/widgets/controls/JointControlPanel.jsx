@@ -4,9 +4,12 @@ import { useTheme } from "../../../context/ThemeContext";
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import { useRobotState } from "../../../context/RobotState";
 import validateNumber from "../../../utils/validate";
+import { debounce } from "lodash";
+import { useWebSocket } from "../../../context/WebSocketContext";
 
 function ManualControl({ }) {
   const { colors } = useTheme()
+  const { send } = useWebSocket()
   const { joints, jointConfig, setJoints } = useRobotState()
   const [tempValues, setTempValues] = useState(jointConfig.map(joint => {
     return joint.default
@@ -16,13 +19,12 @@ function ManualControl({ }) {
     setTempValues(joints)
   }, [joints])
 
+  const debouncedSend = debounce(values => {
+    send({ type: 'articular_move', values: values });
+  }, 300)
+
   const handleChangeSlider = (i, val) => {
-    setJoints(prev => {
-      const newJoints = [...prev]
-      newJoints[i] = val[0]
-      return newJoints
-    }
-    )
+    setVal(i,val[0])
   }
 
   const handleChangeInput = (i, val, min, max) => {
@@ -39,15 +41,9 @@ function ManualControl({ }) {
     setJoints(prev => {
       const newVals = [...prev]
       newVals[i] = val
+      debouncedSend(newVals)
       return newVals
     })
-    setTempValues(
-      prev => {
-        const newVals = [...prev]
-        newVals[i] = val
-        return newVals
-      }
-    )
   }
 
   const commitVal = (i, val, min, max) => {
@@ -102,7 +98,7 @@ function ManualControl({ }) {
                 max={joint.max}
                 step={1}
                 onValueChange={(val) => handleChangeSlider(i, val)}
-                value={[tempValues[i]]}
+                value={[tempValues[i] === '-' ? joint.default : tempValues[i]]}
               >
                 <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
                   style={{ backgroundColor: colors.border }}>

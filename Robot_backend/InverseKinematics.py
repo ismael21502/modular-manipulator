@@ -6,7 +6,7 @@ def Inverse_Kinematics(x, y, z):
     L2 = 0.043
     L3 = 0.043
     L4 = 0.08
-    angle_effector = math.radians(0)
+    angle_effector = math.radians(90)
     effector_dir = np.array([0, math.cos(angle_effector), math.sin(angle_effector)])
     x,y,z= [x,y,z] - L4*effector_dir
     theta1 = math.atan2(y, x)
@@ -21,8 +21,8 @@ def Inverse_Kinematics(x, y, z):
     theta2 = math.atan2(s, r) - math.atan2(L3 * math.sin(theta3), L2 + L3 * math.cos(theta3))
 
     dx, dy, dz = effector_dir
-    print(dx,dy,dz)
-    print(x,y,z)
+    # print(dx,dy,dz)
+    # print(x,y,z)
     phi = math.atan2(dz, dy)  # ajusta ejes según tu modelo
     theta4 = phi - ( theta2 + theta3)
     theta1 = round(math.degrees(theta1))

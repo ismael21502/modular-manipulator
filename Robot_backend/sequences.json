@@ -98,12 +98,12 @@
   },
   {
     "name": "Pick and place",
-    "updated_at": "2025-12-15T16:51:31.140629",
+    "updated_at": "2025-12-23T17:09:28.623882",
     "steps": [
       {
         "type": "inline",
         "joints": {
-          "0": 0,
+          "0": 80,
           "1": -25,
           "2": 65,
           "3": 90,
@@ -190,77 +190,6 @@
         "delay": 200,
         "duration": 1000,
         "label": "Release"
-      }
-    ]
-  },
-  {
-    "name": "Ola",
-    "updated_at": "2025-12-16T04:01:41.012285",
-    "steps": [
-      {
-        "type": "inline",
-        "joints": {
-          "0": 0,
-          "1": -45,
-          "2": -45,
-          "3": -30,
-          "4": 100
-        },
-        "delay": 0,
-        "duration": 1000,
-        "label": "Paso 1"
-      },
-      {
-        "type": "inline",
-        "joints": {
-          "0": 45,
-          "1": 45,
-          "2": 45,
-          "3": 30,
-          "4": 0
-        },
-        "delay": 0,
-        "duration": 1000,
-        "label": "Paso 2"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          90,
-          -45,
-          -45,
-          -30,
-          100
-        ],
-        "delay": 0,
-        "duration": 1000,
-        "label": "Paso 3"
-      },
-      {
-        "type": "inline",
-        "joints": {
-          "0": 135,
-          "1": 45,
-          "2": 45,
-          "3": 30,
-          "4": 0
-        },
-        "delay": 0,
-        "duration": 1000,
-        "label": "Paso 4"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          180,
-          -45,
-          -45,
-          -30,
-          100
-        ],
-        "delay": 0,
-        "duration": 1000,
-        "label": "Paso 5"
       }
     ]
   }

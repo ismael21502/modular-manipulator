@@ -16,25 +16,17 @@ function CartesianControl() {
     const [tempValues, setTempValues] = useState(cartesianConfig.map(axis => {
         return axis.default
     }))
-
-    const debouncedSend = debounce((value, unit) => {
-        send({ type: "cartesian_move", values: value, unit: unit});
+    
+    const debouncedSend = debounce((values) => {
+        send({ type: "cartesian_move", values: values});
     }, 300)
 
     useEffect(() => {
         setTempValues(cartesian)
-        
     }, [cartesian])
 
-    const handleChangeSlider = (i, val, axis) => {
-        setCartesian(prev => {
-            const newCartesian = [...prev]
-            newCartesian[i] = val[0]
-            // const dataToSend = {type: "cartesian_move", values: newCartesian, unit: axis.unit} //Enviar frame de referencia? Enviar speed?
-            debouncedSend(newCartesian, axis.unit)
-            return newCartesian
-        })
-
+    const handleChangeSlider = (i, val) => {
+        setVal(i, val[0])
     }
 
     const handleChangeInput = (i, val, min, max) => {
@@ -52,15 +44,9 @@ function CartesianControl() {
         setCartesian(prev => {
             const newVals = [...prev]
             newVals[i] = val
+            debouncedSend(newVals)
             return newVals
         })
-        setTempValues(
-            prev => {
-                const newVals = [...prev]
-                newVals[i] = val
-                return newVals
-            }
-        )
     }
 
     const commitVal = (i, val, min, max) => {
@@ -113,7 +99,7 @@ function CartesianControl() {
                                 max={axis.max}
                                 step={1}
                                 onValueChange={(val) => handleChangeSlider(i, val, axis)}
-                                value={[tempValues[i]]}
+                                value={[tempValues[i] === '-' ? axis.default : tempValues[i]]}
                             >
                                 <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
                                     style={{ backgroundColor: colors.border }}>

@@ -66,7 +66,7 @@ function Gripper({ }) {
                         }}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                                commitVal(tempVal, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
+                                commitVal(e.target.value !== '-' ? e.target.value : jointConfig[gripperIndex].default, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
                                 // e.target.blur()
                             }
                         }}
@@ -83,7 +83,7 @@ function Gripper({ }) {
                         min={jointConfig[gripperIndex].min}
                         max={jointConfig[gripperIndex].max}
                         step={1}
-                        value={[tempVal]}
+                        value={[tempVal === '-' ? jointConfig[gripperIndex].default : tempVal]}
                         onValueChange={handleChangeSlider}
                     >
                         <Slider.Track className={`bg-[#2B2B2B] relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer`}
