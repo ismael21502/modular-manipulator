@@ -12,10 +12,11 @@ def MatrixFromDH(theta, alfa, a, d):
 theta1, L1 = sp.symbols('theta_1 L_1')
 theta2, L2 = sp.symbols('theta_2 L_2')
 theta3, L3 = sp.symbols('theta_3 L_3')
+theta4, L4 = sp.symbols('theta_4 L_4')
 T01 = MatrixFromDH(theta1, -sp.pi/2, 0, L1)
 T12 = MatrixFromDH(theta2, 0, L2, 0)
 T23 = MatrixFromDH(theta3, 0, L3, 0)
-
+T34= MatrixFromDH(theta4, 0, L4, 0)
 T02 = T01*T12
 T03 = T02*T23
 

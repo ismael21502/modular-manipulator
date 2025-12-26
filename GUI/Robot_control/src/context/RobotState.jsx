@@ -17,9 +17,22 @@ export const RobotStateProvider = ({ children }) => {
         jointsRef.current = joints
     }, [joints])
 
+    const endEffectorsConfig = robotConfig.end_effectors
+    const [endEffectors, setEndEffectors] = useState(
+        robotConfig.end_effectors.map(effector => effector.default ?? 0)
+    )
+    const endEffectorsRef = useRef(endEffectors)
+    useEffect(()=>{
+        endEffectorsRef.current = endEffectors
+    },[endEffectors])
+
+
     useEffect(() =>{
         setJoints(
             robotConfig.joints.map(joint => joint.default ?? 0)
+        )
+        setEndEffectors(
+            robotConfig.end_effectors.map(effector => effector.default ?? 0)
         )
         setCartesian(
             robotConfig.cartesian.map(cart => cart.default ?? 0)
@@ -30,20 +43,21 @@ export const RobotStateProvider = ({ children }) => {
         robotConfig.cartesian.map(cart => cart.default ?? 0)
     )
 
-    function moveRobot(targetJoints, duration=700) {
+    function moveRobot(targetJoints, targetEndEffectors = null, duration=700) {
         return new Promise((resolve) => {
             const start = performance.now()
 
             // Clonamos el valor ACTUAL de "joints" y no uno desfasado
-            const initial = jointsRef.current;   // Usaremos un ref 👈
-            const target = targetJoints
+            const initialJoints = jointsRef.current;  
+            const initialEndEffectors = endEffectorsRef.current
+            const jointsTarget = targetJoints
 
             function animate(time) {
                 const elapsed = time - start;
                 const t = Math.min(elapsed / duration, 1);
 
-                const newJoints = initial.map((startVal, i) => {
-                    const endVal = target[i]
+                const newJoints = initialJoints.map((startVal, i) => {
+                    const endVal = jointsTarget[i]
                     return Math.round(startVal + t * (endVal - startVal))
                 });
 
@@ -68,21 +82,21 @@ export const RobotStateProvider = ({ children }) => {
         const sequence = sequences.find(seq => seq.name === selectedPos)
         if (sequence === null) return
         for (const step of sequence.steps) {
-            const target = step.joints
-            if (target) await moveRobot(target, step.duration)
+            const jointsTarget = step.joints
+            if (jointsTarget) await moveRobot(jointsTarget, step.duration)
             await delay(step.delay)
         }
         setIsPlaying(false)
     }
     
-    const startPosition = async (targetValues) => {
+    const startPosition = async (targetJointsValues) => {
         setIsPlaying(true)
-        if (targetValues) await moveRobot(targetValues)
+        if (targetJointsValues) await moveRobot(targetJointsValues)
         setIsPlaying(false)
     }
 
     return (
-        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying }}>
+        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, endEffectors, setEndEffectors, endEffectorsConfig, cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying }}>
             {children}
         </RobotStateContext.Provider>
     )

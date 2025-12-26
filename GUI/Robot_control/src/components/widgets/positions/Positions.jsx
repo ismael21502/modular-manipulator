@@ -71,7 +71,7 @@ function Positions() {
                     ? <div className='flex flex-row justify-between gap-3 '>
                         <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}
-                            onClick={() => { handleEditing() }}>
+                            onClick={handleEditing}>
                             <EditIcon />
                             <p>Editar</p>
                         </button>
@@ -87,7 +87,7 @@ function Positions() {
                     style={{ borderColor: colors.border, color: colors.text.primary }}>
                     <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                         style={{ borderColor: colors.border }}
-                        onClick={() => { handleSaving() }}>
+                        onClick={handleSaving}>
                         <SaveIcon />
                         <p>Guardar nueva pose</p>
                     </button>

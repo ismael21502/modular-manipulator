@@ -98,7 +98,7 @@ function ManualControl({ }) {
                     }}
                   />
 
-                  <span>°</span>
+                  <span>{joint.unit === "deg" ? "°" : joint.unit}</span>
                 </div>
               </div>
               <Slider.Root

@@ -6,102 +6,135 @@ import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useRobotState } from '../../../context/RobotState';
 import validateNumber from '../../../utils/validate';
+import HandymanIcon from '@mui/icons-material/Handyman';
 
 function Gripper({ }) {
     const { colors } = useTheme()
-    const { joints, jointConfig, setJoints } = useRobotState()
-    const gripperIndex = joints.length - 1
-    const [tempVal, setTempVal] = useState(jointConfig[gripperIndex].default)
+    const { endEffectors, setEndEffectors, endEffectorsConfig } = useRobotState()
 
+    const [tempValues, setTempValues] = useState(
+        endEffectorsConfig.map(effector => effector.default)
+    )
     useEffect(() => {
-        setTempVal(joints[gripperIndex])
-    }, [joints[gripperIndex]])
+        console.log(endEffectorsConfig)
+    }, [])
+    useEffect(() => {
+        setTempValues(endEffectors)
+    }, [endEffectors])
 
-    const handleChangeInput = (val, min, max) => {
+    const handleChangeInput = (i, val, min, max) => {
         const newVal = validateNumber(val, min, max)
         if (newVal === undefined) return
-        setTempVal(newVal)
-    }
-
-    const handleChangeSlider = (val) => {
-        setVal(val[0])
-    }
-
-    const setVal = (val) => {
-        setJoints(prev => {
-            const updated = [...prev]
-            updated[gripperIndex] = val
-            return updated
+        setTempValues((prev) => {
+            const newValues = [...prev]
+            newValues[i] = newVal
+            return newValues
         })
-        setTempVal(val)
+    }
+    // const handleChangeInput = (val, min, max) => {
+    //     const newVal = validateNumber(val, min, max)
+    //     if (newVal === undefined) return
+    //     setTempValues([newVal])
+    // }
+
+    const handleChangeSlider = (i, val) => {
+        setVal(i, val[0])
     }
 
-    const commitVal = (val, min, max) => {
+    const setVal = (i, val) => {
+        setEndEffectors(prev => {
+            const newVals = [...prev]
+            newVals[i] = val
+            // debouncedSend(newVals)
+            return newVals
+        })
+    }
+    // const setVal = (val) => {
+    //     // setJoints(prev => {
+    //     //     const updated = [...prev]
+    //     //     updated[gripperIndex] = val
+    //     //     return updated
+    //     // })
+    //     setEndEffectors([val])
+    //     setTempValues([val])
+    // }
+
+    // const commitVal = (val, min, max) => {
+    //     const valid = validateNumber(val, min, max)
+    //     if (valid === undefined) return
+    //     setVal(val)
+    // }
+
+    const commitVal = (i, val, min, max) => {
         const valid = validateNumber(val, min, max)
         if (valid === undefined) return
-        setVal(val)
+        setVal(i, valid)
     }
 
     return (
         <div className='flex flex-col flex-1 py-2'
             style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
-            <div className='flex flex-row justify-between w-full py-2 px-5 text-md'>
-                <div className='flex flex-row gap-2 items-center font-bold'>
-                    <BackHandIcon fontSize='small' />
-                    <p>PINZA</p>
-                </div>
-                <div className="flex items-center gap-1 text-sm"
-                    style={{}}>
-                    <input
-                        type='text'
-                        className='w-[2rem] text-end outline-none'
-                        value={tempVal}
-                        onChange={(e) => handleChangeInput(e.target.value, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)}
-                        onBlur={(e) => {
-                            if (e.target.value === "-") {
-                                commitVal(jointConfig[gripperIndex].default, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
-                            } else {
-                                commitVal(tempVal, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
-                            }
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                commitVal(e.target.value !== '-' ? e.target.value : jointConfig[gripperIndex].default, jointConfig[gripperIndex].min, jointConfig[gripperIndex].max)
-                                // e.target.blur()
-                            }
-                        }}
-                    />
-                    <span>{jointConfig[gripperIndex].unit}</span>
-                </div>
+            <div className='flex flex-row gap-2 items-center font-bold py-2 px-5 text-md'>
+                {/* <BackHandIcon fontSize='small' /> */}
+                <HandymanIcon fontSize='small' />
+                <p>Herramientas</p>
             </div>
-            <div className="flex flex-col gap-4 py-2 px-5 w-full">
-                <div className='flex flex-row items-center gap-5'> {/* Slider */}
-                    <LockOpenOutlinedIcon fontSize='small' />
-                    <Slider.Root
-                        className="relative flex items-center justify-center select-none touch-none h-1 w-full"
-                        defaultValue={[jointConfig[gripperIndex].default]}
-                        min={jointConfig[gripperIndex].min}
-                        max={jointConfig[gripperIndex].max}
-                        step={1}
-                        value={[tempVal === '-' ? jointConfig[gripperIndex].default : tempVal]}
-                        onValueChange={handleChangeSlider}
-                    >
-                        <Slider.Track className={`bg-[#2B2B2B] relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer`}
-                            style={{ backgroundColor: colors.border }}>
-                            <Slider.Range className={`absolute rounded-full h-full h-full ${tempVal === joints[gripperIndex] ? '' : 'opacity-0'}`}
-                                style={{ backgroundColor: colors.primary }} />
-                        </Slider.Track>
-                        <Slider.Thumb className={`block w-4 h-4 rounded-full hover:cursor-pointer`}
-                            style={{
-                                backgroundColor: colors.primary,
-                                outline: tempVal === joints[gripperIndex] ? 'none' : `2px dashed ${colors.primary}`,
-                                outlineOffset: tempVal === joints[gripperIndex] ? 0 : 2,
-                            }} />
-                    </Slider.Root>
-                    {/* 3CD6D6 */}
-                    <LockOutlinedIcon fontSize='small' />
+            <div className="flex flex-col py-2 px-5 w-full justify-between gap-6">
+                {endEffectorsConfig.map((effector, i) => (
+                    <div key={effector.id} className="flex flex-col items-center gap-2">
+                        <div className="flex flex-row w-full justify-between text-sm ">
+                            <h3 className="text-center">{effector.label}</h3>
+                            <div className="flex items-start">
+                                <input
+                                    type="text"
+                                    className="mb-3 w-[2.5rem] text-end outline-none"
+                                    value={tempValues[i] ?? ""}
+                                    onChange={(e) => handleChangeInput(i, e.target.value, effector.min, effector.max)}
+                                    onBlur={(e) => {
+                                        if (e.target.value === "-") {
+                                            commitVal(i, effector.default, effector.min, effector.max)
+                                        } else {
+                                            commitVal(i, e.target.value, effector.min, effector.max)
+                                        }
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            commitVal(i, e.target.value !== '-' ? e.target.value : effector.default, effector.min, effector.max)
+                                            // e.target.blur()
+                                        }
+                                    }}
+                                />
 
-                </div>
+                                <span>{effector.unit}</span>
+                            </div>
+                        </div>
+
+                        <div className='flex flex-row items-center gap-5 w-full'>
+                            <LockOpenOutlinedIcon fontSize='small' />
+                            <Slider.Root
+                                className="relative flex items-center justify-center select-none touch-none h-1 w-full"
+                                min={effector.min}
+                                max={effector.max}
+                                step={1}
+                                onValueChange={(val) => handleChangeSlider(i, val)}
+                                value={[tempValues[i] === '-' ? effector.default : tempValues[i]]}
+                            >
+                                <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
+                                    style={{ backgroundColor: colors.border }}>
+                                    <Slider.Range className={`absolute rounded-full h-full h-full ${tempValues[i] === endEffectors[i] ? '' : 'opacity-0'}`}
+                                        style={{ backgroundColor: colors.primary }} />
+                                </Slider.Track>
+                                <Slider.Thumb className="block w-4 h-4 rounded-full outline-none hover:cursor-pointer"
+                                    style={{
+                                        backgroundColor: colors.primary,
+                                        outline: tempValues[i] === endEffectors[i] ? 'none' : `2px dashed ${colors.primary}`,
+                                        outlineOffset: tempValues[i] === endEffectors[i] ? 0 : 2,
+                                    }} />
+                            </Slider.Root>
+                            <LockOutlinedIcon fontSize='small'/>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     )

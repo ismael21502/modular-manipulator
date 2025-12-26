@@ -24,6 +24,40 @@ export const RobotConfigProvider = ({ children }) => {
                 "unit": "%"
             }
         ],
+        end_effectors: [
+            {
+                "id": "gripper",
+                "label": "Gripper",
+                "type": "revolute",
+                "min": 0,
+                "max": 100,
+                "default": 0,
+                "unit": "%",
+
+                "parent": "end_effector",
+
+                "origin": {
+                    "translation": [
+                        10,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+
+                "mesh": {
+                    "base": "",
+                    "left_finger": "",
+                    "right_finger": ""
+                }
+
+            }
+        ],
+
         "cartesian": [
             {
                 "id": "x",
@@ -36,7 +70,7 @@ export const RobotConfigProvider = ({ children }) => {
         ]
     })
     return (
-        <RobotConfigContext.Provider value={{robotConfig, setRobotConfig}}>
+        <RobotConfigContext.Provider value={{ robotConfig, setRobotConfig }}>
             {children}
         </RobotConfigContext.Provider>
     )
