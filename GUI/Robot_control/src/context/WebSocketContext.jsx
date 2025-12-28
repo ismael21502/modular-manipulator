@@ -1,11 +1,15 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRobotState } from "./RobotState";
-import { useRobotConfig } from "./RobotConfig";
+import { RobotConfigProvider, useRobotConfig } from "./RobotConfig";
 
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { setJoints, setCartesian } = useRobotState()
+    const { setCartesian } = useRobotState()
+    const state = useRobotState()
+    const setJoints = state.robotApi.setJoints
+    const joints = state.robotState.joints
+    const robotConfig = state.robotConfig
     const { setRobotConfig } = useRobotConfig()
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)

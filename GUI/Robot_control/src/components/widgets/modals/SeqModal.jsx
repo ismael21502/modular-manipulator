@@ -15,7 +15,9 @@ import InputWithSuffix from '../../ui/inputs/InputWithSuffix'
 // function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm, mode, seqName }) {
 function SeqModal({ onConfirm, sequence, mode, onClose }) {
     const { saveSeq, updateSeq } = useWebSocket()
-    const { jointConfig } = useRobotState()
+    const state = useRobotState()
+
+    const jointConfig = state.robotConfig.joints
     const [name, setName] = useState(sequence.name || "")
     const { colors } = useTheme()
     const [showRequeriedName, setShowRequiredName] = useState(false)

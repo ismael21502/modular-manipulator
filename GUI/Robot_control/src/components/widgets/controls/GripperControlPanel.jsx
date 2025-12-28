@@ -10,14 +10,15 @@ import HandymanIcon from '@mui/icons-material/Handyman';
 
 function Gripper({ }) {
     const { colors } = useTheme()
-    const { endEffectors, setEndEffectors, endEffectorsConfig } = useRobotState()
+    const state = useRobotState()
+    const endEffectors = state.robotState.endEffectors
+    const setEndEffector = state.robotApi.setEndEffector
+    const endEffectorsConfig = state.robotConfig.end_effectors
 
     const [tempValues, setTempValues] = useState(
         endEffectorsConfig.map(effector => effector.default)
     )
-    useEffect(() => {
-        console.log(endEffectorsConfig)
-    }, [])
+
     useEffect(() => {
         setTempValues(endEffectors)
     }, [endEffectors])
@@ -42,29 +43,9 @@ function Gripper({ }) {
     }
 
     const setVal = (i, val) => {
-        setEndEffectors(prev => {
-            const newVals = [...prev]
-            newVals[i] = val
-            // debouncedSend(newVals)
-            return newVals
-        })
+        setEndEffector(i,val)
     }
-    // const setVal = (val) => {
-    //     // setJoints(prev => {
-    //     //     const updated = [...prev]
-    //     //     updated[gripperIndex] = val
-    //     //     return updated
-    //     // })
-    //     setEndEffectors([val])
-    //     setTempValues([val])
-    // }
-
-    // const commitVal = (val, min, max) => {
-    //     const valid = validateNumber(val, min, max)
-    //     if (valid === undefined) return
-    //     setVal(val)
-    // }
-
+    
     const commitVal = (i, val, min, max) => {
         const valid = validateNumber(val, min, max)
         if (valid === undefined) return

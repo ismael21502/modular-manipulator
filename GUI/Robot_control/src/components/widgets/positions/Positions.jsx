@@ -15,7 +15,10 @@ import PopUp from '../../ui/popUps/PopUp'
 function Positions() {
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
-    const { jointConfig, startPosition, isPlaying } = useRobotState()
+    const { startPosition, isPlaying } = useRobotState()
+    const state = useRobotState()
+
+    const jointConfig = state.robotConfig.joints
 
     const [showSavePopUp, setShowSavePopUp] = useState(false)
     const [showEditPopUp, setShowEditPopUp] = useState(false)

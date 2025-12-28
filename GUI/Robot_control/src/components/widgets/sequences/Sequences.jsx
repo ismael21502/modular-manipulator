@@ -16,7 +16,10 @@ import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
 import PopUp from '../../ui/popUps/PopUp';
 
 function Sequences() {
-    const { joints, startSequence, isPlaying } = useRobotState()
+    const state = useRobotState()
+    const joints = state.robotState.joints
+
+    const { startSequence, isPlaying } = useRobotState()
     const { sequences, deleteSequence } = useWebSocket()
     //Posible formato de referencia de posiciones
     // { "type": "ref", "positionId": "home", "delay": 500 },

@@ -11,7 +11,15 @@ import ReplayIcon from '@mui/icons-material/Replay';
 function ManualControl({ }) {
   const { colors } = useTheme()
   const { send } = useWebSocket()
-  const { joints, jointConfig, setJoints } = useRobotState()
+  // const { joints, setJoints } = useRobotState()
+
+  const state = useRobotState()
+
+  const jointConfig = state.robotConfig.joints
+  const joints = state.robotState.joints
+  const setJoint = state.robotApi.setJoint
+  const setJoints = state.robotApi.setJoints
+  
   const [tempValues, setTempValues] = useState(jointConfig.map(joint => {
     return joint.default
   }))
@@ -39,12 +47,13 @@ function ManualControl({ }) {
   }
 
   const setVal = (i, val) => {
-    setJoints(prev => {
-      const newVals = [...prev]
-      newVals[i] = val
-      debouncedSend(newVals)
-      return newVals
-    })
+    setJoint(i,val)
+    // setJoints(prev => {
+    //   const newVals = [...prev]
+    //   newVals[i] = val
+    //   debouncedSend(newVals)
+    //   return newVals
+    // })
   }
 
   const commitVal = (i, val, min, max) => {

@@ -13,7 +13,11 @@ function SavePosModal({ isOpen, setIsOpen }) {
     const { savePos } = useWebSocket()
     const [name, setName] = useState("")
     const { colors } = useTheme()
-    const { joints, jointConfig } = useRobotState()
+
+    const state = useRobotState()
+    const joints = state.robotState.joints
+    const jointConfig = state.robotConfig.joints
+
     const [showRequeriedName, setShowRequiredName] = useState(false)
     const handleConfirm = () => {
         // [ ] Añadir feedback

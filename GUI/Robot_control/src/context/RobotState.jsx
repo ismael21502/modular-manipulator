@@ -6,32 +6,55 @@ const RobotStateContext = createContext()
 export const RobotStateProvider = ({ children }) => {
     const { robotConfig } = useRobotConfig()
     
+    const [robotState, setRobotState] = useState({
+        joints: robotConfig.joints.map(joint => joint.default ?? 0),
+        endEffectors: robotConfig.end_effectors.map(effector => effector.default ?? 0),
+    })
+
+    const robotApi = {
+        setJoints(joints) {
+            setRobotState(prev => ({ ...prev, joints }))
+        },
+        setJoint(i, value) {
+            setRobotState(prev => {
+                const joints = [...prev.joints]
+                joints[i] = value
+                return { ...prev, joints }
+            })
+        },
+        setEndEffectors(values) {
+            setRobotState(prev => ({ ...prev, endEffectors: values }))
+        },
+        setEndEffector(i, value) {
+            setRobotState(prev => {
+                const tools = [...prev.endEffectors]
+                tools[i] = value
+                return { ...prev, endEffectors: tools }
+            })
+        }
+      }
+
     const jointConfig = robotConfig.joints
-    const [joints, setJoints] = useState(
-        robotConfig.joints.map(joint => joint.default ?? 0)
-    )
-    const jointsRef = useRef(joints)
+    
+    const jointsRef = useRef(robotState.joints)
     const [isPlaying, setIsPlaying] = useState(false)
     
     useEffect(() => {
-        jointsRef.current = joints
-    }, [joints])
+        jointsRef.current = robotState.joints
+    }, [robotState.joints])
 
-    const endEffectorsConfig = robotConfig.end_effectors
-    const [endEffectors, setEndEffectors] = useState(
-        robotConfig.end_effectors.map(effector => effector.default ?? 0)
-    )
-    const endEffectorsRef = useRef(endEffectors)
+    
+    const endEffectorsRef = useRef(robotState.endEffectors)
     useEffect(()=>{
-        endEffectorsRef.current = endEffectors
-    },[endEffectors])
+        endEffectorsRef.current = (robotState.endEffectors)
+    }, [robotState.endEffectors])
 
 
     useEffect(() =>{
-        setJoints(
+        robotApi.setJoints(
             robotConfig.joints.map(joint => joint.default ?? 0)
         )
-        setEndEffectors(
+        robotApi.setEndEffectors(
             robotConfig.end_effectors.map(effector => effector.default ?? 0)
         )
         setCartesian(
@@ -61,7 +84,7 @@ export const RobotStateProvider = ({ children }) => {
                     return Math.round(startVal + t * (endVal - startVal))
                 });
 
-                setJoints(newJoints)
+                robotApi.setJoints(newJoints)
 
                 if (t < 1) {
                     requestAnimationFrame(animate);
@@ -96,7 +119,8 @@ export const RobotStateProvider = ({ children }) => {
     }
 
     return (
-        <RobotStateContext.Provider value={{ joints, setJoints, jointConfig, endEffectors, setEndEffectors, endEffectorsConfig, cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying }}>
+        <RobotStateContext.Provider value={{ jointConfig, cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying, 
+            robotConfig, robotState, setRobotState, robotApi }}>
             {children}
         </RobotStateContext.Provider>
     )

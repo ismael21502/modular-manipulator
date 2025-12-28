@@ -15,10 +15,13 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
     const oldName = selectedPos
     const [name, setName] = useState(oldName)
     const { colors } = useTheme()
-    const { jointConfig } = useRobotState()
+
+    const state = useRobotState()
+    const jointConfig = state.robotConfig.joints
     const [showRequeriedName, setShowRequiredName] = useState(false)
     const prevValues = positions.find(pos => pos.name === selectedPos).values
     const [values, setValues] = useState([...prevValues])
+
     const handleConfirm = () => {
         if (name === "") {
             setShowRequiredName(true)
