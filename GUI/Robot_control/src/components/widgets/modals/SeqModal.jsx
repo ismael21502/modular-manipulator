@@ -18,6 +18,8 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
     const state = useRobotState()
 
     const jointConfig = state.robotConfig.joints
+    const endEffectorsConfig = state.robotConfig.end_effectors
+
     const [name, setName] = useState(sequence.name || "")
     const { colors } = useTheme()
     const [showRequeriedName, setShowRequiredName] = useState(false)
@@ -158,6 +160,43 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                                                             })
                                                         }} />
                                                     <span style={{ fontWeight: 'bold', color: colors.primary }}>{joint.unit === "%" ? "%" : "°"}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {endEffectorsConfig.map((effector, j) => (
+                                        <div key={effector.id} className="flex flex-1 min-w-[25%] flex-row p-2 rounded-md border-1 justify-center"
+                                            style={{ backgroundColor: colors.background, borderColor: colors.border }}>
+                                            <div className="flex  flex-col justify-center gap-1">
+                                                <p className='text-center'
+                                                    style={{ color: colors.text.title }}>{effector.label}</p>
+                                                <div className="flex w-full flex-row justify-center">
+                                                    <input type='text' value={step.endEffectors[j]}
+                                                        onChange={(e) => {
+                                                            const val = validateNumber(e.target.value, effector.min, effector.max)
+                                                            if (val === undefined) return  // ignorar caracteres inválidos
+                                                            setLocalSteps(prev => {
+                                                                const updated = [...prev]
+                                                                updated[i] = {
+                                                                    ...updated[i],
+                                                                    endEffectors: {
+                                                                        ...updated[i].endEffectors,
+                                                                        [j]: val
+                                                                    }
+                                                                }
+                                                                return updated
+                                                            })
+                                                        }}
+                                                        className='text-end font-bold outline-none'
+                                                        style={{ color: colors.primary, width: `${Math.max((step.endEffectors[j] ?? 0).toString().length, 1)}ch` }}
+                                                        onBlur={() => {
+                                                            if (step.endEffectors[j] === "-") setLocalSteps(prev => {
+                                                                const updated = [...prev]
+                                                                updated[i] = { ...updated[i], endEffectors: { ...updated[i].endEffectors, [j]: effector.default } }
+                                                                return updated
+                                                            })
+                                                        }} />
+                                                    <span style={{ fontWeight: 'bold', color: colors.primary }}>{effector.unit === "%" ? "%" : "°"}</span>
                                                 </div>
                                             </div>
                                         </div>

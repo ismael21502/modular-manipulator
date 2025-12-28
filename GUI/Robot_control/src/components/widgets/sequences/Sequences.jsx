@@ -18,6 +18,7 @@ import PopUp from '../../ui/popUps/PopUp';
 function Sequences() {
     const state = useRobotState()
     const joints = state.robotState.joints
+    const endEffectors = state.robotState.endEffectors
 
     const { startSequence, isPlaying } = useRobotState()
     const { sequences, deleteSequence } = useWebSocket()
@@ -38,6 +39,7 @@ function Sequences() {
             {
                 type: "inline",
                 joints: joints,
+                endEffectors: endEffectors,
                 delay: 200, //ms
                 duration: 1000, // ms 
                 label: `Paso ${steps.length + 1}`  // opcional
@@ -78,6 +80,7 @@ function Sequences() {
         setModalSequence(sequences.find(seq => seq.name === selectedeSequence))
         setShowSaveModal(true)
     }
+
     const saveSequence = () => {
         //Modal de guardado
         if (steps.length == 0) return

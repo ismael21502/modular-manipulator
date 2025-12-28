@@ -13,12 +13,14 @@ import CustomScroll from '../../ui/scrolls/CustomScroll';
 import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
 import PopUp from '../../ui/popUps/PopUp'
 function Positions() {
+    // [ ] Arreglar las cards
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
     const { startPosition, isPlaying } = useRobotState()
     const state = useRobotState()
 
     const jointConfig = state.robotConfig.joints
+    const endEffectorsConfig = state.robotConfig.end_effectors
 
     const [showSavePopUp, setShowSavePopUp] = useState(false)
     const [showEditPopUp, setShowEditPopUp] = useState(false)
@@ -63,8 +65,17 @@ function Positions() {
             <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
                 <div className="flex-1 min-h-0 overflow-hidden flex flex-col gap-5 p-5">
                     {positions.map((position, i) => (
-                        <PositionsCard key={position.name} name={position.name} joints={position.values} labels={jointConfig.map(joint => joint.label)} setSelected={setSelectedPos} isActive={position.name == selectedPos ? true : false} />
+                        <PositionsCard
+                            key={position.name}
+                            name={position.name}
+                            joints={position.values}
+                            labels={jointConfig.map(joint => joint.label)}
+                            setSelected={setSelectedPos}
+                            isActive={position.name == selectedPos ? true : false} />
                     ))}
+                    {
+
+                    }
                 </div>
             </CustomScroll>
 

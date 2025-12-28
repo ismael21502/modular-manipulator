@@ -18,5 +18,18 @@
       90,
       0
     ]
+  },
+  {
+    "name": "aaaaaa",
+    "values": [
+      0,
+      -25,
+      65,
+      90,
+      0
+    ],
+    "endEffectorValues": [
+      100
+    ]
   }
 ]

@@ -8,7 +8,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import UnderlinedInput from "../../ui/inputs/underlinedInput";
 
 function SavePosModal({ isOpen, setIsOpen }) {
-
     if (isOpen != true) return null
     const { savePos } = useWebSocket()
     const [name, setName] = useState("")
@@ -17,6 +16,8 @@ function SavePosModal({ isOpen, setIsOpen }) {
     const state = useRobotState()
     const joints = state.robotState.joints
     const jointConfig = state.robotConfig.joints
+    const endEffectors = state.robotState.endEffectors
+    const endEffectorsConfig = state.robotConfig.end_effectors
 
     const [showRequeriedName, setShowRequiredName] = useState(false)
     const handleConfirm = () => {
@@ -26,7 +27,7 @@ function SavePosModal({ isOpen, setIsOpen }) {
             return
         }
         setShowRequiredName(false)
-        savePos(name, joints)
+        savePos(name, joints, endEffectors)
         setIsOpen(false)
     }
     return (
@@ -70,6 +71,17 @@ function SavePosModal({ isOpen, setIsOpen }) {
                                     style={{ color: colors.text.title }}>{joint.label}</p>
                                 <p className='text-center font-bold'
                                     style={{ color: colors.primary }}> {joints[i]}{joint.unit === "%" ? "%" : "°"}</p>
+                            </div>
+                        </div>
+                    ))}
+                    {endEffectorsConfig.map((effector, i) => (
+                        <div key={effector.id} className="flex flex-1 min-w-[25%] flex-row p-2 rounded-md border-1 justify-center"
+                            style={{ backgroundColor: colors.background, borderColor: colors.border }}>
+                            <div className="flex  flex-col justify-center gap-1">
+                                <p className='text-center font-bold'
+                                    style={{ color: colors.text.title }}>{effector.label}</p>
+                                <p className='text-center font-bold'
+                                    style={{ color: colors.primary }}> {endEffectors[i]}{effector.unit === "%" ? "%" : "°"}</p>
                             </div>
                         </div>
                     ))}

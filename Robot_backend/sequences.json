@@ -1,102 +1,5 @@
 [
   {
-    "name": "Test1",
-    "updated_at": "2025-12-20T15:44:49.086976",
-    "steps": [
-      {
-        "type": "inline",
-        "joints": [
-          0,
-          -25,
-          65,
-          90,
-          0
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 1"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          -90,
-          -68,
-          -43,
-          22,
-          0
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 2"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          90,
-          -21,
-          -138,
-          69,
-          0
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 3"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          90,
-          25,
-          45,
-          69,
-          0
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 4"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          90,
-          25,
-          40,
-          69,
-          100
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 5"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          0,
-          25,
-          40,
-          69,
-          100
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 6"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          0,
-          25,
-          40,
-          69,
-          0
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 7"
-      }
-    ]
-  },
-  {
     "name": "Pick and place",
     "updated_at": "2025-12-26T01:07:45.349745",
     "steps": [
@@ -190,6 +93,146 @@
         "delay": 200,
         "duration": 1000,
         "label": "Release"
+      }
+    ]
+  },
+  {
+    "name": "Test",
+    "updated_at": "2025-12-28T07:13:10.866Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          -83,
+          59,
+          -64,
+          126,
+          0
+        ],
+        "endEffectors": [
+          77
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      }
+    ]
+  },
+  {
+    "name": "Pickandplace",
+    "updated_at": "2025-12-28T07:17:00.775Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -25,
+          65,
+          90,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          10,
+          55,
+          70,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 2"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          10,
+          55,
+          70,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 3"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          10,
+          55,
+          25,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 4"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          10,
+          55,
+          25,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 5"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          10,
+          55,
+          70,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 6"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          10,
+          55,
+          70,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 7"
       }
     ]
   }

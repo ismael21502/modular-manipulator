@@ -150,7 +150,7 @@ export const WebSocketProvider = ({ children }) => {
             }
         }
     }
-    function updatePos(oldName, posName, values) {
+    function updatePos(oldName, posName, jointValues, endEffectorValues = null) {
         if (!posName) return
         if (ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el backend" }])
@@ -159,7 +159,7 @@ export const WebSocketProvider = ({ children }) => {
         fetch(`http://${IP}:${port}/update`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ oldName: oldName, name: posName, values: values })
+            body: JSON.stringify({ oldName: oldName, name: posName, values: jointValues, endEffectorValues: endEffectorValues })
         })
             .then(data => {
                 if (data.ok) {
@@ -171,7 +171,7 @@ export const WebSocketProvider = ({ children }) => {
             })
             .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `No fue posible actualizar la posición: ${err}` }]))
     }
-    function savePos(newPosName, joints) {
+    function savePos(newPosName, joints, endEffectorValues = null) {
         if (!newPosName) return
         if (ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
@@ -180,7 +180,7 @@ export const WebSocketProvider = ({ children }) => {
         fetch(`http://${IP}:${port}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newPosName, values: joints }),
+            body: JSON.stringify({ name: newPosName, values: joints, endEffectorValues: endEffectorValues }),
         })
             .then(data => {
                 if (data.ok) {

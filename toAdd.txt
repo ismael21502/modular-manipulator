@@ -28,3 +28,11 @@ Make pause movement function
 Now all the joints are revolute. I want to be able to use also linear, continuous, etc.
 
 maybe separate desired state vs currentState in the sliders
+
+Corregir animaciones
+-Agregar RobotState que envuelve a joints y gripper
+-Añadir animación de gripper
+-Añadir envío de datos al back para FK
+
+
+Siguiente paso: construir el modelo 3D desde le robotConfig

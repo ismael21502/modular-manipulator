@@ -18,34 +18,48 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
 
     const state = useRobotState()
     const jointConfig = state.robotConfig.joints
+    const endEffectorsConfig = state.robotConfig.end_effectors
+
     const [showRequeriedName, setShowRequiredName] = useState(false)
     const prevValues = positions.find(pos => pos.name === selectedPos).values
-    const [values, setValues] = useState([...prevValues])
+    const [jointValues, setJointValues] = useState([...prevValues])
+    const [endEffectorValues, setEndEffectorValues] = useState(endEffectorsConfig.map(effector => effector.default))
 
     const handleConfirm = () => {
         if (name === "") {
             setShowRequiredName(true)
             return
         }
-        values.forEach(val => {
+        jointValues.forEach(val => {
             if (!Number.isFinite(val)) {
                 return
             }
         })
         setShowRequiredName(false)
-        updatePos(oldName, name, values)
+        updatePos(oldName, name, jointValues, endEffectorValues)
         setIsopen(false)
     }
-    
-    const handleChangeVal = (i,val,min,max) => {
-        const newVal = validateNumber(val,min,max)
-        if(newVal === undefined) return
-        setValues(prev => {
+
+    const handleChangeJoints = (i, val, min, max) => {
+        const newVal = validateNumber(val, min, max)
+        if (newVal === undefined) return
+        setJointValues(prev => {
             const newVals = [...prev]
             newVals[i] = newVal
             return newVals
         })
     }
+
+    const handleChangeEffectors = (i, val, min, max) => {
+        const newVal = validateNumber(val, min, max)
+        if (newVal === undefined) return
+        setEndEffectorValues(prev => {
+            const newVals = [...prev]
+            newVals[i] = newVal
+            return newVals
+        })
+    }
+
     return (
         <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
             onClick={() => { setIsopen(false) }}>
@@ -81,20 +95,33 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                         <div key={joint.id} className="flex flex-col w-full gap-2">
                             <div className="flex justify-between ">
                                 <p>{joint.label}</p>
-                                <div style={{color: colors.primary, fontWeight: 'bold'}}>
-                                    <input type="text" value={values[i]} className="w-10 text-end ml-2 outline-none" onChange={(e) => { handleChangeVal(i, e.target.value, joint.min, joint.max) }} />
+                                <div style={{ color: colors.primary, fontWeight: 'bold' }}>
+                                    <input
+                                        type="text"
+                                        value={jointValues[i]}
+                                        className="w-10 text-end ml-2 outline-none"
+                                        onChange={(e) => { handleChangeJoints(i, e.target.value, joint.min, joint.max) }}
+                                        onBlur={(e) => {
+                                            if (e.target.value === "-") {
+                                                setJointValues(prev => {
+                                                    const newVals = [...prev]
+                                                    newVals[i] = 0
+                                                    return newVals
+                                                })
+                                            }
+                                        }} />
                                     <span>{joint.unit == "deg" ? "°" : "%"}</span>
                                 </div>
                             </div>
                             <div className="flex flex-row w-full items-center gap-2">
-                                <p className="text-sm" style={{ color: colors.text.secondary }}>{joint.min}{joint.unit === "deg"? "°": "%"}</p>
+                                <p className="text-sm" style={{ color: colors.text.secondary }}>{joint.min}{joint.unit === "deg" ? "°" : "%"}</p>
                                 <Slider.Root
                                     className="relative flex items-center justify-center select-none touch-none h-1 w-full"
                                     min={joint.min}
                                     max={joint.max}
                                     step={1}
-                                    onValueChange={(val) => {handleChangeVal(i, val, joint.min, joint.max)}}
-                                    value={[values[i]]}
+                                    onValueChange={(val) => { handleChangeJoints(i, val, joint.min, joint.max) }}
+                                    value={[jointValues[i]]}
                                 >
                                     <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
                                         style={{ backgroundColor: colors.border }}>
@@ -110,6 +137,50 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                                 <p>Min: {joint.min}</p>
                                 <p>Max: {joint.max}</p>
                             </div> */}
+                        </div>
+                    ))}
+                    {endEffectorsConfig.map((effector, i) => (
+                        <div key={effector.id} className="flex flex-col w-full gap-2">
+                            <div className="flex justify-between ">
+                                <p>{effector.label}</p>
+                                <div style={{ color: colors.primary, fontWeight: 'bold' }}>
+                                    <input
+                                        type="text"
+                                        value={endEffectorValues[i]}
+                                        className="w-10 text-end ml-2 outline-none"
+                                        onChange={(e) => { handleChangeEffectors(i, e.target.value, effector.min, effector.max) }}
+                                        onBlur={(e) => {
+                                            if (e.target.value === "-") {
+                                                setEndEffectorValues(prev => {
+                                                    const newVals = [...prev]
+                                                    newVals[i] = 0
+                                                    return newVals
+                                                })
+                                            }
+                                        }} />
+                                    <span>{effector.unit == "deg" ? "°" : "%"}</span>
+                                </div>
+                            </div>
+                            <div className="flex flex-row w-full items-center gap-2">
+                                <p className="text-sm" style={{ color: colors.text.secondary }}>{effector.min}{effector.unit === "deg" ? "°" : "%"}</p>
+                                <Slider.Root
+                                    className="relative flex items-center justify-center select-none touch-none h-1 w-full"
+                                    min={effector.min}
+                                    max={effector.max}
+                                    step={1}
+                                    onValueChange={(val) => { handleChangeEffectors(i, val, effector.min, effector.max) }}
+                                    value={[endEffectorValues[i]]}
+                                >
+                                    <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
+                                        style={{ backgroundColor: colors.border }}>
+                                        <Slider.Range className="absolute rounded-full h-full h-full"
+                                            style={{ backgroundColor: colors.primary }} />
+                                    </Slider.Track>
+                                    <Slider.Thumb className="block w-4 h-4 rounded-full hover:cursor-pointer"
+                                        style={{ backgroundColor: colors.primary }} />
+                                </Slider.Root>
+                                <p className="text-sm" style={{ color: colors.text.secondary }}>{effector.max}{effector.unit === "deg" ? "°" : "%"}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
