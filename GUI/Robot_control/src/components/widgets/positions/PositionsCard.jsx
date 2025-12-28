@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import DoneIcon from '@mui/icons-material/Done';
 import { useTheme } from '../../../context/ThemeContext';
 
-function PositionsCard({ isActive = false, name, joints, labels , setSelected = () =>{} }) {
+function PositionsCard({ isActive = false, name, joints, endEffectors = [], jointLabels, endEffectorsLabels , setSelected = () =>{} }) {
     const { colors } = useTheme()
     const textColor = isActive ? colors.primary : colors.text.title;
     const backgroundColor = isActive
@@ -49,10 +49,21 @@ function PositionsCard({ isActive = false, name, joints, labels , setSelected = 
                                     style={{ 
                                         backgroundColor:  colors.background , 
                                     borderColor: colors.border}}>
-                                    <p style={{color: colors.text.secondary, fontWeight: 'bold'}}>{labels[i]}</p>
-                                    <p style={{ color: colors.text.primary }}>{joint}{labels[i] === "G" ? "%" : "°"}</p>
+                                    <p style={{color: colors.text.secondary, fontWeight: 'bold'}}>{jointLabels[i]}</p>
+                                    <p style={{ color: colors.text.primary }}>{joint}{jointLabels[i] === "G" ? "%" : "°"}</p>
                                 </div>
                             ))}
+                        {endEffectors.map((effector, i) => (
+                            <div key={i} className={`flex flex-1 min-w-[25%] flex-col justify-between rounded-md p-2 border-1 text-xs text-center`}
+                                style={{
+                                    backgroundColor: colors.background,
+                                    borderColor: colors.border
+                                }}>
+                                <p style={{ color: colors.text.secondary, fontWeight: 'bold' }}>{endEffectorsLabels[i]}</p>
+                                {/* [ ] Corregir esto */}
+                                <p style={{ color: colors.text.primary }}>{effector}{endEffectorsLabels[i] === "Gripper" ? "%" : "°"}</p> 
+                            </div>
+                        ))}
                     </div>
                 </div>
 

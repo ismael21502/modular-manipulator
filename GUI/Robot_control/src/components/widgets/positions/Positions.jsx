@@ -30,7 +30,7 @@ function Positions() {
 
     function sendPos() {
         const target = positions.find(pos => pos.name === selectedPos);
-        if (target) startPosition(target.values);
+        if (target) startPosition(target.values, target.endEffectorValues);
     }
 
     const handleSaving = () => {
@@ -69,7 +69,9 @@ function Positions() {
                             key={position.name}
                             name={position.name}
                             joints={position.values}
-                            labels={jointConfig.map(joint => joint.label)}
+                            endEffectors={position.endEffectorValues}
+                            jointLabels={jointConfig.map(joint => joint.label)}
+                            endEffectorsLabels={endEffectorsConfig.map(effector => effector.label)}
                             setSelected={setSelectedPos}
                             isActive={position.name == selectedPos ? true : false} />
                     ))}

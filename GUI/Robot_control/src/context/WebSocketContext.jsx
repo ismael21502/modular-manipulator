@@ -156,7 +156,7 @@ export const WebSocketProvider = ({ children }) => {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el backend" }])
             return
         }
-        fetch(`http://${IP}:${port}/update`, {
+        fetch(`http://${IP}:${port}/updatePos`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ oldName: oldName, name: posName, values: jointValues, endEffectorValues: endEffectorValues })
@@ -177,7 +177,7 @@ export const WebSocketProvider = ({ children }) => {
             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: "No hay conexión con el servidor" }])
             return
         }
-        fetch(`http://${IP}:${port}/save`, {
+        fetch(`http://${IP}:${port}/savePos`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: newPosName, values: joints, endEffectorValues: endEffectorValues }),

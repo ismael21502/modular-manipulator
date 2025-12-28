@@ -119,18 +119,18 @@
     ]
   },
   {
-    "name": "Pickandplace",
-    "updated_at": "2025-12-28T07:17:00.775Z",
+    "name": "Pickandplace1",
+    "updated_at": "2025-12-28T03:09:02.454830",
     "steps": [
       {
         "type": "inline",
-        "joints": [
-          0,
-          -25,
-          65,
-          90,
-          0
-        ],
+        "joints": {
+          "0": 0,
+          "1": -25,
+          "2": 65,
+          "3": 90,
+          "4": 0
+        },
         "endEffectors": [
           0
         ],

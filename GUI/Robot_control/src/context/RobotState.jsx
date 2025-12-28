@@ -120,9 +120,9 @@ export const RobotStateProvider = ({ children }) => {
         setIsPlaying(false)
     }
     
-    const startPosition = async (targetJointsValues) => {
+    const startPosition = async (targetJoints, targetEndEffectors = [0]) => {
         setIsPlaying(true)
-        if (targetJointsValues) await moveRobot(targetJointsValues)
+        if (targetJoints) await moveRobot(targetJoints, targetEndEffectors)
         setIsPlaying(false)
     }
 

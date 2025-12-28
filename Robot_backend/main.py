@@ -34,8 +34,8 @@ async def send_log(ws: WebSocket, catergory_, type_: str, message: str):
     except Exception as e:
         print(f"⚠️ No se pudo enviar log: {e}")
 
-@app.post("/save")
-async def save_data(newData: dict):
+@app.post("/savePos")
+async def save_pos(newData: dict):
     try:
         with open("positions.json", "r") as f:
             data = json.load(f)
@@ -63,7 +63,7 @@ async def get_sequences():
         print("Error leyendo positions.json:", e)
         return []
 @app.post("/saveSeq")
-async def save_data(newData: dict):
+async def save_seq(newData: dict):
     try:
         with open("sequences.json", "r") as f:
             data = json.load(f)
@@ -115,7 +115,7 @@ async def delete_sequence(item: dict):
     else:
         return {"status": "not_found", "message": f"No se encontró '{item['name']}'."}
     
-@app.post("/update")
+@app.post("/updatePos")
 async def update_position(position: dict):
     try:
         with open("positions.json", "r") as f:
@@ -126,6 +126,7 @@ async def update_position(position: dict):
         if item['name'] == position['oldName']:
             item['name'] = position['name']
             item['values'] = position['values']
+            item['endEffectorValues'] = position['endEffectorValues']
             with open("positions.json", "w") as f:
                 json.dump(data, f, indent=2)
             return {'status': 'ok', 'message': f"Posición '{item['name']}' actualizada"}

@@ -21,9 +21,10 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
     const endEffectorsConfig = state.robotConfig.end_effectors
 
     const [showRequeriedName, setShowRequiredName] = useState(false)
-    const prevValues = positions.find(pos => pos.name === selectedPos).values
-    const [jointValues, setJointValues] = useState([...prevValues])
-    const [endEffectorValues, setEndEffectorValues] = useState(endEffectorsConfig.map(effector => effector.default))
+    const prevPosVals = positions.find(pos => pos.name === selectedPos)
+    const [jointValues, setJointValues] = useState([...prevPosVals.values])
+
+    const [endEffectorValues, setEndEffectorValues] = useState([...prevPosVals.endEffectorValues])
 
     const handleConfirm = () => {
         if (name === "") {
@@ -35,6 +36,7 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                 return
             }
         })
+        console.log(oldName, name, jointValues, endEffectorValues)
         setShowRequiredName(false)
         updatePos(oldName, name, jointValues, endEffectorValues)
         setIsopen(false)
