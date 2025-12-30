@@ -5,7 +5,7 @@ import { useRobotConfig } from "./RobotConfig";
 const RobotStateContext = createContext()
 export const RobotStateProvider = ({ children }) => {
     const { robotConfig } = useRobotConfig()
-    
+
     const [robotState, setRobotState] = useState({
         joints: robotConfig.joints.map(joint => joint.default ?? 0),
         endEffectors: robotConfig.end_effectors.map(effector => effector.default ?? 0),
@@ -33,25 +33,23 @@ export const RobotStateProvider = ({ children }) => {
                 return { ...prev, endEffectors: tools }
             })
         }
-      }
-
-    const jointConfig = robotConfig.joints
+    }
     
     const jointsRef = useRef(robotState.joints)
     const [isPlaying, setIsPlaying] = useState(false)
-    
+
     useEffect(() => {
         jointsRef.current = robotState.joints
     }, [robotState.joints])
 
-    
+
     const endEffectorsRef = useRef(robotState.endEffectors)
-    useEffect(()=>{
+    useEffect(() => {
         endEffectorsRef.current = (robotState.endEffectors)
     }, [robotState.endEffectors])
 
 
-    useEffect(() =>{
+    useEffect(() => {
         robotApi.setJoints(
             robotConfig.joints.map(joint => joint.default ?? 0)
         )
@@ -61,18 +59,30 @@ export const RobotStateProvider = ({ children }) => {
         setCartesian(
             robotConfig.cartesian.map(cart => cart.default ?? 0)
         )
-    },[robotConfig])
+    }, [robotConfig])
     const cartesianConfig = robotConfig.cartesian
     const [cartesian, setCartesian] = useState(
         robotConfig.cartesian.map(cart => cart.default ?? 0)
     )
 
-    function moveRobot(targetJoints, targetEndEffectors = [0], duration=700) {
+    // useEffect(() => {
+    //     console.log(robotState.joints)
+    // },[robotState.joints])
+
+    function moveRobot(targetJoints, targetEndEffectors = [0], duration = null) {
+        // if (duration === null || duration <= 0) { // Calcular duración basado en un factor de velocidad
+        //     robotApi.setJoints(targetJoints)
+        //     robotApi.setEndEffectors(targetEndEffectors)
+        //     return Promise.resolve()  // retornamos una promesa resuelta inmediatamente
+        // }
+        if (duration === null || duration <= 0) {
+            duration = 700
+        }
         return new Promise((resolve) => {
             const start = performance.now()
 
             // Clonamos el valor ACTUAL de "joints" y no uno desfasado
-            const initialJoints = jointsRef.current;  
+            const initialJoints = jointsRef.current;
             const initialEndEffectors = endEffectorsRef.current
             const jointsTarget = targetJoints
             const endEffectorsTarget = targetEndEffectors
@@ -90,7 +100,7 @@ export const RobotStateProvider = ({ children }) => {
                     const endVal = endEffectorsTarget[i]
                     return Math.round(startVal + t * (endVal - startVal))
                 })
-                
+
                 robotApi.setJoints(newJoints)
                 robotApi.setEndEffectors(newEndEffectors)
                 if (t < 1) {
@@ -107,7 +117,7 @@ export const RobotStateProvider = ({ children }) => {
     const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
     const startSequence = async (selectedPos, sequences) => {
-        if(isPlaying) return
+        if (isPlaying) return
         setIsPlaying(true)
         const sequence = sequences.find(seq => seq.name === selectedPos)
         if (sequence === null) return
@@ -119,16 +129,17 @@ export const RobotStateProvider = ({ children }) => {
         }
         setIsPlaying(false)
     }
-    
-    const startPosition = async (targetJoints, targetEndEffectors = [0]) => {
+
+    const startPosition = async (targetJoints, targetEndEffectors = [0], duration=null) => {
         setIsPlaying(true)
-        if (targetJoints) await moveRobot(targetJoints, targetEndEffectors)
+        if (targetJoints) await moveRobot(targetJoints, targetEndEffectors, duration)
         setIsPlaying(false)
     }
-
     return (
-        <RobotStateContext.Provider value={{ jointConfig, cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying, 
-            robotConfig, robotState, setRobotState, robotApi }}>
+        <RobotStateContext.Provider value={{
+            cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying,
+            robotConfig, robotState, setRobotState, robotApi
+        }}>
             {children}
         </RobotStateContext.Provider>
     )

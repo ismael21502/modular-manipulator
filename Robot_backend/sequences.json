@@ -1,136 +1,17 @@
 [
   {
-    "name": "Pick and place",
-    "updated_at": "2025-12-26T01:07:45.349745",
+    "name": "Pick and place ",
+    "updated_at": "2025-12-28T04:44:50.918144",
     "steps": [
-      {
-        "type": "inline",
-        "joints": {
-          "0": 0,
-          "1": -25,
-          "2": 65,
-          "3": 90,
-          "4": 0
-        },
-        "delay": 200,
-        "duration": 1000,
-        "label": "Home"
-      },
       {
         "type": "inline",
         "joints": [
           0,
-          10,
-          55,
-          70,
+          -25,
+          65,
+          90,
           0
         ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Approach"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          0,
-          10,
-          55,
-          70,
-          100
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Pick"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          -2,
-          10,
-          55,
-          26,
-          100
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Lift"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          -180,
-          10,
-          55,
-          26,
-          100
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Turn"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          -180,
-          10,
-          55,
-          70,
-          100
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Place"
-      },
-      {
-        "type": "inline",
-        "joints": [
-          -180,
-          10,
-          55,
-          70,
-          0
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Release"
-      }
-    ]
-  },
-  {
-    "name": "Test",
-    "updated_at": "2025-12-28T07:13:10.866Z",
-    "steps": [
-      {
-        "type": "inline",
-        "joints": [
-          -83,
-          59,
-          -64,
-          126,
-          0
-        ],
-        "endEffectors": [
-          77
-        ],
-        "delay": 200,
-        "duration": 1000,
-        "label": "Paso 1"
-      }
-    ]
-  },
-  {
-    "name": "Pickandplace1",
-    "updated_at": "2025-12-28T03:09:02.454830",
-    "steps": [
-      {
-        "type": "inline",
-        "joints": {
-          "0": 0,
-          "1": -25,
-          "2": 65,
-          "3": 90,
-          "4": 0
-        },
         "endEffectors": [
           0
         ],
@@ -211,9 +92,9 @@
           70,
           0
         ],
-        "endEffectors": [
-          100
-        ],
+        "endEffectors": {
+          "0": 100
+        },
         "delay": 200,
         "duration": 1000,
         "label": "Paso 6"
@@ -233,6 +114,72 @@
         "delay": 200,
         "duration": 1000,
         "label": "Paso 7"
+      }
+    ]
+  },
+  {
+    "name": "ola",
+    "updated_at": "2025-12-29T21:18:09.686Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          45,
+          25
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 2"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          45,
+          25
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 3"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          0,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 4"
       }
     ]
   }

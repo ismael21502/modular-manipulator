@@ -29,4 +29,4 @@ def Inverse_Kinematics(x, y, z):
     theta2 = round(math.degrees(theta2))-90
     theta3 = round(math.degrees(theta3))
     theta4 = round(math.degrees(theta4))
-    return [theta1, theta2, theta3, theta4, 0]
+    return [theta1, theta2, theta3, theta4]

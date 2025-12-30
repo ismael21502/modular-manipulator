@@ -27,7 +27,7 @@ function Sequences() {
     const { colors } = useTheme()
     const [selectedeSequence, setSelectedeSequence] = useState("")
     const [isRecording, setIsRecording] = useState(false)
-    const [steps, setSteps] = useState([])
+    const [steps, setSteps] = useState([]) 
     const [showSaveModal, setShowSaveModal] = useState(false)
     const [modalMode, setModalMode] = useState("Nueva secuencia")
     const [modalSequence, setModalSequence] = useState(null)
@@ -52,6 +52,7 @@ function Sequences() {
     }
 
     const closeModal = () => {
+        setSelectedeSequence("")
         setSteps([])
         setIsRecording(false)
         // setShowSaveModal(false)

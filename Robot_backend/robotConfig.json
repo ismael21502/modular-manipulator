@@ -145,15 +145,6 @@
                     0
                 ]
             }
-        },
-        {
-            "id": "gripper",
-            "label": "Gripper",
-            "type": "revolute",
-            "min": 0,
-            "max": 100,
-            "default": 0,
-            "unit": "%"
         }
     ],
     "end_effectors": [{

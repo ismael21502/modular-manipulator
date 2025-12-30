@@ -187,12 +187,13 @@ async def calculate_ik(cartesian_values: list[int]):
     x, y, z, _, _, _ = cartesian_values
     x /= 1000
     y /= 1000
-    z /= 1000
+    z /= 1000 
     values = Inverse_Kinematics(x,y,z)
     result = values
     return result 
 
 async def calculate_fk(articular_values: list[int]):
+    print(articular_values)
     L1 = 0.02  # altura del primer eslabón (ajusta según tu modelo)
     L2 = 0.043
     L3 = 0.043

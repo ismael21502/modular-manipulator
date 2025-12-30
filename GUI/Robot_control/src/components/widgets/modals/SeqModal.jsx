@@ -28,7 +28,6 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
     const title = mode === "edit" ? "Editar secuencia" : "Nueva secuencia"
 
     const handleConfirm = async () => {
-        // [ ] Añadir feedback
         if (name === "") {
             setShowRequiredName(true)
             return
@@ -45,6 +44,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
             onClose()
             onConfirm()
         } else {
+            console.log(serverResponse.status)
             onClose()
             //Revisar si hay errores
         }
@@ -55,7 +55,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
         return parseInt(text)
     }
 
-    const deleteStep = (index) => {
+    const deleteStep = (index) => { 
         setLocalSteps(prev => {
             const updated = [...prev]
             updated.splice(index, 1)

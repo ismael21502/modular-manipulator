@@ -13,7 +13,6 @@ import CustomScroll from '../../ui/scrolls/CustomScroll';
 import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
 import PopUp from '../../ui/popUps/PopUp'
 function Positions() {
-    // [ ] Arreglar las cards
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
     const { startPosition, isPlaying } = useRobotState()
@@ -64,7 +63,7 @@ function Positions() {
 
             <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
                 <div className="flex-1 min-h-0 overflow-hidden flex flex-col gap-5 p-5">
-                    {positions.map((position, i) => (
+                    {positions.map(position => (
                         <PositionsCard
                             key={position.name}
                             name={position.name}

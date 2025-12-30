@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRobotState } from "./RobotState";
 import { RobotConfigProvider, useRobotConfig } from "./RobotConfig";
-
+import { debounce, throttle } from 'lodash'
+import { useMemo } from "react";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { setCartesian } = useRobotState()
+    const { setCartesian, isPlaying } = useRobotState()
     const state = useRobotState()
     const setJoints = state.robotApi.setJoints
     const joints = state.robotState.joints
@@ -93,8 +94,11 @@ export const WebSocketProvider = ({ children }) => {
                     data = event.data;
                 }
                 // if (data.type === "JOINTS") setJoints(data.values)
-                if (data.type === "JOINTS") setJoints(data.values)
-                else if (data.type === "COORDS") setCartesian(data.values) //Dejar esto con callbacks también
+                if (data.type === "JOINTS") setJoints(data.values) // [ ] Cambiar por moveRobot
+                else if (data.type === "COORDS") {
+                    setCartesian(data.values)
+                    console.log(data.values)
+                } //Dejar esto con callbacks también
                 // setLogs(prev => [...prev, data])
             } catch {
                 console.log("Mensaje no JSON:", event.data)
@@ -281,8 +285,8 @@ export const WebSocketProvider = ({ children }) => {
             return { status: 'error' }
         }
     }
-    async function updateSeq(oldName, seqName, steps) {
-        if (!seqName) return false
+    const updateSeq = async (oldName, seqName, steps) => {
+        if (!seqName) return { status: 'error', message: 'Nombre de secuencia inválido' }
 
         if (ws.current?.readyState !== WebSocket.OPEN) {
             setLogs(prev => [
@@ -294,7 +298,7 @@ export const WebSocketProvider = ({ children }) => {
                     values: "No hay conexión con el backend"
                 }
             ])
-            return false
+            return { status: 'error', message: 'No hay conexión con el backend' }
         }
 
         try {
@@ -308,23 +312,23 @@ export const WebSocketProvider = ({ children }) => {
                 })
             })
 
-            if (!res.ok) {
+            if (res.ok) {
+                await loadSequences()
+
+                setLogs(prev => [
+                    ...prev,
+                    {
+                        category: 'log',
+                        time: new Date().toISOString(),
+                        type: 'INFO',
+                        values: 'Secuencia actualizada con éxito'
+                    }
+                ])
+                return { status: 'ok' }
+            } else{
                 throw new Error(`HTTP ${res.status}`)
             }
 
-            await loadSequences()
-
-            setLogs(prev => [
-                ...prev,
-                {
-                    category: 'log',
-                    time: new Date().toISOString(),
-                    type: 'INFO',
-                    values: 'Secuencia actualizada con éxito'
-                }
-            ])
-
-            return true
 
         } catch (err) {
             setLogs(prev => [
@@ -337,22 +341,45 @@ export const WebSocketProvider = ({ children }) => {
                 }
             ])
 
-            return false
+            return { status: 'error', message: err.message}
         }
     }
-
-
+    
     const send = (obj) => {
+        console.log("SEND: ", obj)
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
     }
 
+    // const debouncedSend = useMemo(
+    //     () => debounce((type, values) => {
+    //         send({ type, values })
+    //     }, 300),
+    //     []
+    // )
+    const debouncedSend = useMemo(
+        () =>
+            throttle((type, values) => {
+                send({ type: type, values })
+            }, 20), // 👈 frecuencia
+        [send]
+    ) //Para corregir esto bastará con modificar moveRobot para que haga una interpolación o darle como tiempo los ms de la frecuencia
+
+    useEffect(()=>{
+        if (isPlaying) debouncedSend("articular_move", joints)
+    },[joints])
+    // const debouncedSend = debounce((type, values) => {
+    //     if(isPlaying === true) return
+    //     send({ type: type, values: values })
+    //     console.log("OLA")
+    // }, 300)
+
     return (
         <WebSocketContext.Provider value={{
             ws,
             isConnected, isConnecting,
-            initializeWebSocket, disconnect, send,
+            initializeWebSocket, disconnect, debouncedSend,
             logs, setLogs,
             positions, savePos, deletePos, updatePos,
             IP, setIP,

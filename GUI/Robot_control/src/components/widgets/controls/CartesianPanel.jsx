@@ -6,20 +6,16 @@ import { useRobotState } from '../../../context/RobotState';
 import { useWebSocket } from '../../../context/WebSocketContext';
 import { debounce } from 'lodash'
 import validateNumber from '../../../utils/validate';
-
+ 
 function CartesianControl() {
     const { colors } = useTheme()
     // const [tempCoords, setTempCoords] = useState({ X: "0", Y: "0", Z: "0" });
-    const { send } = useWebSocket()
-    const { cartesian, setCartesian, cartesianConfig } = useRobotState()
+    const { debouncedSend } = useWebSocket()
+    const { cartesian, setCartesian, cartesianConfig, isPlaying } = useRobotState()
 
     const [tempValues, setTempValues] = useState(cartesianConfig.map(axis => {
         return axis.default
     }))
-    
-    const debouncedSend = debounce((values) => {
-        send({ type: "cartesian_move", values: values});
-    }, 300)
 
     useEffect(() => {
         setTempValues(cartesian)
@@ -44,7 +40,7 @@ function CartesianControl() {
         setCartesian(prev => {
             const newVals = [...prev]
             newVals[i] = val
-            debouncedSend(newVals)
+            debouncedSend("cartesian_move", newVals)
             return newVals
         })
     }

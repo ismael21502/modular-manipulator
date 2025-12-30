@@ -4,22 +4,23 @@ import { useTheme } from "../../../context/ThemeContext";
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import { useRobotState } from "../../../context/RobotState";
 import validateNumber from "../../../utils/validate";
-import { debounce } from "lodash";
+import { debounce, join } from "lodash";
 import { useWebSocket } from "../../../context/WebSocketContext";
 import ReplayIcon from '@mui/icons-material/Replay';
 
 function ManualControl({ }) {
   const { colors } = useTheme()
-  const { send } = useWebSocket()
   // const { joints, setJoints } = useRobotState()
-
+  const { debouncedSend } = useWebSocket()
   const state = useRobotState()
 
   const jointConfig = state.robotConfig.joints
+  const endEffectorsConfig = state.robotConfig.end_effectors
+
   const joints = state.robotState.joints
   const setJoint = state.robotApi.setJoint
-  const setJoints = state.robotApi.setJoints
-  
+  const gotoPos = state.startPosition
+
   const [tempValues, setTempValues] = useState(jointConfig.map(joint => {
     return joint.default
   }))
@@ -27,10 +28,6 @@ function ManualControl({ }) {
   useEffect(() => {
     setTempValues(joints)
   }, [joints])
-
-  const debouncedSend = debounce(values => {
-    send({ type: 'articular_move', values: values });
-  }, 300)
 
   const handleChangeSlider = (i, val) => {
     setVal(i, val[0])
@@ -47,13 +44,8 @@ function ManualControl({ }) {
   }
 
   const setVal = (i, val) => {
-    setJoint(i,val)
-    // setJoints(prev => {
-    //   const newVals = [...prev]
-    //   newVals[i] = val
-    //   debouncedSend(newVals)
-    //   return newVals
-    // })
+    setJoint(i, val)
+    debouncedSend("articular_move", joints)
   }
 
   const commitVal = (i, val, min, max) => {
@@ -62,6 +54,10 @@ function ManualControl({ }) {
     setVal(i, valid)
   }
 
+  const handleGotoZero = () => {
+    debouncedSend.cancel()
+    gotoPos(jointConfig.map(joint => joint.default), endEffectorsConfig.map(effector => effector.default), 200)
+  }
   return (
     <div className='flex flex-col flex-1 py-2'
       style={{ borderBottom: '1px solid', borderColor: colors.border, color: colors.text.title }}>
@@ -73,64 +69,63 @@ function ManualControl({ }) {
         <button className="flex flex-row text-xs items-center gap-1 hover:border-b-[1px] cursor-pointer"
           style={{ borderColor: colors.primary, color: colors.primary }}
           onClick={
-            () => setJoints(joints.map(() => 0))
+            handleGotoZero
           }>
           <ReplayIcon fontSize="smaller" />
-          <p>Zero</p>
+          <p>Default</p>
         </button>
       </div>
 
       <div className="flex flex-col py-2 px-5 w-full justify-between gap-6">
         {jointConfig.map((joint, i) => (
-          joint.label === "Gripper" ? null :
-            <div key={joint.id} className="flex flex-col items-center gap-2">
-              <div className="flex flex-row w-full justify-between">
-                <h3 className="text-sm text-center">{joint.label}</h3>
-                <div className="flex items-start">
-                  <input
-                    type="text"
-                    className="text-sm mb-3 w-[2.5rem] text-end mr-1 outline-none"
-                    value={tempValues[i] ?? ""}
-                    onChange={(e) => handleChangeInput(i, e.target.value, joint.min, joint.max)}
-                    onBlur={(e) => {
-                      if (e.target.value === "-") {
-                        commitVal(i, joint.default, joint.min, joint.max)
-                      } else {
-                        commitVal(i, e.target.value, joint.min, joint.max)
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        commitVal(i, e.target.value !== '-' ? e.target.value : joint.default, joint.min, joint.max)
-                        // e.target.blur()
-                      }
-                    }}
-                  />
+          <div key={joint.id} className="flex flex-col items-center gap-2">
+            <div className="flex flex-row w-full justify-between">
+              <h3 className="text-sm text-center">{joint.label}</h3>
+              <div className="flex items-start">
+                <input
+                  type="text"
+                  className="text-sm mb-3 w-[2.5rem] text-end mr-1 outline-none"
+                  value={tempValues[i] ?? ""}
+                  onChange={(e) => handleChangeInput(i, e.target.value, joint.min, joint.max)}
+                  onBlur={(e) => {
+                    if (e.target.value === "-") {
+                      commitVal(i, joint.default, joint.min, joint.max)
+                    } else {
+                      commitVal(i, e.target.value, joint.min, joint.max)
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      commitVal(i, e.target.value !== '-' ? e.target.value : joint.default, joint.min, joint.max)
+                      // e.target.blur()
+                    }
+                  }}
+                />
 
-                  <span>{joint.unit === "deg" ? "°" : joint.unit}</span>
-                </div>
+                <span>{joint.unit === "deg" ? "°" : joint.unit}</span>
               </div>
-              <Slider.Root
-                className="relative flex items-center justify-center select-none touch-none h-1 w-full"
-                min={joint.min}
-                max={joint.max}
-                step={1}
-                onValueChange={(val) => handleChangeSlider(i, val)}
-                value={[tempValues[i] === '-' ? joint.default : tempValues[i]]}
-              >
-                <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
-                  style={{ backgroundColor: colors.border }}>
-                  <Slider.Range className={`absolute rounded-full h-full h-full ${tempValues[i] === joints[i] ? '' : 'opacity-0'}`}
-                    style={{ backgroundColor: colors.primary }} />
-                </Slider.Track>
-                <Slider.Thumb className="block w-4 h-4 rounded-full outline-none hover:cursor-pointer"
-                  style={{
-                    backgroundColor: colors.primary,
-                    outline: tempValues[i] === joints[i] ? 'none' : `2px dashed ${colors.primary}`,
-                    outlineOffset: tempValues[i] === joints[i] ? 0 : 2,
-                  }} />
-              </Slider.Root>
             </div>
+            <Slider.Root
+              className="relative flex items-center justify-center select-none touch-none h-1 w-full"
+              min={joint.min}
+              max={joint.max}
+              step={1}
+              onValueChange={(val) => handleChangeSlider(i, val)}
+              value={[tempValues[i] === '-' ? joint.default : tempValues[i]]}
+            >
+              <Slider.Track className="relative rounded-full h-1 w-full mx-auto overflow-hidden hover:cursor-pointer"
+                style={{ backgroundColor: colors.border }}>
+                <Slider.Range className={`absolute rounded-full h-full h-full ${tempValues[i] === joints[i] ? '' : 'opacity-0'}`}
+                  style={{ backgroundColor: colors.primary }} />
+              </Slider.Track>
+              <Slider.Thumb className="block w-4 h-4 rounded-full outline-none hover:cursor-pointer"
+                style={{
+                  backgroundColor: colors.primary,
+                  outline: tempValues[i] === joints[i] ? 'none' : `2px dashed ${colors.primary}`,
+                  outlineOffset: tempValues[i] === joints[i] ? 0 : 2,
+                }} />
+            </Slider.Root>
+          </div>
         ))}
       </div>
     </div>
