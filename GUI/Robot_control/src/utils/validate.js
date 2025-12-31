@@ -16,6 +16,11 @@ const validateNumber = (val, min, max) => {
         return 0
     }
 
+    //[ ] check for "-0"
+    // if(raw === "-0") {
+    //     return raw
+    // }
+
     const newValue = Number(raw);
 
     // Si no es número válido → NO actualizar

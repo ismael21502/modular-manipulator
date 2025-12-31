@@ -12,7 +12,8 @@ export const WebSocketProvider = ({ children }) => {
     const state = useRobotState()
     const setJoints = state.robotApi.setJoints //Parece necesario
     const joints = state.robotState.joints //Innecesario, savePos puede funcionar con parámetros
-    // const robotConfig = state.robotConfig
+
+    const { subscribeArticular } = useRobotState()
     const { setRobotConfig } = useRobotConfig() //Puede eliminarse robotConfigContext
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)
@@ -367,16 +368,13 @@ export const WebSocketProvider = ({ children }) => {
         [send]
     ) //Para corregir esto bastará con modificar moveRobot para que haga una interpolación o darle como tiempo los ms de la frecuencia
 
-    useEffect(()=>{
-        if (isPlaying) send({type: 'articular_move', values: joints})
-    },[joints]) 
+    useEffect(() => {
+        const unsubscribe = subscribeArticular(joints => {
+            throttledSend('articular_move', joints)
+        })
 
-    
-    // const debouncedSend = debounce((type, values) => {
-    //     if(isPlaying === true) return
-    //     send({ type: type, values: values })
-    //     console.log("OLA")
-    // }, 300)
+        return () => unsubscribe()
+    }, [subscribeArticular, throttledSend])
 
     return (
         <WebSocketContext.Provider value={{

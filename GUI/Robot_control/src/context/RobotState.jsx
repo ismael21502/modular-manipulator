@@ -38,6 +38,19 @@ export const RobotStateProvider = ({ children }) => {
     const jointsRef = useRef(robotState.joints)
     const [isPlaying, setIsPlaying] = useState(false)
 
+    const listeners = useRef([])
+
+    const notifyArticularChange = (joints) => {
+        listeners.current.forEach(cb => cb(joints))
+    }
+
+    const subscribeArticular = (cb) => {
+        listeners.current.push(cb)
+        return () => {
+            listeners.current = listeners.current.filter(l => l !== cb)
+        }
+      }
+
     useEffect(() => {
         jointsRef.current = robotState.joints
         // console.log(robotState.joints)
@@ -97,6 +110,8 @@ export const RobotStateProvider = ({ children }) => {
                     return Math.round(startVal + t * (endVal - startVal))
                 })
 
+                notifyArticularChange(newJoints)
+
                 const newEndEffectors = initialEndEffectors.map((startVal, i) => {
                     const endVal = endEffectorsTarget[i]
                     return Math.round(startVal + t * (endVal - startVal))
@@ -139,7 +154,7 @@ export const RobotStateProvider = ({ children }) => {
     return (
         <RobotStateContext.Provider value={{
             cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying,
-            robotConfig, robotState, setRobotState, robotApi
+            robotConfig, robotState, setRobotState, robotApi, subscribeArticular
         }}>
             {children}
         </RobotStateContext.Provider>
