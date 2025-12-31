@@ -3,15 +3,17 @@ import { useRobotState } from "./RobotState";
 import { RobotConfigProvider, useRobotConfig } from "./RobotConfig";
 import { debounce, throttle } from 'lodash'
 import { useMemo } from "react";
+
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { setCartesian, isPlaying } = useRobotState()
+    // [ ] Chequear cosas innecesarias para saber si puedo cambiar la jerarquía a WebSocket -> RobotState
+    const { setCartesian, isPlaying } = useRobotState() //Parece necesario 
     const state = useRobotState()
-    const setJoints = state.robotApi.setJoints
-    const joints = state.robotState.joints
-    const robotConfig = state.robotConfig
-    const { setRobotConfig } = useRobotConfig()
+    const setJoints = state.robotApi.setJoints //Parece necesario
+    const joints = state.robotState.joints //Innecesario, savePos puede funcionar con parámetros
+    // const robotConfig = state.robotConfig
+    const { setRobotConfig } = useRobotConfig() //Puede eliminarse robotConfigContext
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)
     const [logs, setLogs] = useState([])
@@ -97,7 +99,7 @@ export const WebSocketProvider = ({ children }) => {
                 if (data.type === "JOINTS") setJoints(data.values) // [ ] Cambiar por moveRobot
                 else if (data.type === "COORDS") {
                     setCartesian(data.values)
-                    console.log(data.values)
+                    
                 } //Dejar esto con callbacks también
                 // setLogs(prev => [...prev, data])
             } catch {
@@ -346,7 +348,6 @@ export const WebSocketProvider = ({ children }) => {
     }
     
     const send = (obj) => {
-        console.log("SEND: ", obj)
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
@@ -358,17 +359,19 @@ export const WebSocketProvider = ({ children }) => {
     //     }, 300),
     //     []
     // )
-    const debouncedSend = useMemo(
+    const throttledSend = useMemo(
         () =>
             throttle((type, values) => {
-                send({ type: type, values })
+                send({ type: type, values: values })
             }, 20), // 👈 frecuencia
         [send]
     ) //Para corregir esto bastará con modificar moveRobot para que haga una interpolación o darle como tiempo los ms de la frecuencia
 
     useEffect(()=>{
-        if (isPlaying) debouncedSend("articular_move", joints)
-    },[joints])
+        if (isPlaying) send({type: 'articular_move', values: joints})
+    },[joints]) 
+
+    
     // const debouncedSend = debounce((type, values) => {
     //     if(isPlaying === true) return
     //     send({ type: type, values: values })
@@ -379,7 +382,7 @@ export const WebSocketProvider = ({ children }) => {
         <WebSocketContext.Provider value={{
             ws,
             isConnected, isConnecting,
-            initializeWebSocket, disconnect, debouncedSend,
+            initializeWebSocket, disconnect, throttledSend,
             logs, setLogs,
             positions, savePos, deletePos, updatePos,
             IP, setIP,

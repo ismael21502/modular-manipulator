@@ -40,6 +40,7 @@ export const RobotStateProvider = ({ children }) => {
 
     useEffect(() => {
         jointsRef.current = robotState.joints
+        // console.log(robotState.joints)
     }, [robotState.joints])
 
 

@@ -10,7 +10,7 @@ import validateNumber from '../../../utils/validate';
 function CartesianControl() {
     const { colors } = useTheme()
     // const [tempCoords, setTempCoords] = useState({ X: "0", Y: "0", Z: "0" });
-    const { debouncedSend } = useWebSocket()
+    const { throttledSend } = useWebSocket()
     const { cartesian, setCartesian, cartesianConfig, isPlaying } = useRobotState()
 
     const [tempValues, setTempValues] = useState(cartesianConfig.map(axis => {
@@ -40,7 +40,7 @@ function CartesianControl() {
         setCartesian(prev => {
             const newVals = [...prev]
             newVals[i] = val
-            debouncedSend("cartesian_move", newVals)
+            throttledSend("cartesian_move", newVals)
             return newVals
         })
     }

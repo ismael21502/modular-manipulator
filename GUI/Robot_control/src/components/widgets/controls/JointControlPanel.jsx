@@ -11,7 +11,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 function ManualControl({ }) {
   const { colors } = useTheme()
   // const { joints, setJoints } = useRobotState()
-  const { debouncedSend } = useWebSocket()
+  const { throttledSend } = useWebSocket()
   const state = useRobotState()
 
   const jointConfig = state.robotConfig.joints
@@ -45,7 +45,9 @@ function ManualControl({ }) {
 
   const setVal = (i, val) => {
     setJoint(i, val)
-    debouncedSend("articular_move", joints)
+    const newJoints = [...joints]
+    newJoints[i] = val
+    throttledSend("articular_move", newJoints)
   }
 
   const commitVal = (i, val, min, max) => {
@@ -55,7 +57,7 @@ function ManualControl({ }) {
   }
 
   const handleGotoZero = () => {
-    debouncedSend.cancel()
+    throttledSend.cancel()
     gotoPos(jointConfig.map(joint => joint.default), endEffectorsConfig.map(effector => effector.default), 200)
   }
   return (
