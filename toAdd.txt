@@ -11,18 +11,18 @@ Speed override global (slider 0–200%)
 
 Parámetros del trapezoidal
 
-Host/puerto por defecto
+Host/puerto por defecto 
 
 Theme
 
-(Opcional) selección del modelo 3D
+(Opcional) selección del modelo 3D (X NO)
 
 robotConfig.json validation with zod/yup
 
 Considerate to make a linear gripper
 Take joint values in "moveRobot" function from the backend and add a simulation mode.
 
-Make edit sequence function
+Make edit sequence function **
 Make pause movement function
 
 Now all the joints are revolute. I want to be able to use also linear, continuous, etc.
@@ -38,3 +38,4 @@ Corregir animaciones
 
 
 Siguiente paso: construir el modelo 3D desde le robotConfig
+Terminar el gizmo

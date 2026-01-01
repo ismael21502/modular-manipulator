@@ -1,23 +1,23 @@
 [
   {
-    "name": "Zero",
-    "values": [
-      0,
-      0,
-      0,
-      0
-    ],
-    "endEffectorValues": [
-      0
-    ]
-  },
-  {
     "name": "Home",
     "values": [
       0,
       -25,
       65,
       90
+    ],
+    "endEffectorValues": [
+      0
+    ]
+  },
+  {
+    "name": "Zero",
+    "values": [
+      0,
+      0,
+      0,
+      0
     ],
     "endEffectorValues": [
       0

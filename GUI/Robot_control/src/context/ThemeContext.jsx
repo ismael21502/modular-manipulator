@@ -9,6 +9,7 @@ export const ThemeProvider = ({ children }) => {
     const theme = {
         colors: {
             background: mode === "light" ? "#ffffff" : "#0c0f1a",
+            backgroundSubtle: mode === "light" ? "#f7f7f7ff" : "#070911",
 
             primary: primary,
             primaryDark: mode === "light" ? "#5a2ac9" : "#6a3cdc",

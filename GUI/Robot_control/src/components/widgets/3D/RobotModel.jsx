@@ -6,13 +6,14 @@ import { useEffect } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
 import { useRobotState } from '../../../context/RobotState';
 import OrientationGizmo from './AxisWidget';
+import CloseIcon from '@mui/icons-material/Close';
 // import { GizmoOverlay } from './GizmoOverlay';
 // import AxisWidget from './AxisWidget';
-  
+
 export function Model({ url }) {
   const { scene } = useGLTF(url)
   const state = useRobotState()
-  
+
   const joints = state.robotState.joints
   const endEffectors = state.robotState.endEffectors
 
@@ -59,12 +60,12 @@ function RobotModel({ }) {
   const max_Y = 1
   const max_Z = 1
 
-  const gridSize = 1 //mts
+  const gridSize = 2//mts
   const divisionSize = 100 //mm
   const divisions = gridSize * (1000 / divisionSize)
   return (
-    <div className='flex flex-1 h-full border-x-1 border-solid'
-      style={{ borderColor: colors.border }}>
+    <div className='flex relative flex-1 h-full border-x-1 border-solid'
+      style={{ borderColor: colors.border, backgroundColor: colors.backgroundSubtle }}>
 
       <Canvas camera={{ position: [0, 0.2, 0.30], fov: 70 }}
       >
@@ -72,23 +73,36 @@ function RobotModel({ }) {
 
         <Environment preset="city" />
         <gridHelper args={[gridSize, divisions, '#3c9439', '#9e9e9e']} />
-        <mesh>
+        {/* <mesh>
           <boxGeometry args={[max_X, max_Y, max_Z]} />
           <meshBasicMaterial color="#666" wireframe opacity={0.2} transparent />
-        </mesh>
+        </mesh> */}
         {/* <axesHelper args={[1.5]} /> */}
 
         <Model url="/Modbot.glb" />
         <OrbitControls makeDefault />
-        <GizmoHelper alignment="top-right" margin={[65,65]}>
-          <OrientationGizmo size={12}/>
+        <GizmoHelper alignment="top-right" margin={[65, 65]}>
+          <OrientationGizmo size={10} />
           {/* <GizmoViewport /> */}
         </GizmoHelper>
-         {/* <GizmoOverlay>
-          <OrientationGizmo />
-        </GizmoOverlay>
-       */}
+
       </Canvas>
+      <div className="flex flex-col p-3 text-xs absolute top-5 left-5 rounded-lg"
+        style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.background, color: colors.text.primary }}>
+        <div className="flex justify-between items-center">
+          <p style={{ color: colors.text.title, fontWeight: 'bold' }}>Controles 3D</p>
+          {/* <button>
+            <CloseIcon fontSize='small' color={colors.text.title} className={`hover:text-red-400 cursor-pointer`} />
+          </button> */}
+        </div>
+        <div className='w-full my-1.5' style={{ height: "1px", backgroundColor: colors.border }} />
+
+        <div className="flex flex-col">
+          <p className='flex justify-between gap-5'>Rotar<span className='font-bold' style={{ color: colors.primaryDark }}>Arrastrar</span></p>
+          <p className='flex justify-between gap-5'>Mover<span className='font-bold' style={{ color: colors.primaryDark }}>Arrastrar (der.)</span></p>
+          <p className='flex justify-between gap-5'>Zoom<span className='font-bold' style={{ color: colors.primaryDark }}>Rueda </span></p>
+        </div>
+      </div>
     </div>
   );
 }

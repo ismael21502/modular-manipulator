@@ -182,5 +182,191 @@
         "label": "Paso 4"
       }
     ]
+  },
+  {
+    "name": "Test1",
+    "updated_at": "2026-01-01T12:02:52.269Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -25,
+          65,
+          90
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          0,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 2"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          45,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 3"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          45,
+          25
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 4"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          45,
+          25
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 5"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          45,
+          45,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 6"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          45,
+          45,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 7"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          45,
+          45,
+          25
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 8"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          45,
+          45,
+          25
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 9"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          45,
+          45,
+          0
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 10"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          45,
+          45,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 11"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          -180,
+          45,
+          0,
+          0
+        ],
+        "endEffectors": [
+          100
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 12"
+      }
+    ]
   }
 ]
