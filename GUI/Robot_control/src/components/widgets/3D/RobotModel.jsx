@@ -1,12 +1,14 @@
 import React from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
+import { Canvas, useLoader, useThree } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Environment, GizmoHelper, GizmoViewport } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
 import { useRobotState } from '../../../context/RobotState';
+import OrientationGizmo from './AxisWidget';
+// import { GizmoOverlay } from './GizmoOverlay';
 // import AxisWidget from './AxisWidget';
-
+  
 export function Model({ url }) {
   const { scene } = useGLTF(url)
   const state = useRobotState()
@@ -28,7 +30,7 @@ export function Model({ url }) {
     const limb1 = scene.getObjectByName("Finger1")
     const limb2 = scene.getObjectByName("Finger2")
 
-    if (J1) J1.rotation.y = degToRad(joints[0] + 90) //[ ] Este offset no debería existir
+    if (J1) J1.rotation.y = degToRad(joints[0] - 90) //[ ] Este offset no debería existir
     if (J2) J2.rotation.x = degToRad(joints[1])
     if (J3) J3.rotation.x = degToRad(joints[2])
     if (J4) J4.rotation.x = degToRad(joints[3])
@@ -44,8 +46,15 @@ export function Model({ url }) {
 
   return <primitive object={scene} />;
 }
+
 function RobotModel({ }) {
   const { colors } = useTheme()
+  // const { camera } = useThree()
+  // const q = camera.quaternion
+
+  // useEffect(()=>{
+  //   console.log("!: ", q)
+  // },[q])
   const max_X = 1
   const max_Y = 1
   const max_Z = 1
@@ -70,8 +79,15 @@ function RobotModel({ }) {
         {/* <axesHelper args={[1.5]} /> */}
 
         <Model url="/Modbot.glb" />
-        <OrbitControls />
-
+        <OrbitControls makeDefault />
+        <GizmoHelper alignment="top-right" margin={[65,65]}>
+          <OrientationGizmo size={12}/>
+          {/* <GizmoViewport /> */}
+        </GizmoHelper>
+         {/* <GizmoOverlay>
+          <OrientationGizmo />
+        </GizmoOverlay>
+       */}
       </Canvas>
     </div>
   );
