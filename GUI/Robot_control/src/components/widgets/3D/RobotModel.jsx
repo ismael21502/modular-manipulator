@@ -1,6 +1,6 @@
-import React from 'react';
-import { Canvas, useLoader, useThree } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, GizmoHelper, GizmoViewport } from '@react-three/drei';
+import React, { useRef } from 'react';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Environment, GizmoHelper, GizmoViewport, Html, Billboard } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
@@ -48,14 +48,33 @@ export function Model({ url }) {
   return <primitive object={scene} />;
 }
 
+const TCPCursor = ({ color = null, position }) => {
+  const { colors } = useTheme()
+  if (!color) color = colors.primary
+  return (
+      <Html center position={position}>
+        <div className="flex relative justify-center items-center w-7 h-7 rounded-full"
+          style={{ backgroundColor: `${color}3A`, border: `2px dashed ${color}` }}>
+          <div className="flex w-2 h-2 rounded-full"
+            style={{ backgroundColor: color }}>
+
+          </div>
+          <div className="flex absolute w-10 h-[2px] rounded-full"
+            style={{ backgroundColor: color }}>
+
+          </div>
+          <div className="flex absolute w-[2px] h-10 rounded-full"
+            style={{ backgroundColor: color }}>
+
+          </div>
+        </div>
+      </Html>      
+  )
+}
+
 function RobotModel({ }) {
   const { colors } = useTheme()
-  // const { camera } = useThree()
-  // const q = camera.quaternion
-
-  // useEffect(()=>{
-  //   console.log("!: ", q)
-  // },[q])
+  const { cartesian } = useRobotState()
   const max_X = 1
   const max_Y = 1
   const max_Z = 1
@@ -73,14 +92,12 @@ function RobotModel({ }) {
 
         <Environment preset="city" />
         <gridHelper args={[gridSize, divisions, '#3c9439', '#9e9e9e']} />
-        {/* <mesh>
-          <boxGeometry args={[max_X, max_Y, max_Z]} />
-          <meshBasicMaterial color="#666" wireframe opacity={0.2} transparent />
-        </mesh> */}
-        {/* <axesHelper args={[1.5]} /> */}
 
         <Model url="/Modbot.glb" />
         <OrbitControls makeDefault />
+
+        <TCPCursor position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
+
         <GizmoHelper alignment="top-right" margin={[65, 65]}>
           <OrientationGizmo size={10} />
           {/* <GizmoViewport /> */}

@@ -79,7 +79,7 @@
                 "translation": [
                     0,
                     0,
-                    10
+                    20
                 ],
                 "rotation": [
                     90,
@@ -107,7 +107,7 @@
             "origin": {
                 "translation": [
                     0,
-                    10,
+                    43,
                     0
                 ],
                 "rotation": [
@@ -136,7 +136,7 @@
             "origin": {
                 "translation": [
                     0,
-                    10,
+                    43,
                     0
                 ],
                 "rotation": [
@@ -161,7 +161,7 @@
         "origin": {
             "translation": [
                 0,
-                15,
+                100,
                 0
             ],
             "rotation": [

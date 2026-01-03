@@ -2,6 +2,7 @@ import { useThree, useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '../../../context/ThemeContext'
 import { Line, Html, Text } from '@react-three/drei'
+import { Billboard } from '@react-three/drei'
 
 export default function OrientationGizmo({ size }) {
     const { colors } = useTheme()
@@ -11,18 +12,46 @@ export default function OrientationGizmo({ size }) {
         <group
             position={[0, 0, 0]}
             scale={[size, size, size]}
-
         >
-            <AxisDot color={colors.axes.x} direction={[1, 0, 0]} label={"X"} />
-            <AxisDot color={colors.axes.x} direction={[-1, 0, 0]} negative={true} />
-            <AxisDot color={colors.axes.z} direction={[0, 1, 0]} label={"Z"} />
-            <AxisDot color={colors.axes.z} direction={[0, -1, 0]} negative={true} />
-            <AxisDot color={colors.axes.y} direction={[0, 0, -1]} label={"Y"} />
-            <AxisDot color={colors.axes.y} direction={[0, 0, 1]} negative={true} />
+            <AxisDot size={size} color={colors.axes.x} direction={[1, 0, 0]} label={"X"} />
+            <AxisDot size={size} color={colors.axes.x} direction={[-1, 0, 0]} negative={true} />
+            <AxisDot size={size} color={colors.axes.z} direction={[0, 1, 0]} label={"Z"} />
+            <AxisDot size={size} color={colors.axes.z} direction={[0, -1, 0]} negative={true} />
+            <AxisDot size={size} color={colors.axes.y} direction={[0, 0, -1]} label={"Y"} />
+            <AxisDot size={size} color={colors.axes.y} direction={[0, 0, 1]} negative={true} />
 
             <AxisLine color={colors.axes.x} direction={[1, 0, 0]} />
             <AxisLine color={colors.axes.z} direction={[0, 1, 0]} />
             <AxisLine color={colors.axes.y} direction={[0, 0, -1]} />
+
+            <Billboard
+                position={[0, 0, 0]} // Lo elevamos un poco
+                follow={true} // Esto es TRUE por defecto, pero lo pongo explícito
+            >
+                <mesh>
+                    <planeGeometry args={[1, 1]} />
+                    {/* Usamos DoubleSide para asegurarnos de que se vea bien, 
+                              aunque el Billboard debería evitar que veamos la espalda */}
+                    <meshBasicMaterial color="#ff3366" />
+                </mesh>
+            </Billboard>
+
+            <Html 
+            pointerEvents='none'
+            center>
+                <div className="rounded-full relative"
+                style={{width: size*11, height: size*11, backgroundColor: hovered?  `${colors.text.primary}0F`: 'transparent'}}
+                    onMouseEnter={(e) => {
+                        e.stopPropagation()
+                        setHovered(true)
+                    }}
+                    onMouseLeave={(e) => {
+                        e.stopPropagation()
+                        setHovered(false)
+                    }}
+                    onClick={(e) => console.log("CLICK 2")}
+                    ></div>
+            </Html>
             {/* <group>
                 <mesh
                     onPointerOver={(e) => {
@@ -42,25 +71,15 @@ export default function OrientationGizmo({ size }) {
     )
 }
 
-const AxisDot = ({ color, negative = false, direction = [0, 0, 0], label }) => {
+const AxisDot = ({ color, negative = false, direction = [0, 0, 0], label, size }) => {
     const [hovered, setHovered] = useState(false)
-    
+
     return (
         <mesh
             position={direction.map(v => v * 4)}
             onClick={(e) => console.log(direction)}
-            onPointerOver={(e) => {
-                e.stopPropagation()
-                setHovered(true)
-                console.log(label)
-            }}
-            onPointerOut={(e) => {
-                e.stopPropagation()
-                setHovered(false)
-            }}>
-            <sphereGeometry args={[negative ? hovered ? 1 : 0.8 : hovered ? 1.1 : 1, 16, 16]} />
-            {/* <boxGeometry /> */}
-            <meshBasicMaterial color={color} transparent opacity={negative ? 0.75 : 1} />
+            >
+
             <Html
                 position={[0, 0, 0]}
                 center
@@ -73,7 +92,20 @@ const AxisDot = ({ color, negative = false, direction = [0, 0, 0], label }) => {
                     pointerEvents: "none",
                 }}
             >
-                {label}
+                <div className="flex justify-center items-center rounded-full"
+                    onMouseEnter={(e) => {
+                        e.stopPropagation()
+                        setHovered(true)
+                        console.log(label)
+                    }}
+                    onMouseLeave={(e) => {
+                        e.stopPropagation()
+                        setHovered(false)
+                }}
+                onClick={(e)=>console.log("CLICK")}
+                style={{backgroundColor: color, width: size*2, height: size*2, scale: hovered? 1.1 : 1}}>
+                    {label}
+                </div>
             </Html>
         </mesh>
     )
