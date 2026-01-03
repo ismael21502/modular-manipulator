@@ -9,6 +9,8 @@ import OrientationGizmo from './AxisWidget';
 import CloseIcon from '@mui/icons-material/Close';
 // import { GizmoOverlay } from './GizmoOverlay';
 // import AxisWidget from './AxisWidget';
+import * as THREE from 'three'
+import { CameraControls } from '@react-three/drei';
 
 export function Model({ url }) {
   const { scene } = useGLTF(url)
@@ -50,34 +52,45 @@ export function Model({ url }) {
 
 const TCPCursor = ({ color = null, position }) => {
   const { colors } = useTheme()
-  if (!color) color = colors.primary
+  const finalColor = color || colors.primary
+
+  if (!position || position.some(v => isNaN(v))) return null
+
   return (
-      <Html center position={position}>
-        <div className="flex relative justify-center items-center w-7 h-7 rounded-full"
-          style={{ backgroundColor: `${color}3A`, border: `2px dashed ${color}` }}>
-          <div className="flex w-2 h-2 rounded-full"
-            style={{ backgroundColor: color }}>
+    <group position={position}>
+      <Html
+        center
+        className="pointer-events-none select-none"
+      >
+        <div className="relative flex items-center justify-center w-7 h-7">
+          <div
+            className="absolute inset-0 rounded-full border-2 border-dashed opacity-80"
+            style={{
+              borderColor: finalColor,
+              backgroundColor: `${finalColor}22`,
+              animation: 'spin 10s linear infinite'
+            }}
+          />
 
-          </div>
-          <div className="flex absolute w-10 h-[2px] rounded-full"
-            style={{ backgroundColor: color }}>
+          <div className="absolute w-10 h-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
+          <div className="absolute h-10 w-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
 
-          </div>
-          <div className="flex absolute w-[2px] h-10 rounded-full"
-            style={{ backgroundColor: color }}>
-
-          </div>
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{
+              backgroundColor: finalColor,
+            }}
+          />
         </div>
-      </Html>      
+      </Html>
+    </group>
   )
 }
 
 function RobotModel({ }) {
   const { colors } = useTheme()
   const { cartesian } = useRobotState()
-  const max_X = 1
-  const max_Y = 1
-  const max_Z = 1
+  const cameraControlsRef = useRef()
 
   const gridSize = 2//mts
   const divisionSize = 100 //mm
@@ -94,13 +107,19 @@ function RobotModel({ }) {
         <gridHelper args={[gridSize, divisions, '#3c9439', '#9e9e9e']} />
 
         <Model url="/Modbot.glb" />
-        <OrbitControls makeDefault />
+        {/* <OrbitControls makeDefault /> */}
+        <CameraControls ref={cameraControlsRef} makeDefault />
 
         <TCPCursor position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
 
         <GizmoHelper alignment="top-right" margin={[65, 65]}>
-          <OrientationGizmo size={10} />
-          {/* <GizmoViewport /> */}
+          {/* <GizmoViewport labelColor='white'/> */}
+          <OrientationGizmo size={10} onSetDirection={
+            (e)=>{
+              const distance = 0.5
+              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance, e[2] * distance,0,0,0, true);
+            }
+          }/>
         </GizmoHelper>
 
       </Canvas>
