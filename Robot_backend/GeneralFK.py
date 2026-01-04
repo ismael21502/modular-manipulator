@@ -125,7 +125,7 @@ def GeneralFK(joints, jointValues, end_effectors):
 
     R = T[0:3, 0:3]
     roll, pitch, yaw = rotationMatrixToRPY(R)
-
+    
     return [
         float(pos[0]),
         float(pos[1]),

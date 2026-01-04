@@ -200,7 +200,6 @@ async def calculate_ik(cartesian_values: list[int]):
 async def calculate_fk(articular_values: list[int]):
     joints = robotConfig['joints']
     endEffectors = robotConfig['end_effectors']
-    print("Articular: ", articular_values)
     forwardKinematics = GeneralFK(joints, articular_values, endEffectors)
     forwardKinematics = np.round(forwardKinematics, 0).tolist()
     

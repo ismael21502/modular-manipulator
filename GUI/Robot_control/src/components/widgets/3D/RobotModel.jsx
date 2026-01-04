@@ -7,10 +7,8 @@ import { useTheme } from '../../../context/ThemeContext';
 import { useRobotState } from '../../../context/RobotState';
 import OrientationGizmo from './AxisWidget';
 import CloseIcon from '@mui/icons-material/Close';
-// import { GizmoOverlay } from './GizmoOverlay';
-// import AxisWidget from './AxisWidget';
-import * as THREE from 'three'
 import { CameraControls } from '@react-three/drei';
+import ConstantSizeWidget from './TCPCursor';
 
 export function Model({ url }) {
   const { scene } = useGLTF(url)
@@ -50,42 +48,42 @@ export function Model({ url }) {
   return <primitive object={scene} />;
 }
 
-const TCPCursor = ({ color = null, position }) => {
-  const { colors } = useTheme()
-  const finalColor = color || colors.primary
+// const TCPCursor = ({ color = null, position }) => {
+//   const { colors } = useTheme()
+//   const finalColor = color || colors.primary
 
-  if (!position || position.some(v => isNaN(v))) return null
+//   if (!position || position.some(v => isNaN(v))) return null
 
-  return (
-    <group position={position}>
-      <Html
-        center
-        className="pointer-events-none select-none"
-      >
-        <div className="relative flex items-center justify-center w-7 h-7">
-          <div
-            className="absolute inset-0 rounded-full border-2 border-dashed opacity-80"
-            style={{
-              borderColor: finalColor,
-              backgroundColor: `${finalColor}22`,
-              animation: 'spin 10s linear infinite'
-            }}
-          />
+//   return (
+//     <group position={position}>
+//       <Html
+//         center
+//         className="pointer-events-none select-none"
+//       >
+//         <div className="relative flex items-center justify-center w-7 h-7">
+//           <div
+//             className="absolute inset-0 rounded-full border-2 border-dashed opacity-80"
+//             style={{
+//               borderColor: finalColor,
+//               backgroundColor: `${finalColor}22`,
+//               animation: 'spin 10s linear infinite'
+//             }}
+//           />
 
-          <div className="absolute w-10 h-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
-          <div className="absolute h-10 w-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
+//           <div className="absolute w-10 h-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
+//           <div className="absolute h-10 w-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
 
-          <div
-            className="w-2 h-2 rounded-full"
-            style={{
-              backgroundColor: finalColor,
-            }}
-          />
-        </div>
-      </Html>
-    </group>
-  )
-}
+//           <div
+//             className="w-2 h-2 rounded-full"
+//             style={{
+//               backgroundColor: finalColor,
+//             }}
+//           />
+//         </div>
+//       </Html>
+//     </group>
+//   )
+// }
 
 function RobotModel({ }) {
   const { colors } = useTheme()
@@ -99,7 +97,7 @@ function RobotModel({ }) {
     <div className='flex relative flex-1 h-full border-x-1 border-solid'
       style={{ borderColor: colors.border, backgroundColor: colors.backgroundSubtle }}>
 
-      <Canvas camera={{ position: [0, 0.2, 0.30], fov: 70 }}
+      <Canvas camera={{ position: [0, 0.2, 0.70], fov: 35 }}
       >
         <ambientLight intensity={0.01} />
 
@@ -110,18 +108,26 @@ function RobotModel({ }) {
         {/* <OrbitControls makeDefault /> */}
         <CameraControls ref={cameraControlsRef} makeDefault />
 
-        <TCPCursor position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
+        {/* <TCPCursor position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} /> */}
 
         <GizmoHelper alignment="top-right" margin={[65, 65]}>
           {/* <GizmoViewport labelColor='white'/> */}
           <OrientationGizmo size={10} onSetDirection={
-            (e)=>{
-              const distance = 0.5
-              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance, e[2] * distance,0,0,0, true);
-            }
-          }/>
-        </GizmoHelper>
+            (e) => {
+              const distance = 0.4
+              // const position = cameraControlsRef.current.getPosition()
+              // console.log(position)
+              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance, e[2] * distance, 0, 0, 0, true)
 
+            }
+          } />
+        </GizmoHelper>
+        <ConstantSizeWidget text={"Z"} color={colors.primary} position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
+        {/* <Billboard>
+          <Html transform distanceFactor={-1.5} >
+            <div className="w-10 h-10 bg-red-600"></div>
+          </Html>
+        </Billboard> */}
       </Canvas>
       <div className="flex flex-col p-3 text-xs absolute top-5 left-5 rounded-lg"
         style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.background, color: colors.text.primary }}>

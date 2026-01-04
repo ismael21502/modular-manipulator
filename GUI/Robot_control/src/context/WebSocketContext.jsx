@@ -7,14 +7,12 @@ import { useMemo } from "react";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    // [ ] Chequear cosas innecesarias para saber si puedo cambiar la jerarquía a WebSocket -> RobotState
-    const { setCartesian, isPlaying } = useRobotState() //Parece necesario 
+    const { setCartesian, isPlaying } = useRobotState()  
     const state = useRobotState()
-    const setJoints = state.robotApi.setJoints //Parece necesario
-    const joints = state.robotState.joints //Innecesario, savePos puede funcionar con parámetros
+    const setJoints = state.robotApi.setJoints 
 
     const { subscribeArticular } = useRobotState()
-    const { setRobotConfig } = useRobotConfig() //Puede eliminarse robotConfigContext
+    const { setRobotConfig } = useRobotConfig() 
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)
     const [logs, setLogs] = useState([])
@@ -64,6 +62,8 @@ export const WebSocketProvider = ({ children }) => {
             setIsConnected(true)
             setIsConnecting(false)
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Conexión establecida" }])
+            send({ type: "articular_move", values: robot_config.joints.map(j => j.default) })
+            console.log(robot_config.joints.map(j => j.default))
             loadPositions()
             loadSequences()
         }
@@ -89,6 +89,7 @@ export const WebSocketProvider = ({ children }) => {
             console.error("WebSocket error:", err)
         }
         const handleMessage = (event) => {
+            console.log("Receiving: ", event.data)
             try {
                 let data;
                 if (typeof event.data === "string") {
@@ -349,6 +350,7 @@ export const WebSocketProvider = ({ children }) => {
     }
     
     const send = (obj) => {
+        console.log("SENDING", obj)
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
