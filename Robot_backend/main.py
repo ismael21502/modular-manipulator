@@ -8,7 +8,7 @@ import os
 import time
 from InverseKinematics import Inverse_Kinematics
 from ForwardKinematics import fk_func
-from GeneralFK import GeneralFK
+from GeneralFK import GeneralFK, GeneralFK_sym
 import numpy as np
 
 app = FastAPI()
@@ -23,6 +23,7 @@ app.add_middleware(
 active_connections = []
 esp32_socket: WebSocket | None = None
 robotConfig = {}
+symbolicFK = None
 
 async def send_log(ws: WebSocket, catergory_, type_: str, message: str):
     """Envía un log con timestamp al cliente."""
@@ -167,11 +168,14 @@ async def get_positions():
 @app.get("/robot_config")
 async def get_robot_config():
     global robotConfig
+    global symbolicFK
     try:
         file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robotConfig.json")
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             robotConfig = data
+            symbolicFK, jointSymbols = GeneralFK_sym(robotConfig['joints'], robotConfig['end_effectors'])
+            print(symbolicFK, jointSymbols)
             # print(GeneralFK_symbolic(robotConfig['joints'], [0,0,-90,0]))
         return data
     except Exception as e:
@@ -198,24 +202,10 @@ async def calculate_ik(cartesian_values: list[int]):
     return result 
 
 async def calculate_fk(articular_values: list[int]):
-    joints = robotConfig['joints']
-    endEffectors = robotConfig['end_effectors']
-    forwardKinematics = GeneralFK(joints, articular_values, endEffectors)
+    forwardKinematics = GeneralFK([np.radians(value) for value in articular_values], symbolicFK)
     forwardKinematics = np.round(forwardKinematics, 0).tolist()
-    
-    # L1 = 0.02  # altura del primer eslabón (ajusta según tu modelo)
-    # L2 = 0.043
-    # L3 = 0.043
-    # L4 = 0.08
-
-    # x, y, z = fk_func(
-    #                 L1, L2, L3,
-    #                 math.radians(articular_values[0]),
-    #                 math.radians(articular_values[1]) - math.pi/2, #Offset porque zero debe ser extendido hacia arriba
-    #                 math.radians(articular_values[2])
-    #             )
-    # return [int(x*1000),int(y*1000),int(z*1000),0,0,0]
     return forwardKinematics
+
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):
     await ws.accept()

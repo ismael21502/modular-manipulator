@@ -1,23 +1,24 @@
 import numpy as np
+import sympy as sp
 
 def rotX(theta):
-    return np.array([
+    return sp.Matrix([
         [1, 0, 0],
-        [0, np.cos(theta), -np.sin(theta)],
-        [0, np.sin(theta),  np.cos(theta)]
+        [0, sp.cos(theta), -sp.sin(theta)],
+        [0, sp.sin(theta),  sp.cos(theta)]
     ])
 
 def rotY(theta):
-    return np.array([
-        [ np.cos(theta), 0, np.sin(theta)],
+    return sp.Matrix([
+        [ sp.cos(theta), 0, sp.sin(theta)],
         [ 0,             1, 0           ],
-        [-np.sin(theta), 0, np.cos(theta)]
+        [-sp.sin(theta), 0, sp.cos(theta)]
     ])
 
 def rotZ(theta):
-    return np.array([
-        [np.cos(theta), -np.sin(theta), 0],
-        [np.sin(theta),  np.cos(theta), 0],
+    return sp.Matrix([
+        [sp.cos(theta), -sp.sin(theta), 0],
+        [sp.sin(theta),  sp.cos(theta), 0],
         [0,              0,             1]
     ])
 
@@ -35,21 +36,17 @@ def rotationMatrixToRPY(R):
 
 def originTransform(translation, rotation):
     tx, ty, tz = translation
-    rx, ry, rz = np.radians(rotation)
+    rx, ry, rz = rotation  # ya en radianes
 
-    Rx = rotX(rx)
-    Ry = rotY(ry)
-    Rz = rotZ(rz)
+    R = rotZ(rz) * rotY(ry) * rotX(rx)
 
-    R = Rz @ Ry @ Rx
+    T = sp.eye(4)
+    T[:3, :3] = R
+    T[:3, 3] = sp.Matrix([tx, ty, tz])
 
-    T = np.eye(4)
-    T[0:3, 0:3] = R
-    T[0:3, 3] = [tx, ty, tz]
     return T
 
 def jointTransform(axis, theta):
-    theta = np.radians(theta)
     ax, ay, az = axis
 
     if ax == 1:
@@ -59,8 +56,8 @@ def jointTransform(axis, theta):
     else:
         R = rotZ(theta)
 
-    T = np.eye(4)
-    T[0:3, 0:3] = R
+    T = sp.eye(4)
+    T[:3, :3] = R
     return T
 
 def endEffectorTransform(endEffector):
@@ -69,68 +66,53 @@ def endEffectorTransform(endEffector):
         endEffector["origin"]["rotation"]
     )
 
-# def GeneralFK(joints, jointValues):
-#     T = np.eye(4)
 
-#     for joint, theta in zip(joints, jointValues):
-#         T_origin = originTransform(
-#             joint["origin"]["translation"],
-#             joint["origin"]["rotation"]
-#         )
+def GeneralFK_sym(joints, end_effectors=None):
+    T = sp.eye(4)
+    jointSymbols = ''
+    for i in range(len(joints)):
+        jointSymbols += f'theta{i}, '
 
-#         T_motion = jointTransform(
-#             joint["axis"],
-#             theta
-#         )
-
-#         T = T @ T_origin @ T_motion
-        
-#     pos = T[0:3, 3]
-#     R = T[0:3, 0:3]
-#     roll, pitch, yaw = rotationMatrixToRPY(R)
-    
-#     return [
-#         float(pos[0]),
-#         float(pos[1]),
-#         float(pos[2]),
-#         float(np.degrees(roll)),
-#         float(np.degrees(pitch)),
-#         float(np.degrees(yaw))
-#     ]
-
-def GeneralFK(joints, jointValues, end_effectors):
-    T = np.eye(4)
-
-    for joint, theta in zip(joints, jointValues):
+    jointSymbols = sp.symbols(jointSymbols)
+    for joint, theta in zip(joints, jointSymbols):
         T_origin = originTransform(
             joint["origin"]["translation"],
             joint["origin"]["rotation"]
         )
 
-        T_motion = jointTransform(
-            joint["axis"],
-            theta
-        )
+        T_motion = jointTransform(joint["axis"], theta)
 
-        T = T @ T_origin @ T_motion
+        T = T * T_origin * T_motion
 
-    if end_effectors:
-        endEffector = end_effectors[0] #[ ] Check if I can manage more end effectors
-        T = T @ originTransform(
+    if end_effectors: #[ ] Check if I can manage more than one ee
+        endEffector = end_effectors[0]
+        T = T * originTransform(
             endEffector["origin"]["translation"],
             endEffector["origin"]["rotation"]
         )
 
-    pos = T[0:3, 3]
+    T = sp.simplify(T)
 
-    R = T[0:3, 0:3]
-    roll, pitch, yaw = rotationMatrixToRPY(R)
+    fk_func = sp.lambdify(
+        jointSymbols,
+        T,
+        modules='numpy'
+    )
+
+    return fk_func, jointSymbols
+
+def GeneralFK(joints, fk_func):
+    # print("FUNCION: ", fk_func)
     
+    T = fk_func(*joints)
+    position = T[:3, 3]
+    rotation = T[:3, :3]
+    roll, pitch, yaw = rotationMatrixToRPY(rotation)
     return [
-        float(pos[0]),
-        float(pos[1]),
-        float(pos[2]),
-        float(np.degrees(roll)),
-        float(np.degrees(pitch)),
-        float(np.degrees(yaw))
+        float(position[0]),
+        float(position[1]),
+        float(position[2]),
+        float(roll),
+        float(pitch),
+        float(yaw)
     ]

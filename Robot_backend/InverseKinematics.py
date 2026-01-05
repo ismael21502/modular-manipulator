@@ -6,7 +6,7 @@ def Inverse_Kinematics(x, y, z):
     L2 = 0.043
     L3 = 0.043
     L4 = 0.1
-    angle_effector = math.radians(135)
+    angle_effector = math.radians(90)
     effector_dir = np.array([0, math.cos(angle_effector), math.sin(angle_effector)])
     x,y,z= [x,y,z] - L4*effector_dir
     theta1 = math.atan2(y, x)
