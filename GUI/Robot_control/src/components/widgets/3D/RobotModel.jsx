@@ -5,10 +5,10 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
 import { useTheme } from '../../../context/ThemeContext';
 import { useRobotState } from '../../../context/RobotState';
-import OrientationGizmo from './AxisWidget';
+import OrientationGizmo from './OrientationGizmo';
 import CloseIcon from '@mui/icons-material/Close';
 import { CameraControls } from '@react-three/drei';
-import ConstantSizeWidget from './TCPCursor';
+import TCPCursor from './TCPCursor';
 
 export function Model({ url }) {
   const { scene } = useGLTF(url)
@@ -48,42 +48,42 @@ export function Model({ url }) {
   return <primitive object={scene} />;
 }
 
-// const TCPCursor = ({ color = null, position }) => {
-//   const { colors } = useTheme()
-//   const finalColor = color || colors.primary
+const TCPCursor2 = ({ color = null, position }) => {
+  const { colors } = useTheme()
+  const finalColor = color || colors.primary
 
-//   if (!position || position.some(v => isNaN(v))) return null
+  if (!position || position.some(v => isNaN(v))) return null
 
-//   return (
-//     <group position={position}>
-//       <Html
-//         center
-//         className="pointer-events-none select-none"
-//       >
-//         <div className="relative flex items-center justify-center w-7 h-7">
-//           <div
-//             className="absolute inset-0 rounded-full border-2 border-dashed opacity-80"
-//             style={{
-//               borderColor: finalColor,
-//               backgroundColor: `${finalColor}22`,
-//               animation: 'spin 10s linear infinite'
-//             }}
-//           />
+  return (
+    <group position={position}>
+      <Html
+        center
+        className="pointer-events-none select-none"
+      >
+        <div className="relative flex items-center justify-center w-7 h-7">
+          <div
+            className="absolute inset-0 rounded-full border-2 border-dashed opacity-80"
+            style={{
+              borderColor: finalColor,
+              backgroundColor: `${finalColor}22`,
+              animation: 'spin 10s linear infinite'
+            }}
+          />
 
-//           <div className="absolute w-10 h-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
-//           <div className="absolute h-10 w-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
+          <div className="absolute w-10 h-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
+          <div className="absolute h-10 w-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
 
-//           <div
-//             className="w-2 h-2 rounded-full"
-//             style={{
-//               backgroundColor: finalColor,
-//             }}
-//           />
-//         </div>
-//       </Html>
-//     </group>
-//   )
-// }
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{
+              backgroundColor: finalColor,
+            }}
+          />
+        </div>
+      </Html>
+    </group>
+  )
+}
 
 function RobotModel({ }) {
   const { colors } = useTheme()
@@ -114,7 +114,7 @@ function RobotModel({ }) {
           {/* <GizmoViewport labelColor='white'/> */}
           <OrientationGizmo size={10} onSetDirection={
             (e) => {
-              const distance = 0.4
+              const distance = 0.7
               // const position = cameraControlsRef.current.getPosition()
               // console.log(position)
               cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance, e[2] * distance, 0, 0, 0, true)
@@ -122,12 +122,8 @@ function RobotModel({ }) {
             }
           } />
         </GizmoHelper>
-        <ConstantSizeWidget text={"Z"} color={colors.primary} position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
-        {/* <Billboard>
-          <Html transform distanceFactor={-1.5} >
-            <div className="w-10 h-10 bg-red-600"></div>
-          </Html>
-        </Billboard> */}
+        <TCPCursor color={colors.primary} position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
+        {/* <TCPCursor2 color={colors.primary} position={[1,1,1]}/> */}
       </Canvas>
       <div className="flex flex-col p-3 text-xs absolute top-5 left-5 rounded-lg"
         style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.background, color: colors.text.primary }}>
@@ -140,9 +136,9 @@ function RobotModel({ }) {
         <div className='w-full my-1.5' style={{ height: "1px", backgroundColor: colors.border }} />
 
         <div className="flex flex-col">
-          <p className='flex justify-between gap-5'>Rotar<span className='font-bold' style={{ color: colors.primaryDark }}>Arrastrar</span></p>
-          <p className='flex justify-between gap-5'>Mover<span className='font-bold' style={{ color: colors.primaryDark }}>Arrastrar (der.)</span></p>
-          <p className='flex justify-between gap-5'>Zoom<span className='font-bold' style={{ color: colors.primaryDark }}>Rueda </span></p>
+          <p className='flex justify-between gap-5'>Rotar<span className='font-bold' style={{ color: colors.primary }}>Arrastrar</span></p>
+          <p className='flex justify-between gap-5'>Mover<span className='font-bold' style={{ color: colors.primary }}>Arrastrar (der.)</span></p>
+          <p className='flex justify-between gap-5'>Zoom<span className='font-bold' style={{ color: colors.primary }}>Rueda </span></p>
         </div>
       </div>
     </div>

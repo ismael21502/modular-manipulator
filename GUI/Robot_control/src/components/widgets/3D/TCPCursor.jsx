@@ -45,9 +45,8 @@ import * as THREE from 'three'
 import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 
-export default function TCPCursor({ position, color = "#FFF" }) {
+export default function TCPCursor({ position, color = "#FFF", size = 1 }) {
   const meshRef = useRef()
-  const text = "A"
 
   // 1. Creamos el canvas y la textura UNA SOLA VEZ
   const { canvas, ctx, texture } = useMemo(() => {
@@ -115,7 +114,7 @@ export default function TCPCursor({ position, color = "#FFF" }) {
     const dist = meshRef.current.position.distanceTo(camera.position)
     const vFOV = (camera.fov * Math.PI) / 180
     const scaleHeight = 2 * Math.tan(vFOV / 2) * dist
-    const desiredScale = scaleHeight * 0.15
+    const desiredScale = scaleHeight * 0.15 * size
     meshRef.current.scale.set(desiredScale, desiredScale, 1)
   })
 
