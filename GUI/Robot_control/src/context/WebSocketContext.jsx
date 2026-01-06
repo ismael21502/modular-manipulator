@@ -366,7 +366,7 @@ export const WebSocketProvider = ({ children }) => {
         () =>
             throttle((type, values) => {
                 send({ type: type, values: values })
-            }, 20), // 👈 frecuencia
+            }, 60), // 👈 frecuencia
         [send]
     ) //Para corregir esto bastará con modificar moveRobot para que haga una interpolación o darle como tiempo los ms de la frecuencia
 

@@ -9,6 +9,7 @@ import time
 from InverseKinematics import Inverse_Kinematics
 from ForwardKinematics import fk_func
 from GeneralFK import GeneralFK, GeneralFK_sym
+from GeneralIK import GeneralIK, getNumJacobian
 import numpy as np
 
 app = FastAPI()
@@ -24,6 +25,7 @@ active_connections = []
 esp32_socket: WebSocket | None = None
 robotConfig = {}
 symbolicFK = None
+lastJoints = [0,0,0,0]
 
 async def send_log(ws: WebSocket, catergory_, type_: str, message: str):
     """Envía un log con timestamp al cliente."""
@@ -193,17 +195,26 @@ async def process_gui_command(ws: WebSocket, data: dict):
         
 
 async def calculate_ik(cartesian_values: list[int]):
+    global lastJoints
     x, y, z, _, _, _ = cartesian_values
     x /= 1000
     y /= 1000
     z /= 1000 
     values = Inverse_Kinematics(x,y,z)
     result = values
+    # print("IK: ", GeneralIK(symbolicFK, [0,0,0,0], [0,0,180]))
+    # print(lastJoints)
+    result = GeneralIK(symbolicFK, np.radians(lastJoints).tolist(), [x*1000,y*1000,z*1000])
+    
+    result = np.round(np.degrees(result),0).tolist()
+    lastJoints = result
     return result 
 
 async def calculate_fk(articular_values: list[int]):
+    global lastJoints
     forwardKinematics = GeneralFK([np.radians(value) for value in articular_values], symbolicFK)
     forwardKinematics = np.round(forwardKinematics, 0).tolist()
+    lastJoints = articular_values
     return forwardKinematics
 
 @app.websocket("/ws")

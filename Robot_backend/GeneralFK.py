@@ -103,7 +103,6 @@ def GeneralFK_sym(joints, end_effectors=None):
 
 def GeneralFK(joints, fk_func):
     # print("FUNCION: ", fk_func)
-    
     T = fk_func(*joints)
     position = T[:3, 3]
     rotation = T[:3, :3]
