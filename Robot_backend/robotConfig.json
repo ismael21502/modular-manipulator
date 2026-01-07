@@ -182,24 +182,24 @@
         {
             "id": "x",
             "label": "Eje X (Lateral)",
-            "min": -500,
-            "max": 500,
+            "min": -180,
+            "max": 180,
             "default": 0,
             "unit": "mm"
         },
         {
             "id": "y",
             "label": "Eje Y (Profundidad)",
-            "min": -500,
-            "max": 500,
+            "min": -180,
+            "max": 180,
             "default": 0,
             "unit": "mm"
         },
         {
             "id": "z",
             "label": "Eje Z (Vertical)",
-            "min": 0,
-            "max": 500,
+            "min": -50,
+            "max": 210,
             "default": 0,
             "unit": "mm"
         },

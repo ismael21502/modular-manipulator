@@ -117,7 +117,7 @@ function RobotModel({ }) {
               const distance = 0.7
               // const position = cameraControlsRef.current.getPosition()
               // console.log(position)
-              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance, e[2] * distance, 0, 0, 0, true)
+              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance +0.1, e[2] * distance, 0, 0.1, 0, true)
 
             }
           } />

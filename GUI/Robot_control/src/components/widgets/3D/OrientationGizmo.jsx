@@ -20,7 +20,7 @@ export default function OrientationGizmo({ size, onSetDirection }) {
             <AxisDot onClick={onSetDirection} size={size} color={colors.axes.y} direction={[0, 0, -1]} label={"Y"} />
             <AxisDot onClick={onSetDirection} size={size} color={colors.axes.y} direction={[0, 0, 1]} negative={true} />
 
-            <AxisDot onClick={onSetDirection} size={size*0.5} color={colors.text.title} direction={[0, 0, 0]} />
+            <AxisDot onClick={()=>{}} size={size*0.5} color={colors.text.title} direction={[0, 0, 0]} />
 
             <AxisLine color={colors.axes.x} direction={[1, 0, 0]} />
             <AxisLine color={colors.axes.z} direction={[0, 1, 0]} />
