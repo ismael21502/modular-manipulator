@@ -102,6 +102,9 @@ export const WebSocketProvider = ({ children }) => {
                 else if (data.type === "COORDS") {
                     setCartesian(data.values)
                     
+                } 
+                if(data.category === "log"){
+                    setLogs(prev => [...prev, { time: new Date().toISOString(), type: data.type, category: "log", values: data.values }])
                 } //Dejar esto con callbacks también
                 // setLogs(prev => [...prev, data])
             } catch {

@@ -1,6 +1,9 @@
-/RobotArmESP32/
+/RobotArmESP32/.pio
+/RobotArmESP32/.vscode
+/RobotArmESP32/test
+RobotArmESP32/src/SmoothServo.h
+RobotArmESP32/RobotArm.code-workspace
 /node_modules/
-Robot_backend/CCD.py
 /Robot_backend/__pycache__/
 Robot_backend/main2.py
 Robot.blend

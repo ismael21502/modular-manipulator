@@ -33,7 +33,6 @@ latest_ik_request = None
 ik_lock = asyncio.Lock()
 
 esp = ESP32Connection("COM5")
-esp.connect()
 
 async def send_log(ws: WebSocket, catergory_, type_: str, message: str):
     """Envía un log con timestamp al cliente."""
@@ -191,16 +190,23 @@ async def get_robot_config():
         print("Error leyendo robotConfig.json:", e)
         return {}
     
-async def process_gui_command(ws: WebSocket, data: dict):
+async def process_gui_command(ws: WebSocket, esp: ESP32Connection, data: dict):
     if data.get("type") == "cartesian_move":
-        
         await request_ik(ws, data.get("values"))
-        # await send_log(ws, "state", "JOINTS", ik_values)
     elif data.get("type") == "articular_move":
         joints = data.get("values")
         fk_values = await calculate_fk(joints)
-        esp.sendList(joints)
+        try:
+            await asyncio.to_thread(
+                esp.send,{
+                    "type": "move_joints",
+                    "values": [joint+90 for joint in joints]
+                }
+            )
+        except Exception as e:
+            pass
         await send_log(ws, "state", "COORDS", fk_values)
+
         
 async def calculate_ik(cartesian_values: list[int]):
     global lastJoints
@@ -241,6 +247,15 @@ async def ik_worker(ws: WebSocket):
         )
         result = np.round(np.degrees(result), 0).tolist()
         lastJoints = result
+        try:
+            await asyncio.to_thread(
+                esp.send,{
+                    "type": "move_joints",
+                    "values": [joint+90 for joint in result]
+                }
+            )
+        except Exception as e:
+            pass
         await send_log(ws, "state", "JOINTS", result)
 
 @app.websocket("/ws")
@@ -249,12 +264,13 @@ async def websocket_endpoint(ws: WebSocket):
     print(f"🟢 Cliente conectado desde {ws.client.host}")
     active_connections.append(ws)
     try:
+        esp.connect()
+    except Exception as e:
+        await send_log(ws, "log", "ERROR", f"Error conectando ESP32: {e}")
+    try:
         while True:
             msg = await ws.receive_text()
             msg = json.loads(msg)
-            await process_gui_command(ws, msg)
+            await process_gui_command(ws, esp, msg)
     except Exception as e:
         print("ERROR", e)
-    # while True:
-    #     await asyncio.sleep(10)
-    #     print("OLA")

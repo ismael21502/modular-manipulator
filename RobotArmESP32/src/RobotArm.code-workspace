@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "RobotArmESP32",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"ctime": "cpp",
+			"xlocale": "cpp",
+			"chrono": "cpp",
+			"functional": "cpp",
+			"random": "cpp"
+		}
+	}
+}

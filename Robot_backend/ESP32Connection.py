@@ -18,8 +18,8 @@ class ESP32Connection:
     def send(self, data: dict):
         if not self.ser:
             raise RuntimeError("ESP32 not connected")
-
         msg = json.dumps(data) + "\n"
+        # print(msg)
         self.ser.write(msg.encode())
 
     def sendList(self, values: list):

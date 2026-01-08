@@ -37,8 +37,8 @@
             "id": "j1",
             "label": "J1 (Base)",
             "type": "revolute",
-            "min": -180,
-            "max": 180,
+            "min": -90,
+            "max": 90,
             "default": 0,
             "unit": "deg",
 
@@ -121,8 +121,8 @@
             "id": "j4",
             "label": "J4 (Muñeca)",
             "type": "revolute",
-            "min": -180,
-            "max": 180,
+            "min": -90,
+            "max": 90,
             "default": 0,
             "unit": "deg",
 
