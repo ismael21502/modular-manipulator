@@ -11,7 +11,7 @@ export const WebSocketProvider = ({ children }) => {
     const state = useRobotState()
     const setJoints = state.robotApi.setJoints 
 
-    const { subscribeArticular } = useRobotState()
+    const { subscribeArticular, subscribeEndEffectors } = useRobotState()
     const { setRobotConfig } = useRobotConfig() 
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)
@@ -101,7 +101,6 @@ export const WebSocketProvider = ({ children }) => {
                 if (data.type === "JOINTS") setJoints(data.values) // [ ] Cambiar por moveRobot
                 else if (data.type === "COORDS") {
                     setCartesian(data.values)
-                    
                 } 
                 if(data.category === "log"){
                     setLogs(prev => [...prev, { time: new Date().toISOString(), type: data.type, category: "log", values: data.values }])
@@ -381,6 +380,13 @@ export const WebSocketProvider = ({ children }) => {
         return () => unsubscribe()
     }, [subscribeArticular, throttledSend])
 
+    useEffect(() => {
+        const unsubscribe = subscribeEndEffectors(endEffectors => {
+            throttledSend('end_effectors_move', endEffectors)
+        })
+
+        return () => unsubscribe()
+    }, [subscribeEndEffectors, throttledSend])
     return (
         <WebSocketContext.Provider value={{
             ws,

@@ -7,9 +7,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useRobotState } from '../../../context/RobotState';
 import validateNumber from '../../../utils/validate';
 import HandymanIcon from '@mui/icons-material/Handyman';
+import { useWebSocket } from '../../../context/WebSocketContext';
 
 function Gripper({ }) {
     const { colors } = useTheme()
+    const { throttledSend } = useWebSocket()
     const state = useRobotState()
     const endEffectors = state.robotState.endEffectors
     const setEndEffector = state.robotApi.setEndEffector
@@ -44,6 +46,9 @@ function Gripper({ }) {
 
     const setVal = (i, val) => {
         setEndEffector(i,val)
+        const newVals = [...endEffectors]
+        newVals[i] = val
+        throttledSend("end_effectors_move", newVals)
     }
     
     const commitVal = (i, val, min, max) => {

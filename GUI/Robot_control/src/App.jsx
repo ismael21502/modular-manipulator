@@ -10,14 +10,16 @@ import { useTheme } from "./context/ThemeContext.jsx"
 import { useState } from "react"
 import Tab from "./components/ui/nav/Tab.jsx"
 import CustomScroll from "./components/ui/scrolls/CustomScroll.jsx"
+import ConfigurationModal from "./components/widgets/modals/ConfigurationModal.jsx"
 
 function App() {
   const { colors } = useTheme()
   const [selectedMode, setSelectedMode] = useState("positions")
+  const [openConfig, setOpenConfig] = useState(true)
   return (
     <div className="h-[100vh] flex flex-col transition-colors duration-150 ease-in-out"
       style={{ backgroundColor: colors.background }}>
-      <Header title={"Robot control"} />
+      <Header title={"Robot control"} openConfig={()=>setOpenConfig(true)}/>
       <div className="flex flex-1 flex-row min-h-0">
         <div className="flex-[1_1_25%] min-w-0 min-h-0 flex flex-col">
           {/* tabs */}
@@ -47,9 +49,10 @@ function App() {
             <Gripper />
             <ManualControl />
           </CustomScroll>
-
         </div>
       </div>
+
+      {openConfig && <ConfigurationModal onClose={()=> setOpenConfig(false)}/>}
     </div>
 
   )

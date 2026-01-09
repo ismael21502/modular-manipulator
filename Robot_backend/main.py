@@ -12,7 +12,7 @@ from GeneralFK import GeneralFK, GeneralFK_sym
 from GeneralIK import GeneralIK
 import numpy as np
 from ESP32Connection import ESP32Connection
-
+from utils.mapValues import mapVal
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -206,7 +206,17 @@ async def process_gui_command(ws: WebSocket, esp: ESP32Connection, data: dict):
         except Exception as e:
             pass
         await send_log(ws, "state", "COORDS", fk_values)
-
+    elif data.get("type") == "end_effectors_move":
+        endEffectors = data.get("values")
+        try:
+            await asyncio.to_thread(
+                esp.send,{
+                    "type": "move_end_effector",
+                    "values": [mapVal(ee, 0, 100, 0, 180) for ee in endEffectors]
+                }
+            )
+        except Exception as e:
+            pass
         
 async def calculate_ik(cartesian_values: list[int]):
     global lastJoints

@@ -38,18 +38,30 @@ export const RobotStateProvider = ({ children }) => {
     const jointsRef = useRef(robotState.joints)
     const [isPlaying, setIsPlaying] = useState(false)
 
-    const listeners = useRef([])
+    const articularListeners = useRef([])
+    const endEffectorsListeners = useRef([])
 
     const notifyArticularChange = (joints) => {
-        listeners.current.forEach(cb => cb(joints))
+        articularListeners.current.forEach(callback => callback(joints))
     }
 
-    const subscribeArticular = (cb) => {
-        listeners.current.push(cb)
+    const notifyEndEffectorsChange = (endEffectors) => {
+        endEffectorsListeners.current.forEach(callback => callback(endEffectors))
+    }
+
+    const subscribeArticular = (callback) => {
+        articularListeners.current.push(callback)
         return () => {
-            listeners.current = listeners.current.filter(l => l !== cb)
+            articularListeners.current = articularListeners.current.filter(listener => listener !== callback)
         }
       }
+
+    const subscribeEndEffectors = (callback) => {
+        endEffectorsListeners.current.push(callback)
+        return () => {
+            endEffectorsListeners.current = endEffectorsListeners.current.filter(listener => listener !== callback)
+        }
+    }
 
     useEffect(() => {
         jointsRef.current = robotState.joints
@@ -111,11 +123,13 @@ export const RobotStateProvider = ({ children }) => {
                 })
 
                 notifyArticularChange(newJoints)
-
+                
                 const newEndEffectors = initialEndEffectors.map((startVal, i) => {
                     const endVal = endEffectorsTarget[i]
                     return Math.round(startVal + t * (endVal - startVal))
                 })
+
+                notifyEndEffectorsChange(newEndEffectors)
 
                 robotApi.setJoints(newJoints)
                 robotApi.setEndEffectors(newEndEffectors)
@@ -154,7 +168,7 @@ export const RobotStateProvider = ({ children }) => {
     return (
         <RobotStateContext.Provider value={{
             cartesian, setCartesian, cartesianConfig, startPosition, startSequence, isPlaying,
-            robotConfig, robotState, setRobotState, robotApi, subscribeArticular
+            robotConfig, robotState, setRobotState, robotApi, subscribeArticular, subscribeEndEffectors
         }}>
             {children}
         </RobotStateContext.Provider>

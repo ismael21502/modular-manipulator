@@ -8,7 +8,7 @@ import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
 import BlockIcon from '@mui/icons-material/Block';
 import { color } from '@mui/system';
 
-function Header({ title }) {
+function Header({ title, openConfig }) {
   const { colors, mode, setMode } = useTheme()
   return (
     <div className='flex items-center justify-between flex-row w-full p-2 border-b-1'
@@ -34,7 +34,7 @@ function Header({ title }) {
             <LightModeRoundedIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' />
           </button>}
         <button className='cursor-pointer' style={{ color: colors.text.primary }}>
-          <SettingsIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' />
+          <SettingsIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' onClick={openConfig}/>
         </button>
       </div>
     </div>
