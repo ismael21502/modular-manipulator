@@ -3,18 +3,47 @@ import { createContext, useContext, useState } from 'react'
 
 const ThemeContext = createContext()
 
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }) => { 
     const [mode, setMode] = useState("light")
-    const primary = mode === "light" ? "#6d40d8" : "#7b4af0"
+    const mainColorsDict = {
+        "purple": {
+            primary: mode === "light" ? "#6d40d8" : "#7b4af0",
+            primaryDark: mode === "light" ? "#5a2ac9" : "#6a3cdc",
+            accent: mode === "light" ? "#d89a27" : "#e0a631",
+        },
+        "blue": {
+            primary: mode === "light" ? "#3562c4" : "#5078ff", 
+            primaryDark: mode === "light" ? "#2451b3" : "#4070d8", 
+            accent: mode === "light" ? "#d82d27" : "#e03131",
+        },
+        "orange": {
+            primary: mode === "light" ? "#d36606" : "#e07b23",
+            primaryDark: mode === "light" ? "#c0610e" : "#ce6e1a",
+            accent: mode === "light" ? "#0aa812" : "#2bda34",
+        },
+        "green": {
+            primary: mode === "light" ? "#16ca4c" : "#23da5a",
+            primaryDark: mode === "light" ? "#0db940" : "#15c94bff",
+            accent: mode === "light" ? "#6d40d8" : "#7b4af0",
+        }
+    }
+    const [mainColorName, setMainColorName] = useState("purple")
+
+    const mainColor = mainColorsDict[mainColorName]
+
+    const changeColor = (colorName) => {
+        setMainColorName(colorName)
+    }
+    // const primary = mode === "light" ? "#6d40d8" : "#7b4af0"
     const theme = {
         colors: {
             background: mode === "light" ? "#ffffff" : "#0c0f1a",
             backgroundSubtle: mode === "light" ? "#f7f7f7ff" : "#0e121fff",
 
-            primary: primary,
-            primaryDark: mode === "light" ? "#5a2ac9" : "#6a3cdc",
+            primary: mainColor.primary,
+            primaryDark: mainColor.primaryDark,
 
-            accent: mode === "light" ? "#d89a27" : "#e0a631",
+            accent: mainColor.accent,
 
             danger: mode === "light" ? "#d64545" : "#e05454",
 
@@ -41,7 +70,7 @@ export const ThemeProvider = ({ children }) => {
 
             scrollbar: {
                 track: mode === "light" ? "#0000001e" : "#ffffff10",
-                thumb: mode === "light" ? `${primary}DD` : `${primary}AA`, 
+                thumb: mode === "light" ? `${mainColor.primary}DD` : `${mainColor.primary}AA`, 
             },
             // Ejes con colores más sobrios pero reconocibles
             axes: {
@@ -53,6 +82,8 @@ export const ThemeProvider = ({ children }) => {
 
         mode,
         setMode,
+        changeColor,
+        mainColorName,
     }
     
     return <ThemeContext.Provider value={theme}

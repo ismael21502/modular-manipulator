@@ -5,8 +5,19 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 
 function ConfigurationModal({ onClose = () => { } }) {
-    const { colors } = useTheme()
-    const [activeColor, setActiveColor] = useState("purple")
+    const { colors, changeColor, mainColorName } = useTheme()
+    const [prevConfig, setPrevConfig] = useState({
+        color: mainColorName,
+    })
+
+    const onCancel = () =>{
+        changeColor(prevConfig.color)
+        onClose()
+    }
+
+    const onConfirm = () => {
+        onClose()
+    }
     return (
         <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
         >
@@ -25,22 +36,25 @@ function ConfigurationModal({ onClose = () => { } }) {
                         <h1 style={{ color: colors.text.title }} className='font-bold'>APARIENCIA</h1>
                         <div className="w-full h-[2px] my-3"
                             style={{ backgroundColor: colors.border }}></div>
-                        <div className="flex flex-row justify-between py-2">
+                        {/* <div className="flex flex-row justify-between py-2">
                             <p>Modo oscuro</p>
                             <div className="w-4 h-4 bg-red-600"></div>
-                        </div>
+                        </div> */}
                         <div>
                             <h2>Color principal</h2>
                             <div className="flex items-center gap-4 p-2">
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${activeColor === "purple" ? "outline-2 outline-offset-2" : ''}`}
+                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "purple" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#6d40d8", outlineColor: "#6d40d8" }}
-                                    onClick={() => setActiveColor("purple")} />
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${activeColor === "blue" ? "outline-2 outline-offset-2" : ''}`}
+                                    onClick={() => changeColor("purple")} />
+                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "blue" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#4070d8", outlineColor: "#4070d8" }}
-                                    onClick={() => setActiveColor("blue")} />
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${activeColor === "red" ? "outline-2 outline-offset-2" : ''}`}
-                                    style={{ backgroundColor: "#df3636", outlineColor: "#df3636" }}
-                                    onClick={() => setActiveColor("red")} />
+                                    onClick={() => changeColor("blue")} />
+                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "orange" ? "outline-2 outline-offset-2" : ''}`}
+                                    style={{ backgroundColor: "#d36606", outlineColor: "#d36606" }}
+                                    onClick={() => changeColor("orange")} />
+                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "green" ? "outline-2 outline-offset-2" : ''}`}
+                                    style={{ backgroundColor: "#16ca4c", outlineColor: "#16ca4c" }}
+                                    onClick={() => changeColor("green")} />
                             </div>
                         </div>
                     </div>
@@ -51,12 +65,12 @@ function ConfigurationModal({ onClose = () => { } }) {
                     <div className="flex flex-row gap-3 w-[40%] ">
                         <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1 opacity-90 hover:opacity-100'
                             style={{ borderColor: colors.border, backgroundColor: colors.border, color: colors.text.title }}
-                            onClick={() => { }}>
+                            onClick={onCancel}>
                             <p>Cancelar</p>
                         </button>
                         <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1 text-white font-bold opacity-90 hover:opacity-100'
                             style={{ borderColor: colors.primaryDark, backgroundColor: colors.primaryDark }}
-                            onClick={() => { }}>
+                            onClick={onConfirm}>
                             <p>Guardar cambios</p>
                         </button>
                     </div>

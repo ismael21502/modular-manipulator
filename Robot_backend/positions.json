@@ -22,17 +22,5 @@
     "endEffectorValues": [
       0
     ]
-  },
-  {
-    "name": "Home closed",
-    "values": [
-      0,
-      -25,
-      65,
-      90
-    ],
-    "endEffectorValues": [
-      100
-    ]
   }
 ]

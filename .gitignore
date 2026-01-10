@@ -4,6 +4,7 @@
 RobotArmESP32/src/SmoothServo.h
 RobotArmESP32/RobotArm.code-workspace
 /node_modules/
+/.vscode/
 /Robot_backend/__pycache__/
 Robot_backend/utils/__pycache__/
 Robot_backend/main2.py

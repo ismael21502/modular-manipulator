@@ -10,12 +10,12 @@ import { useTheme } from "./context/ThemeContext.jsx"
 import { useState } from "react"
 import Tab from "./components/ui/nav/Tab.jsx"
 import CustomScroll from "./components/ui/scrolls/CustomScroll.jsx"
-import ConfigurationModal from "./components/widgets/modals/ConfigurationModal.jsx"
+import ConfigurationModal from "./components/widgets/configuration/ConfigurationModal.jsx"
 
 function App() {
   const { colors } = useTheme()
   const [selectedMode, setSelectedMode] = useState("positions")
-  const [openConfig, setOpenConfig] = useState(true)
+  const [openConfig, setOpenConfig] = useState(false)
   return (
     <div className="h-[100vh] flex flex-col transition-colors duration-150 ease-in-out"
       style={{ backgroundColor: colors.background }}>
