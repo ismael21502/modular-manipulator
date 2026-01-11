@@ -3,6 +3,7 @@ import { useTheme } from '../../../context/ThemeContext'
 import TuneIcon from '@mui/icons-material/Tune';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
+import Modal from '../modals/Modal';
 
 function ConfigurationModal({ onClose = () => { } }) {
     const { colors, changeColor, mainColorName } = useTheme()
@@ -19,8 +20,7 @@ function ConfigurationModal({ onClose = () => { } }) {
         onClose()
     }
     return (
-        <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
-        >
+        <Modal onClose={()=>{}}>
             <div className="relative flex flex-col w-[80%] h-[90%] rounded-xl border"
                 style={{ backgroundColor: colors.background, borderColor: colors.border, color: colors.text.primary }}>
                 <div className="flex flex-row w-full justify-between p-5 text-2xl border-b"
@@ -77,7 +77,7 @@ function ConfigurationModal({ onClose = () => { } }) {
 
                 </div>
             </div>
-        </div>
+        </Modal>
     )
 }
 

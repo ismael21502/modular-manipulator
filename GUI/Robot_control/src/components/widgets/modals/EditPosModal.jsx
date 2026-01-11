@@ -8,6 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import * as Slider from "@radix-ui/react-slider";
 import validateNumber from "../../../utils/validate";
 import UnderlinedInput from "../../ui/inputs/underlinedInput";
+import Modal from "./Modal";
 
 function EditPosModal({ isOpen, setIsopen, selectedPos }) {
     if (isOpen != true) return null
@@ -63,8 +64,7 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
     }
 
     return (
-        <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
-            onClick={() => { setIsopen(false) }}>
+        <Modal onClose={()=>setIsopen(false)}>
             <div className='w-[360px] max-h-[85%] overflow-y-auto rounded-lg p-4 flex flex-col gap-5'
                 style={{ backgroundColor: colors.background, color: colors.text.primary }}
                 onClick={(e) => e.stopPropagation()}>
@@ -201,7 +201,7 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                     </button>
                 </div>
             </div>
-        </div>
+        </Modal>
     )
 }
 

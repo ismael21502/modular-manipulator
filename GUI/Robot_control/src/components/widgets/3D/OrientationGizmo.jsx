@@ -20,7 +20,7 @@ export default function OrientationGizmo({ size, onSetDirection }) {
             <AxisDot onClick={onSetDirection} size={size} color={colors.axes.y} direction={[0, 0, -1]} label={"Y"} />
             <AxisDot onClick={onSetDirection} size={size} color={colors.axes.y} direction={[0, 0, 1]} negative={true} />
 
-            <AxisDot onClick={()=>{}} size={size*0.5} color={colors.text.title} direction={[0, 0, 0]} />
+            <AxisDot onClick={()=>{}} size={size*0.5} color={colors.text.title} direction={[0, 0, 0]} disabled={true}/>
 
             <AxisLine color={colors.axes.x} direction={[1, 0, 0]} />
             <AxisLine color={colors.axes.z} direction={[0, 1, 0]} />
@@ -66,7 +66,7 @@ function createCanvasTexture(color = "#fff", label = "", negative=false) {
     const texture = new THREE.CanvasTexture(canvas)
     return texture
 }
-const AxisDot = ({ color = "#FFF", label = "", negative = false, size = 1, direction, onClick }) => {
+const AxisDot = ({ color = "#FFF", label = "", negative = false, size = 1, direction, onClick, disabled = false }) => {
     const meshRef = useRef()
 
     const texture = useMemo(
@@ -79,14 +79,16 @@ const AxisDot = ({ color = "#FFF", label = "", negative = false, size = 1, direc
         <Billboard position={direction.map(v => v * 4)}>
             <mesh 
             ref={meshRef}
-            onClick={() => onClick(direction)}
+            onClick={() => disabled ? {} : onClick(direction)}
                 onPointerEnter={(e) => {
                     e.stopPropagation()
-                    setHovered(true)
+                    if (!disabled) setHovered(true)
+                    document.body.style.cursor = "pointer"
                 }}
                 onPointerLeave={(e) => {
                     e.stopPropagation()
                     setHovered(false)
+                    document.body.style.cursor = "default"
                 }}>
                 <planeGeometry args={[hovered ? 1.1 * size * 0.21 : size * 0.21, hovered ? 1.1 * size * 0.21 : size * 0.21]} />
                 <meshBasicMaterial 

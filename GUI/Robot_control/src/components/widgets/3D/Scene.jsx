@@ -9,6 +9,7 @@ import OrientationGizmo from './OrientationGizmo';
 import CloseIcon from '@mui/icons-material/Close';
 import { CameraControls } from '@react-three/drei';
 import TCPCursor from './TCPCursor';
+import Robot from './Robot';
 
 export function Model({ url }) {
   const { scene } = useGLTF(url)
@@ -48,44 +49,8 @@ export function Model({ url }) {
   return <primitive object={scene} />;
 }
 
-const TCPCursor2 = ({ color = null, position }) => {
-  const { colors } = useTheme()
-  const finalColor = color || colors.primary
 
-  if (!position || position.some(v => isNaN(v))) return null
-
-  return (
-    <group position={position}>
-      <Html
-        center
-        className="pointer-events-none select-none"
-      >
-        <div className="relative flex items-center justify-center w-7 h-7">
-          <div
-            className="absolute inset-0 rounded-full border-2 border-dashed opacity-80"
-            style={{
-              borderColor: finalColor,
-              backgroundColor: `${finalColor}22`,
-              animation: 'spin 10s linear infinite'
-            }}
-          />
-
-          <div className="absolute w-10 h-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
-          <div className="absolute h-10 w-[2px] rounded-md" style={{ backgroundColor: finalColor }} />
-
-          <div
-            className="w-2 h-2 rounded-full"
-            style={{
-              backgroundColor: finalColor,
-            }}
-          />
-        </div>
-      </Html>
-    </group>
-  )
-}
-
-function RobotModel({ }) {
+function Scene({ }) {
   const { colors } = useTheme()
   const { cartesian } = useRobotState()
   const cameraControlsRef = useRef()
@@ -96,42 +61,28 @@ function RobotModel({ }) {
   return (
     <div className='flex relative flex-1 h-full border-x-1 border-solid'
       style={{ borderColor: colors.border, backgroundColor: colors.backgroundSubtle }}>
-
-      <Canvas camera={{ position: [0, 0.2, 0.70], fov: 35 }}
-      >
+      <Canvas camera={{ position: [0, 0.2, 0.70], fov: 35 }}>
         <ambientLight intensity={0.01} />
 
         <Environment preset="city" />
         <gridHelper args={[gridSize, divisions, '#3c9439', '#9e9e9e']} />
-
         <Model url="/Modbot.glb" />
-        {/* <OrbitControls makeDefault /> */}
         <CameraControls ref={cameraControlsRef} makeDefault />
-
-        {/* <TCPCursor position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} /> */}
-
+        <Robot />
         <GizmoHelper alignment="top-right" margin={[65, 65]}>
-          {/* <GizmoViewport labelColor='white'/> */}
           <OrientationGizmo size={10} onSetDirection={
             (e) => {
               const distance = 0.7
-              // const position = cameraControlsRef.current.getPosition()
-              // console.log(position)
-              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance +0.1, e[2] * distance, 0, 0.1, 0, true)
-
+              cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance + 0.1, e[2] * distance, 0, 0.1, 0, true)
             }
           } />
         </GizmoHelper>
         <TCPCursor color={colors.primary} position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
-        {/* <TCPCursor2 color={colors.primary} position={[1,1,1]}/> */}
       </Canvas>
       <div className="flex flex-col p-3 text-xs absolute top-5 left-5 rounded-lg"
         style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.background, color: colors.text.primary }}>
         <div className="flex justify-between items-center">
           <p style={{ color: colors.text.title, fontWeight: 'bold' }}>Controles 3D</p>
-          {/* <button>
-            <CloseIcon fontSize='small' color={colors.text.title} className={`hover:text-red-400 cursor-pointer`} />
-          </button> */}
         </div>
         <div className='w-full my-1.5' style={{ height: "1px", backgroundColor: colors.border }} />
 
@@ -145,4 +96,4 @@ function RobotModel({ }) {
   );
 }
 
-export default RobotModel;
+export default Scene;

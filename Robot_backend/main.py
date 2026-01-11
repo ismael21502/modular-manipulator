@@ -6,10 +6,10 @@ import math
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import os
 import time
-from InverseKinematics import Inverse_Kinematics
-from ForwardKinematics import fk_func
-from GeneralFK import GeneralFK, GeneralFK_sym
-from GeneralIK import GeneralIK
+from kinematics.InverseKinematics import Inverse_Kinematics
+from kinematics.ForwardKinematics import fk_func
+from kinematics.GeneralFK import GeneralFK, GeneralFK_sym
+from kinematics.GeneralIK import GeneralIK
 import numpy as np
 from ESP32Connection import ESP32Connection
 from utils.mapValues import mapVal

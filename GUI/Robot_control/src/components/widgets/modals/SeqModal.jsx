@@ -11,6 +11,7 @@ import CustomScroll from '../../ui/scrolls/CustomScroll'
 import validateNumber from '../../../utils/validate'
 import UnderlinedInput from '../../ui/inputs/underlinedInput'
 import InputWithSuffix from '../../ui/inputs/InputWithSuffix'
+import Modal from './Modal'
 
 // function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm, mode, seqName }) {
 function SeqModal({ onConfirm, sequence, mode, onClose }) {
@@ -63,8 +64,8 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
         })
     }
     return (
-        <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000 '
-            onClick={() => onClose()}>
+        <Modal
+            onClose={onClose}>
             <div className='w-[480px] h-[90%] rounded-lg flex flex-col'
                 style={{ backgroundColor: colors.background, color: colors.text.primary }}
                 onClick={(e) => e.stopPropagation()}>
@@ -255,7 +256,7 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                     </button>
                 </div>
             </div>
-        </div>
+        </Modal>
     )
 }
 

@@ -6,6 +6,7 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import UnderlinedInput from "../../ui/inputs/underlinedInput";
+import Modal from "./Modal";
 
 function SavePosModal({ isOpen, setIsOpen }) {
     if (isOpen != true) return null
@@ -31,8 +32,8 @@ function SavePosModal({ isOpen, setIsOpen }) {
         setIsOpen(false)
     }
     return (
-        <div className='fixed h-full w-full bg-black/80 right-0 top-0 flex justify-center items-center z-1000'
-            onClick={() => { setIsOpen(false) }}>
+        <Modal
+            onClose={() =>  setIsOpen(false) }>
             <div className='w-[360px] rounded-lg p-4 flex flex-col gap-5'
                 style={{ backgroundColor: colors.background, color: colors.text.primary }}
                 onClick={(e) => e.stopPropagation()}>
@@ -101,7 +102,7 @@ function SavePosModal({ isOpen, setIsOpen }) {
                     </button>
                 </div>
             </div>
-        </div>
+        </Modal>
     )
 }
 

@@ -15,7 +15,7 @@ Host/puerto por defecto
 
 Theme
 
-(Opcional) selección del modelo 3D (X NO)
+(Opcional) selección del modelo 3D (X, NO)
 
 robotConfig.json validation with zod/yup
 
@@ -39,3 +39,5 @@ Corregir animaciones
 
 Siguiente paso: construir el modelo 3D desde le robotConfig
 Terminar el gizmo **
+
+JointsByParent en lugar de config.joints.find(...)

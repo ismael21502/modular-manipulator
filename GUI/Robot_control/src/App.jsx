@@ -1,7 +1,7 @@
 import CartesianControl from "./components/widgets/controls/CartesianPanel.jsx"
 import Gripper from "./components/widgets/controls/GripperControlPanel.jsx"
 import ManualControl from "./components/widgets/controls/JointControlPanel.jsx"
-import RobotModel from "./components/widgets/3D/RobotModel.jsx"
+import Scene from "./components/widgets/3D/Scene.jsx"
 import Positions from "./components/widgets/positions/Positions.jsx"
 import Terminal from "./components/widgets/terminal/Terminal.jsx"
 import Sequences from "./components/widgets/sequences/Sequences.jsx"
@@ -37,7 +37,7 @@ function App() {
 
         <div className="flex-[2_1_50%] min-w-0 h-full">
           <div className="flex h-[65%]">
-            <RobotModel />
+            <Scene />
           </div>
           <div className="flex h-[35%]">
             <Terminal />
