@@ -4,12 +4,15 @@ import TuneIcon from '@mui/icons-material/Tune';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import Modal from '../modals/Modal';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import RobotBuildingModal from '../robot_building/RobotBuildingModal';
 
 function ConfigurationModal({ onClose = () => { } }) {
     const { colors, changeColor, mainColorName } = useTheme()
     const [prevConfig, setPrevConfig] = useState({
         color: mainColorName,
     })
+    const [openRobotBuild, setOpenRobotBuild] = useState(false)
 
     const onCancel = () =>{
         changeColor(prevConfig.color)
@@ -29,7 +32,15 @@ function ConfigurationModal({ onClose = () => { } }) {
                         <TuneIcon fontSize='large' style={{ color: colors.primary }} />
                         <p>Configuración</p>
                     </div>
-                    <CloseIcon fontSize='large' onClick={onClose} className={`button hover:text-[${colors.danger}]`} />
+                    <div className="flex items-center gap-3">
+                        <button className="button flex rounded-md text-base border py-1 px-3 gap-2 items-center"
+                        style={{borderColor: colors.primary, color: colors.primaryDark, backgroundColor: `${colors.primary}1F`}}
+                        onClick={()=>setOpenRobotBuild(true)}>
+                            <SmartToyIcon />
+                            Construir un robot
+                        </button>
+                        <CloseIcon fontSize='large' onClick={onClose} className={`button hover:text-[${colors.danger}]`} />
+                    </div>
                 </div>
                 <CustomScroll className="p-5" scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
                     <div className='flex flex-col w-full py-3'>
@@ -77,6 +88,7 @@ function ConfigurationModal({ onClose = () => { } }) {
 
                 </div>
             </div>
+            {openRobotBuild && <RobotBuildingModal onClose={()=>setOpenRobotBuild(false)}/>}
         </Modal>
     )
 }

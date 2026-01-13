@@ -47,6 +47,16 @@
   border-color: var(--cardActiveBorder); /* var(--border-focus) */
 }
 
+.primaryButton{
+  cursor: pointer;
+  background-color: var(--primary);
+  color: white;
+}
+
+.primaryButton:hover{
+  background-color: var(--primaryDark);
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

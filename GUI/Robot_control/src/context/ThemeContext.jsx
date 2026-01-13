@@ -38,7 +38,7 @@ export const ThemeProvider = ({ children }) => {
     const theme = {
         colors: {
             background: mode === "light" ? "#ffffff" : "#0c0f1a",
-            backgroundSubtle: mode === "light" ? "#f7f7f7ff" : "#0e121fff",
+            backgroundSubtle: mode === "light" ? "#fdfdfd" : "#0e121fff",
 
             primary: mainColor.primary,
             primaryDark: mainColor.primaryDark,
@@ -92,6 +92,8 @@ export const ThemeProvider = ({ children }) => {
             "--cardHover": theme.colors.primary,
             "--cardBorder": theme.colors.border,
             "--cardActiveBorder": theme.colors.primary,
+            "--primary": theme.colors.primary,
+            "--primaryDark": theme.colors.primaryDark,
         }}>
             {children}
         </div>

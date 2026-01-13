@@ -34,7 +34,6 @@ function Robot() {
     )
 }
 
-
 function indexById(arr) {
     const map = {}
     arr.forEach(item => map[item.id] = item)
