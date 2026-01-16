@@ -10,6 +10,14 @@ import { useEffect, useState } from "react";
 function RobotBuildingModal({ onClose }) {
     const { colors } = useTheme()
 
+    const [wizardState, setWizardState] = useState(
+        {
+            robotName: "",
+            base: {},
+            joints: [],
+            end_effector: {}
+        }
+    )
     const buildSteps = [
         {
             id: "base", title: "Base", hint: "Tipo de base",
@@ -18,7 +26,8 @@ function RobotBuildingModal({ onClose }) {
                 options: [
                     { label: "Base estándar", img: "vite.svg", isActive: true },
                     { label: "Base móvil V1", img: "vite.svg", isActive: false },
-                    { label: "Base móvil V2", img: "vite.svg", isActive: false },]
+                    { label: "Base móvil V2", img: "vite.svg", isActive: false },
+                ]
             }
         },
         {
@@ -26,7 +35,8 @@ function RobotBuildingModal({ onClose }) {
             content: {
                 label: "Configuración de las articulaciones",
                 options: [
-                    { label: "Articulación tipo Y", img: "vite.svg", isActive: true },]
+                    { label: "Articulación tipo Y", img: "vite.svg", isActive: true },
+                ]
             }
         },
         {
@@ -40,7 +50,7 @@ function RobotBuildingModal({ onClose }) {
     ]
 
     const [currentStep, setCurrentStep] = useState(0)
-    const [completedSteps, setCompletedSteps] = useState(["base"])
+    const [completedSteps, setCompletedSteps] = useState([])
     useEffect(() => {
         console.log("Current: ", currentStep)
         console.log("BuildSteps: ", buildSteps[0])
@@ -59,7 +69,13 @@ function RobotBuildingModal({ onClose }) {
                             Configuración del robot
                         </div>
                         {buildSteps.map((step, index) => (
-                            <BuildStep key={index} title={step.title} hint={step.hint} number={index + 1} isActive={index === currentStep} complete={completedSteps.includes(step.id)} />
+                            <BuildStep
+                                key={index}
+                                title={step.title}
+                                hint={step.hint}
+                                number={index + 1}
+                                isActive={index === currentStep}
+                                complete={completedSteps.includes(step.id)} />
                         ))}
                         {/* active={currentStep === step.id}
                         complete={completedSteps.includes(step.id)} */}
@@ -77,9 +93,16 @@ function RobotBuildingModal({ onClose }) {
                     <div className="flex flex-1">
 
                         <Select title={buildSteps[currentStep].content.label}>
-                            {buildSteps[currentStep].content.options.map((option, index) => (
-                                <BuildCard key={index} label={option.label} imgSrc={option.img} onClick={() => { }} isActive={false} />
-                            ))}
+                            <div className="w-full grid grid-cols-3 gap-4">
+                                {buildSteps[currentStep].content.options.map((option, index) => (
+                                    <BuildCard
+                                        key={index}
+                                        label={option.label}
+                                        imgSrc={option.img}
+                                        onClick={() => { }}
+                                        isActive={false} />
+                                ))}
+                            </div>
                         </Select>
                     </div>
                     <div className="flex border-t p-6 flex-row justify-end gap-6 text-xl"
@@ -88,7 +111,7 @@ function RobotBuildingModal({ onClose }) {
                             onClick={() => {
                                 if (currentStep === 0) return
                                 setCompletedSteps(
-                                    prev => prev.slice(0, currentStep-1)
+                                    prev => prev.slice(0, currentStep - 1)
                                 )
                                 setCurrentStep(currentStep - 1)
 

@@ -8,13 +8,13 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import RobotBuildingModal from '../robot_building/RobotBuildingModal';
 
 function ConfigurationModal({ onClose = () => { } }) {
-    const { colors, changeColor, mainColorName } = useTheme()
+    const { colors, mode, setMode, changeColor, mainColorName } = useTheme()
     const [prevConfig, setPrevConfig] = useState({
         color: mainColorName,
     })
     const [openRobotBuild, setOpenRobotBuild] = useState(false)
 
-    const onCancel = () =>{
+    const onCancel = () => {
         changeColor(prevConfig.color)
         onClose()
     }
@@ -23,7 +23,7 @@ function ConfigurationModal({ onClose = () => { } }) {
         onClose()
     }
     return (
-        <Modal onClose={()=>{}}>
+        <Modal onClose={() => { }}>
             <div className="relative flex flex-col w-[80%] h-[90%] rounded-xl border"
                 style={{ backgroundColor: colors.background, borderColor: colors.border, color: colors.text.primary }}>
                 <div className="flex flex-row w-full justify-between p-5 text-2xl border-b"
@@ -34,8 +34,8 @@ function ConfigurationModal({ onClose = () => { } }) {
                     </div>
                     <div className="flex items-center gap-3">
                         <button className="button flex rounded-md text-base border py-1 px-3 gap-2 items-center"
-                        style={{borderColor: colors.primary, color: colors.primaryDark, backgroundColor: `${colors.primary}1F`}}
-                        onClick={()=>setOpenRobotBuild(true)}>
+                            style={{ borderColor: colors.primary, color: colors.primaryDark, backgroundColor: `${colors.primary}1F` }}
+                            onClick={() => setOpenRobotBuild(true)}>
                             <SmartToyIcon />
                             Construir un robot
                         </button>
@@ -47,10 +47,20 @@ function ConfigurationModal({ onClose = () => { } }) {
                         <h1 style={{ color: colors.text.title }} className='font-bold'>APARIENCIA</h1>
                         <div className="w-full h-[2px] my-3"
                             style={{ backgroundColor: colors.border }}></div>
-                        {/* <div className="flex flex-row justify-between py-2">
+                        <div className="flex flex-row justify-between py-2">
                             <p>Modo oscuro</p>
-                            <div className="w-4 h-4 bg-red-600"></div>
-                        </div> */}
+                            <button className={`flex px-1 w-16 h-8 rounded-full items-center cursor-pointer`}
+                                style={{ backgroundColor: colors.border }}
+                                onClick={() => {
+                                    setMode(mode === "dark" ? "light" : "dark")
+                                }}
+                                aria-label="Toggle theme">
+                                <span className={`h-6 w-6 bg-red-600 rounded-full
+                                    transition-transform duration-300
+                                    ${mode === "dark" ? "translate-x-8" : "translate-x-0"}`}
+                                    style={{ backgroundColor: "white" }} />
+                            </button>
+                        </div>
                         <div>
                             <h2>Color principal</h2>
                             <div className="flex items-center gap-4 p-2">
@@ -88,7 +98,7 @@ function ConfigurationModal({ onClose = () => { } }) {
 
                 </div>
             </div>
-            {openRobotBuild && <RobotBuildingModal onClose={()=>setOpenRobotBuild(false)}/>}
+            {openRobotBuild && <RobotBuildingModal onClose={() => setOpenRobotBuild(false)} />}
         </Modal>
     )
 }

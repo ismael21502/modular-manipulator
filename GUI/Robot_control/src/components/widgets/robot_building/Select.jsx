@@ -1,5 +1,7 @@
 import { useTheme } from "../../../context/ThemeContext.jsx"
 import Scene from "../3D/Scene.jsx"
+import CustomScroll from "../../ui/scrolls/CustomScroll.jsx"
+
 function Select({ title, children }) {
   const { colors } = useTheme()
   return (
@@ -9,6 +11,7 @@ function Select({ title, children }) {
       <h1>{title}</h1>
       <div className="flex flex-row gap-4">
         {children}
+        {/* Add scroll */}
       </div>
     </div>
   )
