@@ -1,4 +1,4 @@
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 function Log({ time, type, content }) {
     const { colors } = useTheme()
     const typeColors = {

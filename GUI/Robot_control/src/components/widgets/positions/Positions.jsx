@@ -5,7 +5,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import EditIcon from '@mui/icons-material/Edit';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 import { useWebSocket } from '../../../context/WebSocketContext';
 import { useRobotState } from '../../../context/RobotState';
 import EditPosModal from '../modals/EditPosModal';

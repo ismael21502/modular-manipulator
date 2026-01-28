@@ -1,4 +1,4 @@
-import { useTheme } from '../../../context/ThemeContext'
+import { useTheme } from '../../../context/themes/ThemeContext'
 import CheckIcon from '@mui/icons-material/Check';
 
 function BuildStep({title, hint, number, complete=false, isActive=false}) {

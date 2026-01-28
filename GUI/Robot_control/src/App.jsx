@@ -6,7 +6,7 @@ import Positions from "./components/widgets/positions/Positions.jsx"
 import Terminal from "./components/widgets/terminal/Terminal.jsx"
 import Sequences from "./components/widgets/sequences/Sequences.jsx"
 import Header from "./components/widgets/header/Header.jsx"
-import { useTheme } from "./context/ThemeContext.jsx"
+import { useTheme } from "./context/themes/ThemeContext.jsx"
 import { useState } from "react"
 import Tab from "./components/ui/nav/Tab.jsx"
 import CustomScroll from "./components/ui/scrolls/CustomScroll.jsx"
@@ -43,7 +43,7 @@ function App() {
             <Terminal />
           </div>
         </div>
-        <div className="flex-[1_1_25%] overflow-y-auto">
+        <div className="flex-[1_1_25%]">
           <CustomScroll scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
             <CartesianControl />
             <Gripper />

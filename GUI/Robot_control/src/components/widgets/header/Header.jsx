@@ -1,7 +1,7 @@
 import React from 'react'
 import Connection from './Connection'
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded'; 
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'; 

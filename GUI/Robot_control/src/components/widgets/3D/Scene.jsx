@@ -3,7 +3,7 @@ import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, GizmoHelper, GizmoViewport, Html, Billboard } from '@react-three/drei';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { useEffect } from 'react';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 import { useRobotState } from '../../../context/RobotState';
 import OrientationGizmo from './OrientationGizmo';
 import CloseIcon from '@mui/icons-material/Close';

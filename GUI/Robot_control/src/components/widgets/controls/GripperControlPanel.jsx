@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import * as Slider from "@radix-ui/react-slider";
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 import BackHandIcon from '@mui/icons-material/BackHand';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';

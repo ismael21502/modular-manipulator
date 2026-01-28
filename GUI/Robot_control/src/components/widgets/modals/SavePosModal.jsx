@@ -1,4 +1,4 @@
-import { useTheme } from "../../../context/ThemeContext"
+import { useTheme } from "../../../context/themes/ThemeContext"
 import { useState } from "react"
 import { useWebSocket } from "../../../context/WebSocketContext"
 import { useRobotState } from "../../../context/RobotState"

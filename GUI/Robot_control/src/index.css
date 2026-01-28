@@ -12,15 +12,17 @@
 .rotate {
   animation: spin 0.8s linear infinite;
 }
+
+/* Use outline 2 instead of border in active */
 .card {
-  border: 1px solid var(--cardBorder);
+  border: 1px solid var(--border);
   transition: border 0.2s ease;
 }
 .card:hover{
-  border-color: var(--cardHover);
+  border-color: var(--primary);
 }
 .card.active {
-  border-color: var(--cardActiveBorder);
+  border-color: var(--primary);
 }
 
 .button{
@@ -34,17 +36,17 @@
 .inputBorder {
   position: absolute;
   inset: 0;
-  border: 1px solid var(--cardBorder); /* var(--border) */
+  border: 1px solid var(--border); /* var(--border) */
   border-radius: 4px;
   transition: border-color 0.2s ease;
 }
 
 .group:hover .inputBorder {
-  border-color: var(--cardHover); /* var(--border-hover) */
+  border-color: var(--primary); /* var(--border-hover) */
 }
 
 .group:focus-within .inputBorder {
-  border-color: var(--cardActiveBorder); /* var(--border-focus) */
+  border-color: var(--primary); /* var(--border-focus) */
 }
 
 .primaryButton{

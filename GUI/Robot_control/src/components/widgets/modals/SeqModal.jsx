@@ -2,7 +2,7 @@ import React from 'react'
 import { useWebSocket } from '../../../context/WebSocketContext'
 import { useState } from 'react'
 import { useRobotState } from '../../../context/RobotState'
-import { useTheme } from '../../../context/ThemeContext'
+import { useTheme } from '../../../context/themes/ThemeContext'
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';

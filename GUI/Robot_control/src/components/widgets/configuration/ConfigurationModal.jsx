@@ -1,5 +1,5 @@
 import CustomScroll from '../../ui/scrolls/CustomScroll'
-import { useTheme } from '../../../context/ThemeContext'
+import { useTheme } from '../../../context/themes/ThemeContext'
 import TuneIcon from '@mui/icons-material/Tune';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';

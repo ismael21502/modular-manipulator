@@ -1,11 +1,16 @@
 import Modal from "../modals/Modal";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "../../../context/themes/ThemeContext";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import BuildStep from "./BuildStep";
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Select from "./Select";
 import BuildCard from "./BuildCard.jsx";
 import { useEffect, useReducer, useState } from "react";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import CustomScroll from "../../ui/scrolls/CustomScroll.jsx";
+import JointEditor from "./JointEditor.jsx";
+import Scene from "../3D/Scene.jsx";
 
 /* --------------------------
    1) Estado inicial y reducer
@@ -37,7 +42,11 @@ function wizardReducer(state, action) {
                 id: generateId(),
                 type: null,     // e.g. 'revolute', 'prismatic', etc.
                 link: {},       // datos del link
-                limits: {}      // límites
+                limits: {
+                    min: -90,
+                    max: 90,
+                    default: 0
+                }
             };
             return {
                 ...state,
@@ -72,9 +81,9 @@ function wizardReducer(state, action) {
    2) Componente principal
    -------------------------- */
 function RobotBuildingModal({ onClose }) {
-    const { colors } = useTheme();
+    const { colors } = useTheme()
 
-    const [wizardState, dispatch] = useReducer(wizardReducer, initialState);
+    const [wizardState, dispatch] = useReducer(wizardReducer, initialState)
 
     const buildSteps = [
         {
@@ -97,6 +106,11 @@ function RobotBuildingModal({ onClose }) {
                     { label: "Revolute", img: "vite.svg", value: { type: "revolute" } },
                     { label: "Prismatic", img: "vite.svg", value: { type: "prismatic" } },
                     { label: "Spherical", img: "vite.svg", value: { type: "spherical" } }
+                ],
+                linkOptions: [
+                    { label: "Straight 10mm", img: "vite.svg", value: { type: "straight10mm" } },
+                    { label: "Straight 20mm", img: "vite.svg", value: { type: "straight20mm" } },
+                    { label: "Straight 40mm", img: "vite.svg", value: { type: "straight40mm" } },
                 ]
             }
         },
@@ -140,13 +154,13 @@ function RobotBuildingModal({ onClose }) {
        -------------------------- */
     function JointsPanel({ step }) {
         return (
-            <div className="w-full flex gap-6">
+            <div className="w-full h-full flex">
                 {/* LEFT: lista de joints + añadir */}
-                <div className="w-1/3 p-4">
-                    <div className="mb-4 flex items-center justify-between">
+                <div className="flex flex-col h-full w-1/3">
+                    <div className="flex items-center justify-between p-4 pb-0 text-2xl">
                         <h3 className="font-bold">Articulaciones</h3>
                         <button
-                            className="px-2 py-1 rounded bg-gray-100"
+                            className="flex items-center justify-center p-2 opacity-80 hover:opacity-100 cursor-pointer rounded-full"
                             onClick={() => {
                                 dispatch({ type: "ADD_JOINT" });
                                 // seleccionar la recién creada (se añade al final)
@@ -157,119 +171,77 @@ function RobotBuildingModal({ onClose }) {
                                     if (last) setSelectedJointId(last.id);
                                 }, 0);
                             }}
+                            style={{ backgroundColor: `${colors.primary}1A`, color: colors.primary }}
                         >
-                            + Añadir
+                            <AddIcon />
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        {wizardState.joints.length === 0 && (
-                            <div className="text-sm opacity-70">No hay articulaciones aún.</div>
-                        )}
+                    <CustomScroll
+                        className="p-2 pr-4"
+                        scrollbarColor={colors.scrollbar.track}
+                        thumbColor={colors.scrollbar.thumb}>
+                        <div className="flex flex-1 min-h-0 flex-col p-2 gap-3">
+                            {wizardState.joints.length === 0 && (
+                                <div className="text-sm opacity-70">No hay articulaciones aún.</div>
+                            )}
 
-                        {wizardState.joints.map((joint, idx) => (
-                            <div
-                                key={joint.id}
-                                className={`p-3 rounded cursor-pointer border ${selectedJointId === joint.id ? 'border-primary' : 'border-gray-200'}`}
-                                onClick={() => setSelectedJointId(joint.id)}
-                            >
-                                <div className="font-semibold">Joint {idx + 1}</div>
-                                <div className="text-sm opacity-80">{joint.type ?? "Sin tipo"}</div>
-                                <div className="flex gap-2 mt-2">
-                                    <button
-                                        className="text-sm underline"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            dispatch({ type: "REMOVE_JOINT", jointId: joint.id });
-                                            if (selectedJointId === joint.id) setSelectedJointId(null);
-                                        }}
-                                    >
-                                        Eliminar
-                                    </button>
+                            {wizardState.joints.map((joint, idx) => (
+                                <div
+                                    key={joint.id}
+                                    className={`flex justify-between p-3 rounded-lg cursor-pointer border hover:ring-2 ring-[var(--primary)] ${selectedJointId === joint.id ? "ring-2" : ""}`}
+                                    onClick={() => setSelectedJointId(joint.id)}
+                                    style={{ borderColor: colors.border, backgroundColor: selectedJointId === joint.id ? `${colors.primary}1A` : "transparent" }}
+                                >
+                                    <div>
+                                        <div className="font-semibold">Joint {idx + 1}</div>
+                                        <div className="text-xs opacity-90 font-bold"
+                                            style={{ color: colors.text.secondary }}>{joint.type || joint.link
+                                                ? [joint.type, joint.link].filter(Boolean).join(" - ")
+                                                : "Sin tipo"}</div>
+                                    </div>
+                                    <div className="flex gap-2 mt-2">
+                                        <button
+                                            className="text-sm opacity-80 hover:opacity-100 cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                dispatch({ type: "REMOVE_JOINT", jointId: joint.id });
+                                                if (selectedJointId === joint.id) setSelectedJointId(null);
+                                            }}
+                                            onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
+                                            onMouseLeave={(e) => e.currentTarget.style.color = colors.disabled}
+                                            style={{ color: colors.disabled }}
+                                        >
+                                            {/* Eliminar */}
+                                            <DeleteIcon fontSize="small" />
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+
+                    </CustomScroll>
+
                 </div>
 
                 {/* RIGHT: editor de la joint seleccionada */}
-                <div className="w-2/3 p-4 border-l" style={{ borderColor: colors.border }}>
+                <div className="w-2/3 border-l" style={{ borderColor: colors.border }}>
                     {selectedJointId ? (
                         <JointEditor
                             joint={wizardState.joints.find(j => j.id === selectedJointId)}
-                            options={step.content.options}
+                            jointOptions={step.content.options}
+                            linkOptions={step.content.linkOptions}
                             onUpdate={(payload) => dispatch({ type: "UPDATE_JOINT", jointId: selectedJointId, payload })}
                         />
                     ) : (
-                        <div className="text-sm opacity-70">Selecciona una articulación para editarla o pulsa "+ Añadir".</div>
+                        <div className="text-sm opacity-70 p-4">Selecciona una articulación para editarla o pulsa "+".</div>
                     )}
                 </div>
             </div>
-        );
+        )
     }
 
-    /* --------------------------
-       JointEditor subcomponente (simple)
-       - Permite seleccionar tipo de joint usando tus BuildCard
-       - Muestra inputs simples para link.length y límites como ejemplo
-       -------------------------- */
-    function JointEditor({ joint, options = [], onUpdate }) {
-        if (!joint) return null;
-
-        return (
-            <div className="flex flex-col gap-4">
-                <h4 className="font-bold">Editar Joint</h4>
-
-                <div>
-                    <div className="text-sm mb-2">Tipo de articulación</div>
-                    <div className="grid grid-cols-3 gap-4">
-                        {options.map((opt, i) => (
-                            <BuildCard
-                                key={i}
-                                label={opt.label}
-                                imgSrc={opt.img}
-                                onClick={() => onUpdate({ type: opt.value.type })}
-                                isActive={joint.type === opt.value.type}
-                            />
-                        ))}
-                    </div>
-                </div>
-
-                <div>
-                    <div className="text-sm mb-2">Link (ejemplo: longitud)</div>
-                    <input
-                        type="number"
-                        placeholder="Length (mm)"
-                        value={joint.link.length ?? ""}
-                        onChange={(e) => onUpdate({ link: { ...(joint.link || {}), length: e.target.value ? Number(e.target.value) : null } })}
-                        className="border p-2 rounded w-40"
-                    />
-                </div>
-
-                <div>
-                    <div className="text-sm mb-2">Límites (min / max)</div>
-                    <div className="flex gap-2">
-                        <input
-                            type="number"
-                            placeholder="min"
-                            value={joint.limits.min ?? ""}
-                            onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), min: e.target.value ? Number(e.target.value) : null } })}
-                            className="border p-2 rounded w-28"
-                        />
-                        <input
-                            type="number"
-                            placeholder="max"
-                            value={joint.limits.max ?? ""}
-                            onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), max: e.target.value ? Number(e.target.value) : null } })}
-                            className="border p-2 rounded w-28"
-                        />
-                    </div>
-                </div>
-
-            </div>
-        );
-    }
-
+    
     /* --------------------------
        Render principal
        -------------------------- */
@@ -297,7 +269,17 @@ function RobotBuildingModal({ onClose }) {
                                 complete={completedSteps.includes(step.id)} />
                         ))}
                     </div>
-
+                    <div className="flex-1 h-80 w-full p-6">
+                        <div className="flex flex-col h-full w-full rounded-md justify-center p-4 gap-4 border"
+                            style={{ borderColor: colors.border, backgroundColor: colors.background }}>
+                            <h2 className="text-xl font-bold text-center"
+                                style={{ color: colors.text.title }}>Vista previa</h2>
+                            <div className="rounded-lg overflow-hidden border aspect-square"
+                                style={{ borderColor: colors.border }}>
+                                {/* <Scene /> */}
+                            </div>
+                        </div>
+                    </div>
                     <button className="flex flex-row gap-2 p-6 cursor-pointer opacity-80 hover:opacity-100"
                         onClick={onClose}>
                         <ArrowBackIcon />
@@ -306,11 +288,7 @@ function RobotBuildingModal({ onClose }) {
                 </div>
 
                 <div className="flex flex-2 flex-col">
-                    <div>
-                        {/* Escena 3D */}
-                    </div>
-
-                    <div className="flex flex-1 p-6">
+                    <div className="flex flex-1 min-h-0">
                         {/* Si el paso actual es 'joints' renderizamos panel especial */}
                         {currentStepObj.id === "joints" ? (
                             <JointsPanel step={currentStepObj} />
@@ -331,7 +309,7 @@ function RobotBuildingModal({ onClose }) {
                         )}
                     </div>
 
-                    <div className="flex border-t p-6 flex-row justify-end gap-6 text-xl"
+                    <div className="flex flex-0.1 border-t p-6 flex-row justify-end gap-6 text-xl"
                         style={{ borderColor: colors.border }}>
                         {currentStep !== 0 && <button className="cursor-pointer py-2 px-4 opacity-80 hover:opacity-100"
                             onClick={() => {
@@ -352,7 +330,7 @@ function RobotBuildingModal({ onClose }) {
                                     ...prev,
                                     buildSteps[currentStep].id
                                 ]);
-                                setCurrentStep(currentStep + 1);
+                                setCurrentStep(currentStep + 1)
                             }}>
                             {currentStep === buildSteps.length - 1 ? "Finalizar" : "Siguiente"}
                         </button>
@@ -363,4 +341,4 @@ function RobotBuildingModal({ onClose }) {
     );
 }
 
-export default RobotBuildingModal;
+export default RobotBuildingModal

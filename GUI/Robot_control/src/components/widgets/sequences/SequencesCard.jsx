@@ -1,6 +1,6 @@
 import React from 'react'
 import DoneIcon from '@mui/icons-material/Done';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 
 function SequencesCard({ isActive = false, sequence, setSelected = () => { } }) {
     const { colors } = useTheme()

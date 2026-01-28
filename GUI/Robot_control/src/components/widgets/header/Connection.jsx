@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import LinkIcon from '@mui/icons-material/Link';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
-import { useTheme } from '../../../context/ThemeContext.jsx';
+import { useTheme } from '../../../context/themes/ThemeContext.jsx';
 import { useWebSocket } from "../../../context/WebSocketContext.jsx"
 import ActiviyIndicator from '../../ui/indicators/LoadingIndicator.jsx';
 import UnderlinedInput from '../../ui/inputs/underlinedInput.jsx';

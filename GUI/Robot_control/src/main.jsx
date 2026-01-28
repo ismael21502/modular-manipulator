@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ThemeProvider } from './context/ThemeContext.jsx'
+import { ThemeProvider } from './context/themes/ThemeContext.jsx'
 import { WebSocketProvider } from './context/WebSocketContext.jsx'
 import { RobotStateProvider } from './context/RobotState.jsx'
 import { RobotConfigProvider } from './context/RobotConfig.jsx'

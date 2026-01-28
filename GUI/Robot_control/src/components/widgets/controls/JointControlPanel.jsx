@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as Slider from "@radix-ui/react-slider";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "../../../context/themes/ThemeContext";
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import { useRobotState } from "../../../context/RobotState";
 import validateNumber from "../../../utils/validate";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as Slider from "@radix-ui/react-slider";
 import OpenWithIcon from '@mui/icons-material/OpenWith';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 import { useRobotState } from '../../../context/RobotState';
 import { useWebSocket } from '../../../context/WebSocketContext';
 import { debounce } from 'lodash'

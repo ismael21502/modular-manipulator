@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useTheme } from '../../../context/ThemeContext'
+import { useTheme } from '../../../context/themes/ThemeContext'
 import WarningIcon from '@mui/icons-material/Warning';
 import InfoIcon from '@mui/icons-material/Info';
 function PopUp({ type = "info", title, message, onConfirm, onCancel }) {

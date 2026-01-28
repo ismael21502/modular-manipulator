@@ -1,6 +1,6 @@
 import { useThree, useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState, useMemo } from 'react'
-import { useTheme } from '../../../context/ThemeContext'
+import { useTheme } from '../../../context/themes/ThemeContext'
 import { Line, Html, Text } from '@react-three/drei'
 import { Billboard } from '@react-three/drei'
 import * as THREE from 'three'

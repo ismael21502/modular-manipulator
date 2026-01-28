@@ -1,4 +1,4 @@
-import { useTheme } from "../../../context/ThemeContext.jsx"
+import { useTheme } from "../../../context/themes/ThemeContext.jsx"
 import Scene from "../3D/Scene.jsx"
 import CustomScroll from "../../ui/scrolls/CustomScroll.jsx"
 

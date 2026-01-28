@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import Log from './Log';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import TerminalIcon from '@mui/icons-material/Terminal';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/themes/ThemeContext';
 import { useWebSocket } from '../../../context/WebSocketContext';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
 
