@@ -9,8 +9,9 @@ import * as Slider from "@radix-ui/react-slider";
 import validateNumber from "../../../utils/validate";
 import UnderlinedInput from "../../ui/inputs/underlinedInput";
 import Modal from "./Modal";
+import SolidButton from "../../ui/buttons/SolidButton";
 
-function EditPosModal({ isOpen, setIsopen, selectedPos }) {
+function EditPosModal({ isOpen, setIsOpen, selectedPos }) {
     if (isOpen != true) return null
     const { positions, updatePos } = useWebSocket()
     const oldName = selectedPos
@@ -40,7 +41,7 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
         console.log(oldName, name, jointValues, endEffectorValues)
         setShowRequiredName(false)
         updatePos(oldName, name, jointValues, endEffectorValues)
-        setIsopen(false)
+        setIsOpen(false)
     }
 
     const handleChangeJoints = (i, val, min, max) => {
@@ -64,7 +65,7 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
     }
 
     return (
-        <Modal onClose={()=>setIsopen(false)}>
+        <Modal onClose={()=>setIsOpen(false)}>
             <div className='w-[360px] max-h-[85%] overflow-y-auto rounded-lg p-4 flex flex-col gap-5'
                 style={{ backgroundColor: colors.background, color: colors.text.primary }}
                 onClick={(e) => e.stopPropagation()}>
@@ -186,19 +187,39 @@ function EditPosModal({ isOpen, setIsopen, selectedPos }) {
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-between text-lg text-white">
-                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md'
+                <div className="flex justify-between text-lg text-white gap-5">
+                    {/* <button className='button flex py-1 px-4 gap-2 items-center rounded-md'
                         style={{ backgroundColor: colors.dangerDark }}
-                        onClick={() => { setIsopen(false) }}>
+                        onClick={() => { setIsOpen(false) }}>
                         <CloseIcon />
                         Cancelar
-                    </button>
-                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md'
+                    </button> */}
+                    {/* <button className='button flex py-1 px-4 gap-2 items-center rounded-md'
                         style={{ backgroundColor: colors.primary }}
                         onClick={handleConfirm}>
                         <CheckIcon />
                         Confirmar
-                    </button>
+                    </button> */}
+                    <SolidButton 
+                        color={colors.text.primary}
+                        borderColor={colors.border}
+                        bgColor={colors.border}
+
+                        text="Cancelar"
+                        IconComponent={CloseIcon}
+                        onClick={() => { setIsOpen(false) }}
+                        className="px-2 py-1"
+                    />
+                    <SolidButton 
+                        color={"white"}
+                        bgColor={colors.primaryDark}
+                        borderColor={colors.primaryDark}
+                        
+                        text="Confirmar"
+                        IconComponent={CheckIcon}
+                        onClick={handleConfirm}
+                        className="px-2 py-1"
+                    />
                 </div>
             </div>
         </Modal>

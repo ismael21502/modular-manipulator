@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useTheme } from '../../../context/themes/ThemeContext'
 import WarningIcon from '@mui/icons-material/Warning';
 import InfoIcon from '@mui/icons-material/Info';
+import SolidButton from '../buttons/SolidButton';
 function PopUp({ type = "info", title, message, onConfirm, onCancel }) {
     const { colors } = useTheme()
     useEffect(()=>{
@@ -28,8 +29,8 @@ function PopUp({ type = "info", title, message, onConfirm, onCancel }) {
                 style={{color: colors.text.secondary}}>{title}</h1>
                 <div className='flex flex-col justify-between h-full'>
                     <p className='text-lg text-center'>{message}</p>
-                    <div className="flex justify-between text-lg mt-5">
-                        <button className='button flex py-1 px-4 gap-2 items-center rounded-md opacity-60 hover:opacity-100'
+                    <div className="flex justify-between text-lg mt-5 gap-5">
+                        {/* <button className='button flex py-1 px-4 gap-2 items-center rounded-md opacity-60 hover:opacity-100'
                         style={{ backgroundColor: colors.border, color: colors.text.title}}
                             onClick={onCancel}>
                             Cancelar
@@ -38,7 +39,27 @@ function PopUp({ type = "info", title, message, onConfirm, onCancel }) {
                         style={{ backgroundColor: colors.dangerDark}}
                             onClick={onConfirm}>
                             Confirmar
-                        </button>
+                        </button> */}
+                        <SolidButton
+                            color={colors.text.primary}
+                            borderColor={colors.border}
+                            bgColor={colors.border}
+
+                            text="Cancelar"
+                            IconComponent={null}
+                            onClick={onCancel}
+                            className="px-2 py-1"
+                        />
+                        <SolidButton
+                            color={"white"}
+                            bgColor={colors.dangerDark}
+                            borderColor={colors.dangerDark}
+
+                            text="Confirmar"
+                            IconComponent={null}
+                            onClick={onConfirm}
+                            className="px-2 py-1"
+                        />
                     </div>
                 </div>
             </div>

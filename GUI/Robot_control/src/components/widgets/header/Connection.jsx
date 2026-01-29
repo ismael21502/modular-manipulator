@@ -5,6 +5,7 @@ import { useTheme } from '../../../context/themes/ThemeContext.jsx';
 import { useWebSocket } from "../../../context/WebSocketContext.jsx"
 import ActiviyIndicator from '../../ui/indicators/LoadingIndicator.jsx';
 import UnderlinedInput from '../../ui/inputs/underlinedInput.jsx';
+import SolidButton from '../../ui/buttons/SolidButton.jsx';
 
 function Connection() {
     const { colors, mode } = useTheme()
@@ -36,7 +37,7 @@ function Connection() {
             </div>
             <div className='h-5 w-[1px] bg-gray-400'>
             </div>
-            <button onClick={() => {
+            {/* <button onClick={() => {
                 isConnected
                     ? disconnect()
                     : initializeWebSocket()
@@ -50,10 +51,25 @@ function Connection() {
                             : <LinkIcon />}
                     <p>{isConnected ? "Desconectar" : isConnecting ? "Conectando..." : "Conectar"}</p>
                 </div>
-            </button>
-            {/* <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}>
+            </button> */}
+            <SolidButton
+                className={"px-2 py-0.5"}
+                onClick={() => {
+                    isConnected
+                        ? disconnect()
+                        : initializeWebSocket()
+                }}
+                text={isConnected ? "Desconectar" : isConnecting ? "Conectando..." : "Conectar"}
+                bgColor={isConnected ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
+                borderColor={isConnected ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
+                color={"white"}
+                disabled={isConnecting}
+                IconComponent={isConnected
+                    ? LinkOffIcon
+                    : isConnecting
+                        ? ActiviyIndicator
+                        : LinkIcon} />
 
-            </div> */}
         </div>
     )
 }

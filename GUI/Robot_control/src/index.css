@@ -48,7 +48,7 @@
 .group:focus-within .inputBorder {
   border-color: var(--primary); /* var(--border-focus) */
 }
-
+/* 
 .primaryButton{
   cursor: pointer;
   background-color: var(--primary);
@@ -57,7 +57,7 @@
 
 .primaryButton:hover{
   background-color: var(--primaryDark);
-}
+} */
 
 @keyframes spin {
   from {

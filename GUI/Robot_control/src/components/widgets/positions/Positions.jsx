@@ -12,6 +12,9 @@ import EditPosModal from '../modals/EditPosModal';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
 import LoadingIndicator from '../../ui/indicators/LoadingIndicator';
 import PopUp from '../../ui/popUps/PopUp'
+import HollowButton from '../../ui/buttons/HollowButton';
+import SolidButton from '../../ui/buttons/SolidButton';
+
 function Positions() {
     const { positions, deletePos } = useWebSocket()
     const { colors } = useTheme()
@@ -84,46 +87,80 @@ function Positions() {
                 style={{ borderColor: colors.border, color: colors.text.primary }}>
                 {selectedPos !== ""
                     ? <div className='flex flex-row justify-between gap-3 '>
-                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        {/* <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.primary, color: colors.primary, backgroundColor: `${colors.primary}1A` }}
                             onClick={handleEditing}>
                             <EditIcon />
                             <p>Editar</p>
-                        </button>
-                        <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                        </button> */}
+                        {/* <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                             style={{ borderColor: colors.danger, color: colors.danger, backgroundColor: `${colors.danger}1A` }}
                             onClick={handleDelete}>
                             <DeleteIcon />
                             <p>Borrar</p>
-                        </button>
+                        </button> */}
+                        <HollowButton
+                            color={colors.primary}
+                            borderColor={colors.primary}
+                            bgColor={colors.primary}
+                            IconComponent={EditIcon}
+                            text="Editar"
+                            onClick={handleEditing}
+                        />
+                        <HollowButton
+                            color={colors.danger}
+                            borderColor={colors.danger}
+                            bgColor={colors.danger}
+                            IconComponent={DeleteIcon}
+                            text="Borrar"
+                            onClick={handleDelete}
+                        />
                     </div>
                     : null}
                 <div className='flex w-full'
                     style={{ borderColor: colors.border, color: colors.text.primary }}>
-                    <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
+                    {/* <button className='button flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1'
                         style={{ borderColor: colors.border }}
                         onClick={handleSaving}>
                         <SaveIcon />
                         <p>Guardar nueva pose</p>
-                    </button>
+                    </button> */}
+                    <HollowButton
+                        color={colors.text.primary}
+                        borderColor={colors.disabled}
+                        bgColor={colors.background}
+                        IconComponent={SaveIcon}
+                        text="Guardar nueva pose"
+                        onClick={handleSaving}
+                    />
                 </div>
                 {selectedPos !== ""
-                    ? <div className='flex text-white'>
-                        <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-3 rounded-md`}
-                            style={{ backgroundColor: colors.primaryDark }}
-                            onClick={isPlaying ? () => { } : sendPos}>
-                            {isPlaying
-                                ? <>
-                                    <LoadingIndicator />
-                                    <p>Reproduciendo movimiento</p>
-                                </>
-                                : <>
-                                    <PlayArrowRoundedIcon />
-                                    <p>Reproducir movimiento</p>
-                                </>}
+                    // ? <div className='flex text-white'>
+                    //     <button className={`${isPlaying ? 'opacity-70' : 'button'} flex flex-1 p-2 justify-center gap-3 rounded-md`}
+                    //         style={{ backgroundColor: colors.primaryDark }}
+                    //         onClick={isPlaying ? () => { } : sendPos}>
+                    //         {isPlaying
+                    //             ? <>
+                    //                 <LoadingIndicator />
+                    //                 <p>Reproduciendo movimiento</p>
+                    //             </>
+                    //             : <>
+                    //                 <PlayArrowRoundedIcon />
+                    //                 <p>Reproducir movimiento</p>
+                    //             </>}
 
-                        </button>
-                    </div>
+                    //     </button>
+                    // </div>
+                    ?
+                    <SolidButton 
+                        bgColor={colors.primaryDark}
+                        color={"white"}
+                        borderColor={colors.primaryDark}
+                        text={isPlaying ? "Reproduciendo movimiento" : "Reproducir movimiento"}
+                        IconComponent={isPlaying ? LoadingIndicator : PlayArrowRoundedIcon}
+                        onClick={isPlaying ? () => { } : sendPos}
+                        disabled={isPlaying}
+                    />
                     : null}
             </div>
             <SavePosModal
@@ -131,7 +168,7 @@ function Positions() {
                 setIsOpen={setShowSavePopUp} />
             <EditPosModal
                 isOpen={showEditPopUp}
-                setIsopen={setShowEditPopUp}
+                setIsOpen={setShowEditPopUp}
                 selectedPos={selectedPos} />
             {popUp && (
                 <PopUp

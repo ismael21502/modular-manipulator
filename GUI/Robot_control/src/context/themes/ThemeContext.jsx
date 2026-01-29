@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react'
 
 //[ ] Add useMemo to optimize theme building
 
-const withAlpha = (hex, alpha) => `${hex}${alpha}`
+const withAlpha = (hex, alpha) => `${hex}${alpha}` //[ ] Improve this function
 
 const colorPalettes = {
     purple: {
@@ -134,8 +134,7 @@ const baseThemes = {
 const buildTheme = (mode, mainColorName) => {
     const base = baseThemes[mode]
     const palette = colorPalettes[mainColorName][mode]
-    
-    
+     
     return {
         colors: {
             ...base,
@@ -171,6 +170,7 @@ export const ThemeProvider = ({ children }) => {
         setMode,
         mainColorName,
         setMainColorName,
+        withAlpha
     }
 
     return (

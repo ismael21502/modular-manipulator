@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CustomScroll from "../../ui/scrolls/CustomScroll.jsx";
 import JointEditor from "./JointEditor.jsx";
 import Scene from "../3D/Scene.jsx";
+import SolidButton from "../../ui/buttons/SolidButton.jsx";
 
 /* --------------------------
    1) Estado inicial y reducer
@@ -241,7 +242,7 @@ function RobotBuildingModal({ onClose }) {
         )
     }
 
-    
+
     /* --------------------------
        Render principal
        -------------------------- */
@@ -311,7 +312,7 @@ function RobotBuildingModal({ onClose }) {
 
                     <div className="flex flex-0.1 border-t p-6 flex-row justify-end gap-6 text-xl"
                         style={{ borderColor: colors.border }}>
-                        {currentStep !== 0 && <button className="cursor-pointer py-2 px-4 opacity-80 hover:opacity-100"
+                        {currentStep !== 0 && <button className="cursor-pointer py-2 px-4 opacity-90 hover:opacity-100"
                             onClick={() => {
                                 if (currentStep === 0) return;
                                 setCompletedSteps(prev => prev.slice(0, currentStep - 1));
@@ -319,8 +320,27 @@ function RobotBuildingModal({ onClose }) {
                             }}>
                             Atrás
                         </button>}
-
-                        <button className="primaryButton py-2 px-4 rounded-md"
+                        <div className="flex">
+                            <SolidButton
+                                color={"white"}
+                                bgColor={colors.primaryDark}
+                                borderColor={colors.primaryDark}
+                                text={currentStep === buildSteps.length - 1 ? "Finalizar" : "Siguiente"}
+                                onClick={() => {
+                                    if (currentStep >= buildSteps.length - 1) {
+                                        console.log("Construir robotConfig.json", wizardState);
+                                        return;
+                                    }
+                                    setCompletedSteps(prev => [
+                                        ...prev,
+                                        buildSteps[currentStep].id
+                                    ]);
+                                    setCurrentStep(currentStep + 1)
+                                }}
+                                className={"px-8"}
+                            />
+                        </div>
+                        {/* <button className="primaryButton py-2 px-4 rounded-md"
                             onClick={() => {
                                 if (currentStep >= buildSteps.length - 1) {
                                     console.log("Construir robotConfig.json", wizardState);
@@ -333,7 +353,7 @@ function RobotBuildingModal({ onClose }) {
                                 setCurrentStep(currentStep + 1)
                             }}>
                             {currentStep === buildSteps.length - 1 ? "Finalizar" : "Siguiente"}
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>

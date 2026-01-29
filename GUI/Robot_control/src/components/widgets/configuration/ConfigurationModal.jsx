@@ -6,16 +6,17 @@ import { useState } from 'react';
 import Modal from '../modals/Modal';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import RobotBuildingModal from '../robot_building/RobotBuildingModal';
+import HollowButton from '../../ui/buttons/HollowButton';
+import SolidButton from '../../ui/buttons/SolidButton';
 
 function ConfigurationModal({ onClose = () => { } }) {
-    const { colors, mode, setMode, changeColor, mainColorName } = useTheme()
-    const [prevConfig, setPrevConfig] = useState({
-        color: mainColorName,
-    })
+    const { colors, mode, setMode, setMainColorName, mainColorName } = useTheme()
+    const [prevConfig, setPrevConfig] = useState(mainColorName)
     const [openRobotBuild, setOpenRobotBuild] = useState(false)
 
     const onCancel = () => {
-        changeColor(prevConfig.color)
+        console.log("CANCEL")
+        setMainColorName(prevConfig)
         onClose()
     }
 
@@ -32,14 +33,22 @@ function ConfigurationModal({ onClose = () => { } }) {
                         <TuneIcon fontSize='large' style={{ color: colors.primary }} />
                         <p>Configuración</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button className="button flex rounded-md text-base border py-1 px-3 gap-2 items-center"
+                    <div className="flex items-center gap-3 text-base">
+                        {/* <button className="button flex rounded-md text-base border py-1 px-3 gap-2 items-center"
                             style={{ borderColor: colors.primary, color: colors.primaryDark, backgroundColor: `${colors.primary}1F` }}
                             onClick={() => setOpenRobotBuild(true)}>
                             <SmartToyIcon />
                             Construir un robot
-                        </button>
-                        <CloseIcon fontSize='large' onClick={onClose} className={`button hover:text-[${colors.danger}]`} />
+                        </button> */}
+                        <HollowButton
+                            color={colors.primary}
+                            bgColor={colors.primary}
+                            borderColor={colors.primary}
+                            IconComponent={SmartToyIcon}
+                            text="Construir un robot"
+                            onClick={() => setOpenRobotBuild(true)}
+                        />
+                        <CloseIcon fontSize='large' onClick={onCancel} className={`button hover:text-[${colors.danger}]`} />
                     </div>
                 </div>
                 <CustomScroll className="p-5" scrollbarColor={colors.scrollbar.track} thumbColor={colors.scrollbar.thumb}>
@@ -66,16 +75,16 @@ function ConfigurationModal({ onClose = () => { } }) {
                             <div className="flex items-center gap-4 p-2">
                                 <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "purple" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#6d40d8", outlineColor: "#6d40d8" }}
-                                    onClick={() => changeColor("purple")} />
+                                    onClick={() => setMainColorName("purple")} />
                                 <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "blue" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#4070d8", outlineColor: "#4070d8" }}
-                                    onClick={() => changeColor("blue")} />
+                                    onClick={() => setMainColorName("blue")} />
                                 <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "orange" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#d36606", outlineColor: "#d36606" }}
-                                    onClick={() => changeColor("orange")} />
+                                    onClick={() => setMainColorName("orange")} />
                                 <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "green" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#16ca4c", outlineColor: "#16ca4c" }}
-                                    onClick={() => changeColor("green")} />
+                                    onClick={() => setMainColorName("green")} />
                             </div>
                         </div>
                     </div>
@@ -84,16 +93,30 @@ function ConfigurationModal({ onClose = () => { } }) {
                 <div className="flex flex-row p-5 border-t justify-end"
                     style={{ borderColor: colors.border }}>
                     <div className="flex flex-row gap-3 w-[40%] ">
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1 opacity-90 hover:opacity-100'
+                        {/* <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1 opacity-90 hover:opacity-100'
                             style={{ borderColor: colors.border, backgroundColor: colors.border, color: colors.text.title }}
                             onClick={onCancel}>
                             <p>Cancelar</p>
-                        </button>
-                        <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1 text-white font-bold opacity-90 hover:opacity-100'
+                        </button> */}
+                        {/* <button className='flex flex-1 p-2 justify-center gap-3 cursor-pointer rounded-md border-1 text-white font-bold opacity-90 hover:opacity-100'
                             style={{ borderColor: colors.primaryDark, backgroundColor: colors.primaryDark }}
                             onClick={onConfirm}>
                             <p>Guardar cambios</p>
-                        </button>
+                        </button> */}
+                        <SolidButton
+                            text="Cancelar"
+                            borderColor={colors.border}
+                            bgColor={colors.border}
+                            color={colors.text.title}
+                            onClick={onCancel}
+                        />
+                        <SolidButton
+                            text="Guardar cambios"
+                            borderColor={colors.primaryDark}
+                            bgColor={colors.primaryDark}
+                            color={"white"}
+                            onClick={onConfirm}
+                        />
                     </div>
 
                 </div>

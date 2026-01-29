@@ -1,0 +1,24 @@
+.hollowButton {
+    border-color: var(--hollow-borderColor);
+    background-color: color-mix(in srgb, var(--hollow-bg) 10%, transparent);
+    color: var(--hollow-color);
+    transition: background-color 150ms ease
+}
+.hollowButton:hover {
+    background-color: color-mix(in srgb, var(--hollow-bg) 20%, transparent);
+    outline: 2px solid var(--hollow-borderColor);
+    outline-offset: -2px;
+}
+
+.solidButton {
+    opacity: 1;
+    transition: opacity 150ms ease
+}
+.solidButton:hover{
+    opacity: 0.9;
+}
+.solidButton:disabled{
+    opacity: 0.7;
+    filter: grayscale(20%);
+    cursor: not-allowed;
+}

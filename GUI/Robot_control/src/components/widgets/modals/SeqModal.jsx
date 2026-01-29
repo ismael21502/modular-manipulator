@@ -12,6 +12,7 @@ import validateNumber from '../../../utils/validate'
 import UnderlinedInput from '../../ui/inputs/underlinedInput'
 import InputWithSuffix from '../../ui/inputs/InputWithSuffix'
 import Modal from './Modal'
+import SolidButton from '../../ui/buttons/SolidButton'
 
 // function SaveSeqModal({ isOpen, setIsOpen, steps, onConfirm, mode, seqName }) {
 function SeqModal({ onConfirm, sequence, mode, onClose }) {
@@ -240,9 +241,9 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                         ))}
                     </div>
                 </CustomScroll>
-                <div className="flex justify-between text-lg text-white p-4 border-t-1"
+                <div className="flex justify-between text-lg text-white p-4 border-t-1 gap-10"
                     style={{ borderColor: colors.border }}>
-                    <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
+                    {/* <button className='button flex py-1 px-4 gap-2 items-center rounded-md cursor-pointer text-bold'
                         style={{ backgroundColor: colors.dangerDark }}
                         onClick={onClose}>
                         <CloseIcon />
@@ -253,7 +254,27 @@ function SeqModal({ onConfirm, sequence, mode, onClose }) {
                         onClick={handleConfirm}>
                         <CheckIcon />
                         Confirmar
-                    </button>
+                    </button> */}
+                    <SolidButton
+                        color={colors.text.primary}
+                        borderColor={colors.border}
+                        bgColor={colors.border}
+
+                        text="Cancelar"
+                        IconComponent={CloseIcon}
+                        onClick={onClose}
+                        className="px-2 py-1"
+                    />
+                    <SolidButton
+                        color={"white"}
+                        bgColor={colors.primaryDark}
+                        borderColor={colors.primaryDark}
+
+                        text="Confirmar"
+                        IconComponent={CheckIcon}
+                        onClick={handleConfirm}
+                        className="px-2 py-1"
+                    />
                 </div>
             </div>
         </Modal>
