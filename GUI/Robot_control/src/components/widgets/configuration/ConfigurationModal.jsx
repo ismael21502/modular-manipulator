@@ -73,6 +73,7 @@ function ConfigurationModal({ onClose = () => { } }) {
                         <div>
                             <h2>Color principal</h2>
                             <div className="flex items-center gap-4 p-2">
+                                {/* [ ] Use "usetheme" to get the colors */}
                                 <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "purple" ? "outline-2 outline-offset-2" : ''}`}
                                     style={{ backgroundColor: "#6d40d8", outlineColor: "#6d40d8" }}
                                     onClick={() => setMainColorName("purple")} />

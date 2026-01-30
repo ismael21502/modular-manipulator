@@ -8,7 +8,6 @@ function PositionsCard({ isActive = false, name, joints, endEffectors = [], join
     const backgroundColor = isActive
         ? `${colors.primary}1A` // 10% opacity
         : ``;
-
     return (
         <button onClick={()=>{setSelected(name)}}>
             <div

@@ -42,7 +42,7 @@ function wizardReducer(state, action) {
             const newJoint = {
                 id: generateId(),
                 type: null,     // e.g. 'revolute', 'prismatic', etc.
-                link: {},       // datos del link
+                link: null,       // datos del link
                 limits: {
                     min: -90,
                     max: 90,
@@ -167,10 +167,10 @@ function RobotBuildingModal({ onClose }) {
                                 // seleccionar la recién creada (se añade al final)
                                 // como dispatch es síncrono en reducer, el state cambiará en el siguiente render
                                 // aquí hacemos un pequeño truco: seleccionar tras un timeout 0 para esperar el re-render
-                                setTimeout(() => {
-                                    const last = wizardState.joints[wizardState.joints.length - 1];
-                                    if (last) setSelectedJointId(last.id);
-                                }, 0);
+                                // setTimeout(() => {
+                                //     const last = wizardState.joints[wizardState.joints.length - 1];
+                                //     if (last) setSelectedJointId(last.id);
+                                // }, 0);
                             }}
                             style={{ backgroundColor: `${colors.primary}1A`, color: colors.primary }}
                         >
@@ -246,6 +246,44 @@ function RobotBuildingModal({ onClose }) {
     /* --------------------------
        Render principal
        -------------------------- */
+
+    function isStepComplete(stepId, wizardState) {
+        const value = wizardState[stepId];
+
+        switch (stepId) {
+            case "base":
+            case "tool":
+                return value && Object.keys(value).length > 0;
+
+            case "joints":
+                return (
+                    value.length > 0 &&
+                    value.every(j =>
+                        j.type &&
+                        j.link &&
+                        Object.keys(j.link).length > 0
+                    )
+                );
+
+            default:
+                return true;
+        }
+    }
+      
+    const handleNextStep = () => {
+        // buildSteps[currentStep]
+        console.log("Así va el wizard: ", wizardState[buildSteps[currentStep].id])
+        // if (isEmpty(wizardState[buildSteps[currentStep].id])) console.log("NO HAY NADA")
+        if (currentStep >= buildSteps.length - 1) {
+            console.log("Construir robotConfig.json", wizardState);
+            return;
+        }
+        setCompletedSteps(prev => [
+            ...prev,
+            buildSteps[currentStep].id
+        ]);
+        setCurrentStep(currentStep + 1)
+    }
     return (
         <Modal>
             <div className="flex flex-row h-full w-full"
@@ -326,18 +364,9 @@ function RobotBuildingModal({ onClose }) {
                                 bgColor={colors.primaryDark}
                                 borderColor={colors.primaryDark}
                                 text={currentStep === buildSteps.length - 1 ? "Finalizar" : "Siguiente"}
-                                onClick={() => {
-                                    if (currentStep >= buildSteps.length - 1) {
-                                        console.log("Construir robotConfig.json", wizardState);
-                                        return;
-                                    }
-                                    setCompletedSteps(prev => [
-                                        ...prev,
-                                        buildSteps[currentStep].id
-                                    ]);
-                                    setCurrentStep(currentStep + 1)
-                                }}
+                                onClick={handleNextStep}
                                 className={"px-8"}
+                                disabled={!isStepComplete(buildSteps[currentStep].id, wizardState)}
                             />
                         </div>
                         {/* <button className="primaryButton py-2 px-4 rounded-md"

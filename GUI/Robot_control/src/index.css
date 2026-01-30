@@ -19,10 +19,14 @@
   transition: border 0.2s ease;
 }
 .card:hover{
-  border-color: var(--primary);
+  /* border-color: var(--primary); */
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 .card.active {
   border-color: var(--primary);
+  outline: 2px solid var(--primary);
+    outline-offset: -2px;
 }
 
 .button{
@@ -48,16 +52,6 @@
 .group:focus-within .inputBorder {
   border-color: var(--primary); /* var(--border-focus) */
 }
-/* 
-.primaryButton{
-  cursor: pointer;
-  background-color: var(--primary);
-  color: white;
-}
-
-.primaryButton:hover{
-  background-color: var(--primaryDark);
-} */
 
 @keyframes spin {
   from {

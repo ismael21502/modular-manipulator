@@ -180,8 +180,6 @@ export const ThemeProvider = ({ children }) => {
                     "--primary": theme.colors.primary,
                     "--primaryDark": theme.colors.primaryDark,
                     "--border": theme.colors.border,
-                    "--cardBorder": theme.colors.border,
-                    "--cardActiveBorder": theme.colors.primary,
                 }}
             >
                 {children}
