@@ -50,7 +50,7 @@ export function Model({ url }) {
 }
 
 
-function Scene({ }) {
+function Scene({ cameraPos = [0,0,0], gizmoSize=1, useControlsLegend=true }) {
   const { colors } = useTheme()
   const { cartesian } = useRobotState()
   const cameraControlsRef = useRef()
@@ -58,19 +58,20 @@ function Scene({ }) {
   const gridSize = 2//mts
   const divisionSize = 100 //mm
   const divisions = gridSize * (1000 / divisionSize)
+  
   return (
     <div className='flex relative flex-1 h-full border-x-1 border-solid'
       style={{ borderColor: colors.border, backgroundColor: colors.backgroundSubtle }}>
-      <Canvas camera={{ position: [0, 0.2, 0.70], fov: 35 }}>
+      <Canvas camera={{ position: cameraPos, fov: 35}}>
         <ambientLight intensity={0.01} />
 
         <Environment preset="city" />
         <gridHelper args={[gridSize, divisions, '#3c9439', '#9e9e9e']} />
         <Model url="/Modbot.glb" />
         <CameraControls ref={cameraControlsRef} makeDefault />
-        <Robot />
-        <GizmoHelper alignment="top-right" margin={[65, 65]}>
-          <OrientationGizmo size={10} onSetDirection={
+        <Robot position={[0,0,0.3]}/>
+        <GizmoHelper alignment="top-right" margin={[65*gizmoSize, 65*gizmoSize]}>
+          <OrientationGizmo size={10*gizmoSize} onSetDirection={
             (e) => {
               const distance = 0.7
               cameraControlsRef.current.setLookAt(e[0] * distance, e[1] * distance + 0.1, e[2] * distance, 0, 0.1, 0, true)
@@ -79,21 +80,28 @@ function Scene({ }) {
         </GizmoHelper>
         <TCPCursor color={colors.primary} position={[(cartesian[0] ?? 0) / 1000, (cartesian[2] ?? 0) / 1000, (cartesian[1] ?? 0) / 1000 * -1]} />
       </Canvas>
-      <div className="flex flex-col p-3 text-xs absolute top-5 left-5 rounded-lg"
-        style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.background, color: colors.text.primary }}>
-        <div className="flex justify-between items-center">
-          <p style={{ color: colors.text.title, fontWeight: 'bold' }}>Controles 3D</p>
-        </div>
-        <div className='w-full my-1.5' style={{ height: "1px", backgroundColor: colors.border }} />
+      {useControlsLegend && <ControlsLegend  />}
+    </div>
+  )
+}
 
-        <div className="flex flex-col">
-          <p className='flex justify-between gap-5'>Rotar<span className='font-bold' style={{ color: colors.primary }}>Arrastrar</span></p>
-          <p className='flex justify-between gap-5'>Mover<span className='font-bold' style={{ color: colors.primary }}>Arrastrar (der.)</span></p>
-          <p className='flex justify-between gap-5'>Zoom<span className='font-bold' style={{ color: colors.primary }}>Rueda </span></p>
-        </div>
+const ControlsLegend  = () => {
+  const { colors } = useTheme()
+  return (
+    <div className="flex flex-col p-3 text-xs absolute top-5 left-5 rounded-lg"
+      style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.background, color: colors.text.primary }}>
+      <div className="flex justify-between items-center">
+        <p style={{ color: colors.text.title, fontWeight: 'bold' }}>Controles 3D</p>
+      </div>
+      <div className='w-full my-1.5' style={{ height: "1px", backgroundColor: colors.border }} />
+
+      <div className="flex flex-col">
+        <p className='flex justify-between gap-5'>Rotar<span className='font-bold' style={{ color: colors.primary }}>Arrastrar</span></p>
+        <p className='flex justify-between gap-5'>Mover<span className='font-bold' style={{ color: colors.primary }}>Arrastrar (der.)</span></p>
+        <p className='flex justify-between gap-5'>Zoom<span className='font-bold' style={{ color: colors.primary }}>Rueda </span></p>
       </div>
     </div>
-  );
+  )
 }
 
 export default Scene;

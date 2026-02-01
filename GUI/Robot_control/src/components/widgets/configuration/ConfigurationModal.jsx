@@ -10,7 +10,7 @@ import HollowButton from '../../ui/buttons/HollowButton';
 import SolidButton from '../../ui/buttons/SolidButton';
 
 function ConfigurationModal({ onClose = () => { } }) {
-    const { colors, mode, setMode, setMainColorName, mainColorName } = useTheme()
+    const { colors, mode, setMode, setMainColorName, mainColorName, colorOptions } = useTheme()
     const [prevConfig, setPrevConfig] = useState(mainColorName)
     const [openRobotBuild, setOpenRobotBuild] = useState(false)
 
@@ -72,20 +72,14 @@ function ConfigurationModal({ onClose = () => { } }) {
                         </div>
                         <div>
                             <h2>Color principal</h2>
-                            <div className="flex items-center gap-4 p-2">
-                                {/* [ ] Use "usetheme" to get the colors */}
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "purple" ? "outline-2 outline-offset-2" : ''}`}
-                                    style={{ backgroundColor: "#6d40d8", outlineColor: "#6d40d8" }}
-                                    onClick={() => setMainColorName("purple")} />
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "blue" ? "outline-2 outline-offset-2" : ''}`}
-                                    style={{ backgroundColor: "#4070d8", outlineColor: "#4070d8" }}
-                                    onClick={() => setMainColorName("blue")} />
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "orange" ? "outline-2 outline-offset-2" : ''}`}
-                                    style={{ backgroundColor: "#d36606", outlineColor: "#d36606" }}
-                                    onClick={() => setMainColorName("orange")} />
-                                <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === "green" ? "outline-2 outline-offset-2" : ''}`}
-                                    style={{ backgroundColor: "#16ca4c", outlineColor: "#16ca4c" }}
-                                    onClick={() => setMainColorName("green")} />
+                            <div className="flex items-center gap-4 p-2">                            
+                                {colorOptions.map(option => (
+                                    // <h1>option</h1>
+                                    <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === option.name ? "outline-2 outline-offset-2" : ''}`}
+                                        style={{ backgroundColor: option.primary, outlineColor: option.primary }}
+                                        onClick={() => setMainColorName(option.name)} />
+                                ))}
+
                             </div>
                         </div>
                     </div>

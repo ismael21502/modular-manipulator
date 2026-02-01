@@ -2,7 +2,7 @@ import { useRobotConfig } from '../../../context/RobotConfig'
 import { useRef, useMemo } from 'react'
 import { useRobotState } from '../../../context/RobotState'
 
-function Robot() {
+function Robot({position=[0,0,0]}) {
     const { robotConfig } = useRobotConfig()
     const state = useRobotState()
     const joints = state.robotState.joints
@@ -24,7 +24,7 @@ function Robot() {
 
     return (
         // Rotar -90° en X convierte todo a Z up como en mi robotConfig
-        <group rotation={[-Math.PI/2, 0, 0]} position={[0,0,0.3]}> 
+        <group rotation={[-Math.PI/2, 0, 0]} position={position}> 
             <JointChain
                 joint={rootJoint}
                 config={robotConfig}

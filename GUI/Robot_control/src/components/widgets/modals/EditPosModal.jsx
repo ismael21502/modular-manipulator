@@ -11,7 +11,7 @@ import UnderlinedInput from "../../ui/inputs/underlinedInput";
 import Modal from "./Modal";
 import SolidButton from "../../ui/buttons/SolidButton";
 
-function EditPosModal({ isOpen, setIsOpen, selectedPos }) {
+function EditPosModal({ isOpen, setIsOpen, selectedPos, setSelectedPos }) {
     if (isOpen != true) return null
     const { positions, updatePos } = useWebSocket()
     const oldName = selectedPos
@@ -42,6 +42,7 @@ function EditPosModal({ isOpen, setIsOpen, selectedPos }) {
         setShowRequiredName(false)
         updatePos(oldName, name, jointValues, endEffectorValues)
         setIsOpen(false)
+        setSelectedPos(name)
     }
 
     const handleChangeJoints = (i, val, min, max) => {

@@ -169,7 +169,8 @@ function Positions() {
             <EditPosModal
                 isOpen={showEditPopUp}
                 setIsOpen={setShowEditPopUp}
-                selectedPos={selectedPos} />
+                selectedPos={selectedPos}
+                setSelectedPos={setSelectedPos}  />
             {popUp && (
                 <PopUp
                     open

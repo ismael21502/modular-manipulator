@@ -269,7 +269,7 @@ function RobotBuildingModal({ onClose }) {
                 return true;
         }
     }
-      
+
     const handleNextStep = () => {
         // buildSteps[currentStep]
         console.log("Así va el wizard: ", wizardState[buildSteps[currentStep].id])
@@ -291,7 +291,7 @@ function RobotBuildingModal({ onClose }) {
                 <div className="flex flex-1 flex-col border-r"
                     style={{ borderColor: colors.border }}>
                     <div className="flex flex-1 flex-col p-6 gap-6"
-                        style={{ backgroundColor: colors.backgroundSubtle }}>
+                    >
                         <div className="flex font-bold text-2xl items-center gap-2"
                             style={{ color: colors.text.title }}>
                             <SmartToyIcon fontSize="large" style={{ color: colors.primary }} />
@@ -308,25 +308,27 @@ function RobotBuildingModal({ onClose }) {
                                 complete={completedSteps.includes(step.id)} />
                         ))}
                     </div>
-                    <div className="flex-1 h-80 w-full p-6">
+                    <div className="flex flex-1 h-80 w-full p-6">
                         <div className="flex flex-col h-full w-full rounded-md justify-center p-4 gap-4 border"
                             style={{ borderColor: colors.border, backgroundColor: colors.background }}>
                             <h2 className="text-xl font-bold text-center"
                                 style={{ color: colors.text.title }}>Vista previa</h2>
-                            <div className="rounded-lg overflow-hidden border aspect-square"
-                                style={{ borderColor: colors.border }}>
-                                {/* <Scene /> */}
+                            <div className="flex flex-1 overflow-hidden justify-center">
+                                {/* <div className="flex h-full aspect-square bg-red-600 border rounded-lg" style={{ borderColor: colors.border }}>
+                                    <Scene cameraPos={[0, 0.2, 0.7]} gizmoSize={0.8} useControlsLegend={false} />
+                                </div> */}
                             </div>
                         </div>
                     </div>
-                    <button className="flex flex-row gap-2 p-6 cursor-pointer opacity-80 hover:opacity-100"
+
+                    <button className="flex h-10 items-center flex-row gap-2 p-6 cursor-pointer opacity-80 hover:opacity-100"
                         onClick={onClose}>
                         <ArrowBackIcon />
                         Regresar
                     </button>
                 </div>
 
-                <div className="flex flex-2 flex-col">
+                <div className="flex flex-3 flex-col">
                     <div className="flex flex-1 min-h-0">
                         {/* Si el paso actual es 'joints' renderizamos panel especial */}
                         {currentStepObj.id === "joints" ? (

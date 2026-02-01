@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="h-[100vh] flex flex-col transition-colors duration-150 ease-in-out"
       style={{ backgroundColor: colors.background }}>
-      <Header title={"Robot control"} openConfig={()=>setOpenConfig(true)}/>
+      <Header title={"Robot control"} openConfig={() => setOpenConfig(true)} />
       <div className="flex flex-1 flex-row min-h-0">
         <div className="flex-[1_1_25%] min-w-0 min-h-0 flex flex-col">
           {/* tabs */}
@@ -37,7 +37,7 @@ function App() {
 
         <div className="flex-[2_1_50%] min-w-0 h-full">
           <div className="flex h-[65%]">
-            <Scene />
+            <Scene cameraPos={[0, 0.2, 0.7]} />
           </div>
           <div className="flex h-[35%]">
             <Terminal />
@@ -52,7 +52,7 @@ function App() {
         </div>
       </div>
 
-      {openConfig && <ConfigurationModal onClose={()=> setOpenConfig(false)}/>}
+      {openConfig && <ConfigurationModal onClose={() => setOpenConfig(false)} />}
     </div>
 
   )

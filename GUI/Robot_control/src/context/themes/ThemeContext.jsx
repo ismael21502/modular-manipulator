@@ -31,6 +31,19 @@ const colorPalettes = {
         },
     },
 
+    cyan: {
+        light: {
+            primary: "#2eabaf",
+            primaryDark: "#22a398",
+            accent: "#d46018",
+        },
+        dark: {
+            primary: "#31c7b3",
+            primaryDark: "#2aa090",
+            accent: "#df6d26",
+        },
+    },
+
     orange: {
         light: {
             primary: "#d36606",
@@ -46,14 +59,27 @@ const colorPalettes = {
 
     green: {
         light: {
-            primary: "#16ca4c",
-            primaryDark: "#0db940",
+            primary: "#15b846",
+            primaryDark: "#109437",
             accent: "#6d40d8",
         },
         dark: {
-            primary: "#23da5a",
-            primaryDark: "#15c94b",
+            primary: "#19b447",
+            primaryDark: "#1b9c42",
             accent: "#7b4af0",
+        },
+    },
+    
+    red: {
+        light: {
+            primary: "#d82d27",
+            primaryDark: "#c22621",
+            accent: "#3562c4",
+        },
+        dark: {
+            primary: "#e03131",
+            primaryDark: "#ca2929",
+            accent: "#5078ff",
         },
     },
 }
@@ -86,19 +112,6 @@ const baseThemes = {
             track: "#0000001e",
         },
 
-        // button: {
-        //     solid: {
-        //         background: colorPalettes[mainColorName][mode].primary,
-        //         border: colorPalettes[mainColorName][mode].primary,
-        //         color: "white",
-        //     },
-        //     hollow: {
-
-        //     },
-        //     secondary: { /* Check if this is a correct name */
-                
-        //     }
-        // }
     },
 
     dark: {
@@ -134,7 +147,7 @@ const baseThemes = {
 const buildTheme = (mode, mainColorName) => {
     const base = baseThemes[mode]
     const palette = colorPalettes[mainColorName][mode]
-     
+
     return {
         colors: {
             ...base,
@@ -164,13 +177,22 @@ export const ThemeProvider = ({ children }) => {
 
     const theme = buildTheme(mode, mainColorName)
 
+    // This is for color selection in config
+    const colorOptions = Object.entries(colorPalettes).map(
+        ([name, modes]) => ({
+            name,
+            ...modes[mode],
+        })
+    )
+
     const value = {
         ...theme,
         mode,
         setMode,
         mainColorName,
         setMainColorName,
-        withAlpha
+        withAlpha,
+        colorOptions
     }
 
     return (
