@@ -1,33 +1,24 @@
-from fastapi import FastAPI, WebSocket # type: ignore
+from fastapi import FastAPI, WebSocket
 import json
 from datetime import datetime
 import asyncio
-from fastapi.middleware.cors import CORSMiddleware # type: ignore
+# from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import os
 from kinematics.GeneralFK import GeneralFK, GeneralFK_sym
 from kinematics.GeneralIK import GeneralIK
 import numpy as np
-from ESP32Connection import ESP32Connection
+from services.ESP32Connection import ESP32Connection
 from utils.mapValues import mapVal
-from api.positions import router as positionsRouter
-from api.sequences import router as sequencesRouter
-
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*", "http://localhost:5173", "http://localhost"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-app.include_router(positionsRouter)
-app.include_router(sequencesRouter)
+# from api.positions import router as positionsRouter
+# from api.sequences import router as sequencesRouter
+from services.robot_state import RobotState
+from utils.appfactory import createApp
+app = createApp()
 
 active_connections = []
 esp32_socket: WebSocket | None = None
-robotConfig = {}
-symbolicFK = None
-lastJoints = [0,0,0,0]
+
+robot_state = RobotState()
 
 ik_task_running = False
 latest_ik_request = None
@@ -49,14 +40,13 @@ async def send_log(ws: WebSocket, catergory_, type_: str, message: str):
     
 @app.get("/robot_config")
 async def get_robot_config():
-    global robotConfig
-    global symbolicFK
     try:
         file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robotConfig.json")
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            robotConfig = data
-            symbolicFK, jointSymbols = GeneralFK_sym(robotConfig['joints'], robotConfig['end_effectors'])
+            # robotConfig = data
+            symbolicFK, jointSymbols = GeneralFK_sym(data['joints'], data['end_effectors'])
+            robot_state.setConfig(data, symbolicFK)
             print(symbolicFK, jointSymbols)
         return data
     except Exception as e:
@@ -91,18 +81,16 @@ async def process_gui_command(ws: WebSocket, esp: ESP32Connection, data: dict):
         except Exception as e:
             pass
         
-async def calculate_ik(cartesian_values: list[int]):
-    global lastJoints
-    x, y, z, _, _, _ = cartesian_values
-    result = GeneralIK(symbolicFK, np.radians(lastJoints).tolist(), [x,y,z])
-    result = np.round(np.degrees(result),0).tolist()
-    lastJoints = result
-    return result 
+# async def calculateIK(cartesian_values: list[int]):
+#     x, y, z, _, _, _ = cartesian_values
+#     result = GeneralIK(robot_state.symbolicFK, np.radians(robot_state.getJoints()).tolist(), [x,y,z])
+#     result = np.round(np.degrees(result),0).tolist()
+#     robot_state.setJoints(result)
+#     return result 
 
 async def calculate_fk(articular_values: list[int]):
-    global lastJoints
-    lastJoints = articular_values
-    forwardKinematics = GeneralFK([np.radians(value) for value in articular_values], symbolicFK)
+    robot_state.setJoints(articular_values)
+    forwardKinematics = GeneralFK([np.radians(value) for value in articular_values], robot_state.symbolicFK)
     forwardKinematics = np.round(forwardKinematics, 0).tolist()
     return forwardKinematics
 
@@ -112,8 +100,9 @@ async def request_ik(ws: WebSocket, cartesian_values):
         latest_ik_request = cartesian_values
         if not ik_task_running:
             asyncio.create_task(ik_worker(ws))
+            
 async def ik_worker(ws: WebSocket):
-    global ik_task_running, latest_ik_request, lastJoints
+    global ik_task_running, latest_ik_request
     while True:
         async with ik_lock:
             if latest_ik_request is None:
@@ -124,12 +113,12 @@ async def ik_worker(ws: WebSocket):
             ik_task_running = True
         x, y, z, _, _, _ = cartesian
         result = GeneralIK(
-            symbolicFK,
-            np.radians(lastJoints).tolist(),
+            robot_state.symbolicFK,
+            np.radians(robot_state.getJoints()).tolist(),
             [x, y, z]
         )
         result = np.round(np.degrees(result), 0).tolist()
-        lastJoints = result
+        robot_state.setJoints(result)
         try:
             await asyncio.to_thread(
                 esp.send,{

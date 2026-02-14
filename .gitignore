@@ -9,7 +9,7 @@ RobotArmESP32/RobotArm.code-workspace
 /Robot_backend/kinematics/__pycache__/
 /Robot_backend/utils/__pycache__/
 /Robot_backend/api/__pycache__/
-/Robot_backend/services/
+/Robot_backend/services/__pycache__/
 Robot_backend/main2.py
 Robot.blend
 notes.txt

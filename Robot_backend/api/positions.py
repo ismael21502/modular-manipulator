@@ -7,7 +7,7 @@ router = APIRouter()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 POSITIONS_FILE = os.path.join(BASE_DIR, "..", "positions.json")
 
-def load_positions():
+def loadPositions():
     try:
         with open(POSITIONS_FILE, "r") as f:
             return json.load(f)
@@ -22,12 +22,12 @@ def save_positions(data):
 
 @router.get("/positions")
 async def get_positions():
-    return load_positions()
+    return loadPositions()
 
 
 @router.post("/savePos")
 async def save_pos(newData: dict):
-    data = load_positions()
+    data = loadPositions()
 
     if any(item["name"] == newData["name"] for item in data):
         return {"status": "exists"}
@@ -39,7 +39,7 @@ async def save_pos(newData: dict):
 
 @router.post("/updatePos")
 async def update_position(position: dict):
-    data = load_positions()
+    data = loadPositions()
 
     for item in data:
         if item["name"] == position["oldName"]:
@@ -57,7 +57,7 @@ async def delete_position(item: dict):
     if "name" not in item:
         return {"status": "error", "message": "Missing name"}
 
-    data = load_positions()
+    data = loadPositions()
     new_data = [pos for pos in data if pos["name"] != item["name"]]
 
     if len(new_data) == len(data):
