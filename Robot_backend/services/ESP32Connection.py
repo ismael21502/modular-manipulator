@@ -7,7 +7,13 @@ class ESP32Connection:
         self.baudrate = baudrate
         self.ser = None
 
-    def connect(self):
+    def connect(self, port=None, baudrate=None):
+        if port is not None:
+            self.port = port
+        if baudrate is not None:
+            self.baudrate = baudrate
+        print("Conectando hardware en puerto", self.port, "a", self.baudrate, "baudios...")
+
         self.ser = serial.Serial(self.port, self.baudrate, timeout=1)
 
     def disconnect(self):

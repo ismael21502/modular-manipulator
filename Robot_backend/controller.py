@@ -35,6 +35,10 @@ class RobotController:
             tcp = command["values"]
             self.currentMode = ControlMode.CARTESIAN
             await self.ikService.request_ik(tcp)
+        elif command["type"] == "connectRobot":
+            port = command.get("port")
+            baudrate = command.get("baudrate")
+            await self.connect(port=port, baudrate=baudrate)
 
     async def run(self):
         await self.connect() #[ ] Esto debe vivir en processcommand, pero lo dejo aquí temporalmente para probar la conexión al hardware antes de implementar el control completo
@@ -52,8 +56,11 @@ class RobotController:
         self._notifiers.append(notifier)
 
     async def notify(self, message):
-        for notifier in self._notifiers:
-            await notifier(message)
+        for notifier in list(self._notifiers):
+            try:
+                await notifier(message)
+            except:
+                self._notifiers.remove(notifier)
     
     def removeNotifier(self, notifier):
         self._notifiers.remove(notifier)

@@ -7,7 +7,7 @@ import ActiviyIndicator from '../../ui/indicators/LoadingIndicator.jsx';
 import UnderlinedInput from '../../ui/inputs/underlinedInput.jsx';
 import SolidButton from '../../ui/buttons/SolidButton.jsx';
 
-function Connection() {
+function BackendConnection() {
     const { colors, mode } = useTheme()
     const { isConnected, isConnecting, initializeWebSocket, disconnect, port, setPort, IP, setIP } = useWebSocket()
     const onIPChange = (newIP) => {
@@ -74,4 +74,4 @@ function Connection() {
     )
 }
 
-export default Connection
+export default BackendConnection

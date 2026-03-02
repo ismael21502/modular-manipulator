@@ -1,5 +1,4 @@
 import React from 'react'
-import Connection from './Connection'
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import { useTheme } from '../../../context/themes/ThemeContext';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -7,7 +6,9 @@ import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'; 
 import BlockIcon from '@mui/icons-material/Block';
 import { color } from '@mui/system';
-
+import BackendConnection from './BackendConnection';
+import ArduinoStyleConnection from './ArduinoStyleConnection';
+ 
 function Header({ title, openConfig }) {
   const { colors, mode, setMode } = useTheme()
   return (
@@ -25,7 +26,8 @@ function Header({ title, openConfig }) {
       </div>
 
       <div className='flex flex-row gap-4 items-center pr-2'>
-        <Connection />
+        {/* <BackendConnection /> */}
+        <ArduinoStyleConnection />
         {mode === "light"
           ? <button className='cursor-pointer' style={{ color: colors.text.primary }} onClick={() => { setMode("dark") }}>
             <DarkModeRoundedIcon fontSize='medium' className='opacity-80 hover:scale-120 hover:opacity-100' />
