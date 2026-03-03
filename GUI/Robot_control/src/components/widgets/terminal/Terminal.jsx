@@ -5,10 +5,11 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import { useTheme } from '../../../context/themes/ThemeContext';
 import { useWebSocket } from '../../../context/WebSocketContext';
 import CustomScroll from '../../ui/scrolls/CustomScroll';
-
+import HollowButton from '../../ui/buttons/HollowButton';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 function Terminal({ }) {
     const { colors } = useTheme()
-    const { logs, setLogs } = useWebSocket()
+    const { logs, setLogs, isConnected, initializeWebSocket, isConnecting } = useWebSocket()
     const logContainerRef = useRef(null)
     useEffect(() => {
         if (logContainerRef.current) {
@@ -16,25 +17,37 @@ function Terminal({ }) {
 
             // Verifica si el usuario está al final del contenedor
             const currentHeight = scrollHeight - scrollTop
-            const isAtBottom = (clientHeight -50 >= currentHeight || currentHeight <= clientHeight +50)
+            const isAtBottom = (clientHeight - 50 >= currentHeight || currentHeight <= clientHeight + 50)
             // Desplazar solo si el usuario está al final
             if (isAtBottom) {
                 logContainerRef.current.scrollTop = scrollHeight;
             }
         }
     }, [logs])
-    
+
     function clearTerminal(e) {
         setLogs([])
     }
     return (
         <div className='flex flex-col flex-1 text-white border-1 border-solid border-[#4A4A4A]' //overflow-hidden
-        style={{backgroundColor: colors.terminal.content}}>
+            style={{ backgroundColor: colors.terminal.content }}>
             <div className='flex w-full py-1 px-5 font-bold text-lg justify-between items-center border-b-1 border-[#4A4A4A]'
                 style={{ backgroundColor: colors.terminal.head }}>
                 <div className='flex flex-row gap-2 items-center'>
                     <TerminalIcon fontSize='medium' />{/*fontSize='small' */}
                     <p>TERMINAL</p>
+                    <span className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: isConnected ? colors.success : colors.danger }}></span>
+                    {!isConnected && <HollowButton
+                        className='ml-2 text-xs rounded-sm px-1 py-0.5'
+                        color={colors.warning}
+                        bgColor={colors.warning}
+                        borderColor={colors.warning}
+                        IconComponent={AutorenewIcon}
+                        iconSx={{ fontSize: 16 }}
+                        iconClass={`${isConnecting && "rotate"}`}
+                        text={isConnecting ? "Reconectando..." : "Reconectar"}
+                        onClick={initializeWebSocket} />}
                 </div>
 
                 <button onClick={clearTerminal}>
@@ -53,9 +66,9 @@ function Terminal({ }) {
                         return <Log key={`${log.time}-${index}`} type={log.type} time={log.time} content={log.values} />
                     })}
             </div> */}
-            
+
             <CustomScroll scrollbarColor={"#ffffff10"} thumbColor={colors.scrollbar.thumb} ref={logContainerRef} >
-                <div className="flex flex-col gap-2 p-2" >
+                <div className="flex flex-col gap-1 p-2" >
                     {logs.map((log, index) => {
                         if (log.category != "log") {
                             return

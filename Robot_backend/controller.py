@@ -27,10 +27,16 @@ class RobotController:
             tcp = await self.fkSolver(joints)
             # tcp = self.calculateFK(joints)
             await self.notify({
-                "category": "state",
-                "type": "COORDS",
-                "values": tcp,
+                "event": "ROBOT_STATE",
+                "payload": {
+                    "tcp": tcp
+                }
             })
+            # await self.notify({
+            #     "category": "state",
+            #     "type": "COORDS",
+            #     "values": tcp,
+            # })
         elif command["type"] == "cartesian_move":
             tcp = command["values"]
             self.currentMode = ControlMode.CARTESIAN
@@ -38,19 +44,23 @@ class RobotController:
         elif command["type"] == "connectRobot":
             port = command.get("port")
             baudrate = command.get("baudrate")
-            await self.connect(port=port, baudrate=baudrate)
+            await self.connectHardware(port=port, baudrate=baudrate)
+        elif command["type"] == "disconnectRobot":
+            print("DESCONECTANDO...")
+            await self.disconnectHardware()
 
     async def run(self):
-        await self.connect() #[ ] Esto debe vivir en processcommand, pero lo dejo aquí temporalmente para probar la conexión al hardware antes de implementar el control completo
+        await self.connectHardware() #[ ] Esto debe vivir en processcommand, pero lo dejo aquí temporalmente para probar la conexión al hardware antes de implementar el control completo
         while True:
             joints = await self.ikService.solutionQueue.get()
             self.robotState.setJoints(joints)
-            
             await self.notify({
-                "category": "state",
-                "type": "JOINTS",
-                "values": joints,
-                })
+                "event": "ROBOT_STATE",
+                "payload": {
+                    "joints": joints
+                }
+            })
+            
     
     def addNotifier(self, notifier):
         self._notifiers.append(notifier)
@@ -65,16 +75,49 @@ class RobotController:
     def removeNotifier(self, notifier):
         self._notifiers.remove(notifier)
 
-    async def connect(self):
+    async def connectHardware(self, port=None, baudrate=None):
         try:
-            print("Conectando a hardware...")
-            self.hardwareDriver.connect()
-        except Exception as e:
-            await self.notify( {
-                "category": "log",
-                "type": "ERROR",
-                "values": f"Error conectando ESP32: {e}"
+            self.hardwareDriver.connect(port, baudrate)
+            await self.notify({
+                "event": "HARDWARE_STATE",
+                "payload": {
+                    "connected": True
+                },
+                "meta": {
+                    "severity": "info",
+                    "userVisible": True
+                },
+                "message": f"Conexión establecida con el hardware", #O robot
             })
+        except Exception as e:
+            await self.notify({
+                "event": "HARDWARE_STATE",
+                "payload": {
+                    "connected": False
+                },
+                "meta": {
+                    "severity": "error",
+                    "userVisible": True
+                },
+                "message": f"Error conectando ESP32: {e}", #[ ] Hacer un error message handler o algo así
+            })
+
+    async def disconnectHardware(self):
+        try:
+            self.hardwareDriver.disconnect()
+            await self.notify({
+                "event": "HARDWARE_STATE",
+                "payload": {
+                    "connected": False
+                },
+                "meta": {
+                    "severity": "info",
+                    "userVisible": True
+                },
+                "message": f"Desconectado del hardware", #O robot
+            })
+        except Exception as e:
+            print("Error while disconnecting: ", e)
 
     def stop(self):
         # Code to stop the robot

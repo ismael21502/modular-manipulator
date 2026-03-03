@@ -10,7 +10,7 @@ class ESP32Connection:
     def connect(self, port=None, baudrate=None):
         if port is not None:
             self.port = port
-        if baudrate is not None:
+        if baudrate is not None: 
             self.baudrate = baudrate
         print("Conectando hardware en puerto", self.port, "a", self.baudrate, "baudios...")
 

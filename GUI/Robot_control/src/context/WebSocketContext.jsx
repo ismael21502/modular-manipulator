@@ -7,12 +7,13 @@ import { useMemo } from "react";
 const WebSocketContext = createContext(null);
 
 export const WebSocketProvider = ({ children }) => {
-    const { setCartesian, isPlaying } = useRobotState()  
+    //[ ] category en setLogs no parece importante
+    const { setCartesian, isPlaying } = useRobotState()
     const state = useRobotState()
-    const setJoints = state.robotApi.setJoints 
+    const setJoints = state.robotApi.setJoints
 
     const { subscribeArticular, subscribeEndEffectors } = useRobotState()
-    const { setRobotConfig } = useRobotConfig() 
+    const { setRobotConfig } = useRobotConfig()
     const ws = useRef(null)
     const [isConnected, setIsConnected] = useState(false)
     const [logs, setLogs] = useState([])
@@ -21,6 +22,8 @@ export const WebSocketProvider = ({ children }) => {
     const [port, setPort] = useState("8000")
     const [sequences, setSequences] = useState([])
     const [isConnecting, setIsConnecting] = useState(false)
+
+    const [hardwareStatus, setHardwareStatus] = useState('disconnected')
 
     useEffect(() => {
         initializeWebSocket()
@@ -89,7 +92,6 @@ export const WebSocketProvider = ({ children }) => {
             console.error("WebSocket error:", err)
         }
         const handleMessage = (event) => {
-            console.log("Receiving: ", event.data)
             try {
                 let data;
                 if (typeof event.data === "string") {
@@ -97,16 +99,15 @@ export const WebSocketProvider = ({ children }) => {
                 } else {
                     data = event.data;
                 }
-                // if (data.type === "JOINTS") setJoints(data.values)
-                if (data.type === "JOINTS") setJoints(data.values) // [ ] Cambiar por moveRobot
-                else if (data.type === "COORDS") {
-                    setCartesian(data.values)
-                } 
-                if(data.category === "log"){
-                    setLogs(prev => [...prev, { time: new Date().toISOString(), type: data.type, category: "log", values: data.values }])
-                } //Dejar esto con callbacks también
-                // setLogs(prev => [...prev, data])
-            } catch {
+                if(data.event === "HARDWARE_STATE"){
+                    setHardwareStatus(data.payload.connected ? 'connected' : 'disconnected')
+                    setLogs(prev => [...prev, { time: new Date().toISOString(), type: data.meta.severity.toUpperCase(), category: "log", values: data.message }])
+                } else if(data.event === "ROBOT_STATE"){
+                    if(data.payload.joints) setJoints(data.payload.joints)
+                    if(data.payload.tcp) setCartesian(data.payload.tcp)
+                }
+                
+            } catch (err) {
                 console.log("Mensaje no JSON:", event.data)
             }
         }
@@ -331,7 +332,7 @@ export const WebSocketProvider = ({ children }) => {
                     }
                 ])
                 return { status: 'ok' }
-            } else{
+            } else {
                 throw new Error(`HTTP ${res.status}`)
             }
 
@@ -347,12 +348,25 @@ export const WebSocketProvider = ({ children }) => {
                 }
             ])
 
-            return { status: 'error', message: err.message}
+            return { status: 'error', message: err.message }
         }
     }
-    
+    const connectHardware = async (port, baudrate) => {
+        setHardwareStatus('connecting')
+        send({
+            type: "connectRobot",
+            port: port,
+            baudrate: baudrate
+        })
+    }
+
+    const disconnectHardware = () => {
+        send({
+            type: "disconnectRobot"
+        })
+    }
+
     const send = (obj) => {
-        console.log("SENDING", obj)
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
@@ -397,6 +411,7 @@ export const WebSocketProvider = ({ children }) => {
             IP, setIP,
             port, setPort,
             sequences, saveSeq, deleteSequence, updateSeq,
+            connectHardware, disconnectHardware, hardwareStatus,
         }}>
             {children}
         </WebSocketContext.Provider>

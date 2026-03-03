@@ -1,13 +1,15 @@
 import { useTheme } from "../../../context/themes/ThemeContext"
 import SolidButton from "../../ui/buttons/SolidButton"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import LinkIcon from '@mui/icons-material/Link';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
 import ActiviyIndicator from "../../ui/indicators/LoadingIndicator";
 import DropDown from "../../ui/inputs/DropDown";
+import { useWebSocket } from "../../../context/WebSocketContext";
 
 function ArduinoStyleConnection() {
     const { colors, mode } = useTheme()
+    const { connectHardware, hardwareStatus, disconnectHardware } = useWebSocket()
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
 
@@ -17,12 +19,16 @@ function ArduinoStyleConnection() {
         { label: "115200", value: "115200" }
     ]
     const availablePorts = [
-        { label: "COM3", value: "com3" },
-        { label: "COM4", value: "com4" },
-        { label: "COM7", value: "com7" }
+        { label: "COM3", value: "COM3" },
+        { label: "COM4", value: "COM4" },
+        { label: "COM7", value: "COM7" }
     ]
-    const [port, setPort] = useState(availablePorts[0])
-    const [baudrate, setBaudrate] = useState(avialableBaudRates[0])
+    const [port, setPort] = useState()
+    const [baudrate, setBaudrate] = useState()
+
+    useEffect(()=>{
+        console.log(hardwareStatus)
+    },[hardwareStatus])
     return (
         <div className="flex flex-row gap-3">
             <DropDown
@@ -50,18 +56,19 @@ function ArduinoStyleConnection() {
             <SolidButton
                 className={"px-2 py-0.5"}
                 onClick={() => {
-                    isConnected
-                        ? console.log("Desconectar")
-                        : console.log("Conectar")
+                    hardwareStatus === "connected"
+                        ? disconnectHardware()
+                        : connectHardware(port, baudrate)
+                        
                 }}
-                text={isConnected ? "Desconectar" : isConnecting ? "Conectando..." : "Conectar"}
-                bgColor={isConnected ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
-                borderColor={isConnected ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
+                text={hardwareStatus === "connected" ? "Desconectar" : hardwareStatus === "connecting" ? "Conectando..." : "Conectar"}
+                bgColor={hardwareStatus === "connected" ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
+                borderColor={hardwareStatus === "connected" ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
                 color={"white"}
-                disabled={isConnecting}
-                IconComponent={isConnected
+                disabled={hardwareStatus === "connecting"}
+                IconComponent={hardwareStatus === "connected"
                     ? LinkOffIcon
-                    : isConnecting
+                    : hardwareStatus === "connecting"
                         ? ActiviyIndicator
                         : LinkIcon}
             />

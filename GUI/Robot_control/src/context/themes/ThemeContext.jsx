@@ -118,10 +118,10 @@ const baseThemes = {
         background: "#0c0f1a",
         backgroundSubtle: "#0e121f",
 
-        danger: "#e05454",
+        danger: "#e04040",
         dangerDark: "#b62f2f",
-        warning: "#e8d256",
-        success: "#53d653",
+        warning: "#e7cd3b",
+        success: "#36db36",
 
         border: "#2e3650",
         disabled: "#9e9e9e",
