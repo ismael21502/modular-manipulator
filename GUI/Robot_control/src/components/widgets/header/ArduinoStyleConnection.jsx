@@ -9,7 +9,7 @@ import { useWebSocket } from "../../../context/WebSocketContext";
 
 function ArduinoStyleConnection() {
     const { colors, mode } = useTheme()
-    const { connectHardware, hardwareStatus, disconnectHardware } = useWebSocket()
+    const { connectHardware, hardwareStatus, disconnectHardware, hardwareConnectionOptions } = useWebSocket()
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
 
@@ -26,9 +26,13 @@ function ArduinoStyleConnection() {
     const [port, setPort] = useState()
     const [baudrate, setBaudrate] = useState()
 
+    useEffect(() => {
+        console.log(hardwareConnectionOptions)
+    }, [hardwareConnectionOptions])
+
     useEffect(()=>{
-        console.log(hardwareStatus)
-    },[hardwareStatus])
+        console.log(hardwareStatus, port,baudrate)
+    },[hardwareStatus, port,baudrate])
     return (
         <div className="flex flex-row gap-3">
             <DropDown
@@ -39,18 +43,18 @@ function ArduinoStyleConnection() {
                 textColor={colors.text.primary}
                 primaryColor={colors.primary}
                 selectedColor={'white'}
-                options={availablePorts} 
+                options={hardwareConnectionOptions.ports}
                 value={port}
-                onSelect={setPort}/>
+                onSelect={setPort} />
             <DropDown
-                label="Baudrate"
+                label="Baudios"
                 buttonStyle={{ borderColor: colors.border, outlineColor: colors.primary }}
                 backgroundColor={colors.background}
                 borderColor={colors.border}
                 textColor={colors.text.primary}
                 primaryColor={colors.primary}
                 selectedColor={'white'}
-                options={avialableBaudRates} 
+                options={hardwareConnectionOptions?.baudrates}
                 value={baudrate}
                 onSelect={setBaudrate} />
             <SolidButton
@@ -59,13 +63,14 @@ function ArduinoStyleConnection() {
                     hardwareStatus === "connected"
                         ? disconnectHardware()
                         : connectHardware(port, baudrate)
-                        
+
                 }}
                 text={hardwareStatus === "connected" ? "Desconectar" : hardwareStatus === "connecting" ? "Conectando..." : "Conectar"}
                 bgColor={hardwareStatus === "connected" ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
                 borderColor={hardwareStatus === "connected" ? colors.danger : mode === "light" ? "#1e293b" : "#2b384e"}
                 color={"white"}
-                disabled={hardwareStatus === "connecting"}
+                // disabled={hardwareStatus === "connecting" || !port || !baudrate}
+                disabled={!(hardwareStatus === "connected" || (port && baudrate))}
                 IconComponent={hardwareStatus === "connected"
                     ? LinkOffIcon
                     : hardwareStatus === "connecting"

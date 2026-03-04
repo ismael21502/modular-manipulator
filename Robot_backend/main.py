@@ -15,6 +15,7 @@ from services.robot_state import RobotState
 from utils.appfactory import createApp
 from controller import RobotController
 from services.IKService import IKService
+from services.DeviceDiscovery import DeviceDiscovery
 
 #[ ] Sacar symbolicFK de robotState
 app = createApp()
@@ -22,10 +23,11 @@ app = createApp()
 active_connections = []
 
 robotState = RobotState()
-esp = ESP32Connection("COM5")
+esp = ESP32Connection()
 
 async def sendLog(ws: WebSocket, payload: dict):
     """Envía un log con timestamp al cliente."""
+    print("ENVIANDO...", payload)
     try:
         await ws.send_json({
             **payload,
@@ -42,6 +44,9 @@ async def calculateFK(articularValues: list[int]):
 
 ikService = IKService(robotState=robotState)
 controller = RobotController(robotState=robotState, ikService=ikService, hardwareDriver=esp, fkSolver=calculateFK)
+deviceDiscoverer = DeviceDiscovery()
+
+asyncio.create_task(deviceDiscoverer.run())
 asyncio.create_task(controller.run())
 
 @app.get("/robot_config")
@@ -58,7 +63,51 @@ async def get_robot_config():
     except Exception as e:
         print("Error leyendo robotConfig.json:", e)
         return {}
-    
+
+#[ ] Considerar crear un archivo nuevo para estas funciones
+# #region Serial info
+# BAUDRATES = [{'label': 9600, 'value': 9600},
+#     {'label': 19200, 'value': 19200},
+#     {'label': 38400, 'value': 38400},
+#     {'label': 57600, 'value': 57600},
+#     {'label': 115200, 'value': 115200},]
+# def getPorts():
+#     # return [
+#     #     {
+#     #         "device": p.device,
+#     #         "description": p.description,
+#     #     }
+#     #     for p in list_ports.comports()
+#     # ]
+#     return [{
+#         'label': p.device,
+#         'value': p.device
+#     } for p in list_ports.comports()]
+
+# def getSerialOptions():
+#     return {
+#         "ports": getPorts(),
+#         "baudrates": BAUDRATES
+#     } 
+
+# async def sendPorts(ws):
+#     await sendLog(ws, {
+#         "event": "HARDWARE_CONFIG",
+#         "payload": getSerialOptions()    
+#     })
+# async def updatePorts(ws):
+#     options = getSerialOptions()
+#     while True:
+#         newOptions = getSerialOptions()
+#         if options != newOptions:
+#             options = newOptions
+#             sendPorts(ws)
+#             #Enviar al frontend
+#         await asyncio.sleep(1)
+
+
+# #endregion
+
 # async def process_gui_command(ws: WebSocket, esp: ESP32Connection, data: dict):
 #     if data.get("type") == "cartesian_move":
 #         await request_ik(ws, data.get("values"))
@@ -97,6 +146,18 @@ async def websocket_endpoint(ws: WebSocket):
         async def notifier(payload):
             await sendLog(ws, payload)
         controller.addNotifier(notifier)
+        deviceDiscoverer.addNotifier(notifier)
+        await deviceDiscoverer.notifyCurrent(notifier)
+        await notifier({
+                "event": "HARDWARE_STATE",
+                "payload": {
+                    "connected": True
+                },
+                "meta": {
+                    "severity": "info",
+                    "userVisible": False
+                },
+            })
         while True:
             msg = await ws.receive_text()
             msg = json.loads(msg)
@@ -107,4 +168,5 @@ async def websocket_endpoint(ws: WebSocket):
     finally:
         active_connections.remove(ws)
         controller.removeNotifier(notifier)
+        deviceDiscoverer.removeNotifier(notifier)
         print(f"🔴 Cliente desconectado desde {ws.client.host}")

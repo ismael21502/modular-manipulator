@@ -34,7 +34,7 @@ function DropDown({ options = [], label, backgroundColor, borderColor, textColor
                 {label}
             </div>
             {/* Select button */}
-            <button className='flex w-full items-center justify-between p-1 pl-3 border rounded hover:outline-2 hover:cursor-pointer focus:outline-2 gap-2'
+            <button className='flex w-full items-center justify-between p-1 pl-3 border rounded hover:outline-2 hover:cursor-pointer focus:outline-2 -outline-offset-2 gap-2'
                 style={{ borderColor: borderColor, backgroundColor: backgroundColor, outlineColor: primaryColor }}
                 onClick={() => setIsOpen(!isOpen)}>
                 <span>{value}</span>

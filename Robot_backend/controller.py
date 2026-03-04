@@ -46,11 +46,9 @@ class RobotController:
             baudrate = command.get("baudrate")
             await self.connectHardware(port=port, baudrate=baudrate)
         elif command["type"] == "disconnectRobot":
-            print("DESCONECTANDO...")
             await self.disconnectHardware()
 
     async def run(self):
-        await self.connectHardware() #[ ] Esto debe vivir en processcommand, pero lo dejo aquí temporalmente para probar la conexión al hardware antes de implementar el control completo
         while True:
             joints = await self.ikService.solutionQueue.get()
             self.robotState.setJoints(joints)
@@ -87,7 +85,7 @@ class RobotController:
                     "severity": "info",
                     "userVisible": True
                 },
-                "message": f"Conexión establecida con el hardware", #O robot
+                "message": f"Conexión establecida con el hardware en puerto {self.hardwareDriver.port} a {self.hardwareDriver.baudrate} baudios", #O robot
             })
         except Exception as e:
             await self.notify({

@@ -1,8 +1,9 @@
 import serial
 import json
 
+#Quitar puerto y baudrate predeterminados?
 class ESP32Connection:
-    def __init__(self, port, baudrate=115200):
+    def __init__(self, port: str | None = None, baudrate: int = 115200):
         self.port = port
         self.baudrate = baudrate
         self.ser = None
@@ -39,3 +40,7 @@ class ESP32Connection:
     def read(self):
         if self.ser and self.ser.in_waiting:
             return self.ser.readline().decode().strip()
+    
+    #Revisar esto
+    def isConnected(self):
+        return self.ser is not None and self.ser.is_open

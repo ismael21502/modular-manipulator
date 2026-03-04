@@ -24,7 +24,7 @@ export const WebSocketProvider = ({ children }) => {
     const [isConnecting, setIsConnecting] = useState(false)
 
     const [hardwareStatus, setHardwareStatus] = useState('disconnected')
-
+    const [hardwareConnectionOptions, setHardwareConnectionOptions] = useState({})
     useEffect(() => {
         initializeWebSocket()
         return () => ws.current?.close()
@@ -60,13 +60,15 @@ export const WebSocketProvider = ({ children }) => {
         // Funciones de manejo de eventos
         const handleOpen = async () => {
             connectionAttempted = true; // La conexión se ha establecido correctamente
-            const robot_config = await getRobotConfig()
-            setRobotConfig(robot_config)
             setIsConnected(true)
             setIsConnecting(false)
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Conexión establecida" }])
+            setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Cargando configuración del robot" }])
+            const robot_config = await getRobotConfig()
+            setRobotConfig(robot_config)
             send({ type: "articular_move", values: robot_config.joints.map(j => j.default) })
             console.log(robot_config.joints.map(j => j.default))
+            // setLogs(prev => [...prev, { time: new Date().toISOString(), type: "INFO", category: "log", values: "Cargando secuencias y posiciones" }])
             loadPositions()
             loadSequences()
         }
@@ -99,14 +101,16 @@ export const WebSocketProvider = ({ children }) => {
                 } else {
                     data = event.data;
                 }
-                if(data.event === "HARDWARE_STATE"){
+                if (data.event === "HARDWARE_STATE") {
                     setHardwareStatus(data.payload.connected ? 'connected' : 'disconnected')
-                    setLogs(prev => [...prev, { time: new Date().toISOString(), type: data.meta.severity.toUpperCase(), category: "log", values: data.message }])
-                } else if(data.event === "ROBOT_STATE"){
-                    if(data.payload.joints) setJoints(data.payload.joints)
-                    if(data.payload.tcp) setCartesian(data.payload.tcp)
+                    data.meta.userVisible && setLogs(prev => [...prev, { time: new Date().toISOString(), type: data.meta.severity.toUpperCase(), category: "log", values: data.message }])
+                } else if (data.event === "ROBOT_STATE") {
+                    if (data.payload.joints) setJoints(data.payload.joints)
+                    if (data.payload.tcp) setCartesian(data.payload.tcp)
+                } else if (data.event === "HARDWARE_CONFIG") {
+                    setHardwareConnectionOptions(data.payload)
                 }
-                
+
             } catch (err) {
                 console.log("Mensaje no JSON:", event.data)
             }
@@ -411,7 +415,7 @@ export const WebSocketProvider = ({ children }) => {
             IP, setIP,
             port, setPort,
             sequences, saveSeq, deleteSequence, updateSeq,
-            connectHardware, disconnectHardware, hardwareStatus,
+            connectHardware, disconnectHardware, hardwareStatus, hardwareConnectionOptions
         }}>
             {children}
         </WebSocketContext.Provider>
