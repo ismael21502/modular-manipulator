@@ -80,6 +80,7 @@ export const WebSocketProvider = ({ children }) => {
             if (ws.current.readyState === WebSocket.CONNECTING) return
             setIsConnected(false)
             setIsConnecting(false)
+            setHardwareStatus('disconnected')
             setLogs(prev => [...prev, { time: new Date().toISOString(), type: "WARNING", category: "log", values: "Conexión cerrada" }])
         }
 
@@ -224,7 +225,7 @@ export const WebSocketProvider = ({ children }) => {
             })
             .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error al intentar borrar la posición: ${err}` }]))
     }
-    const deleteSequence = (sequenceName) => {
+    const deleteSeq = (sequenceName) => {
         fetch(`http://${IP}:${port}/deleteSeq`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -356,6 +357,10 @@ export const WebSocketProvider = ({ children }) => {
         }
     }
     const connectHardware = async (port, baudrate) => {
+        if (!isConnected) {
+            setLogs(prev => [...prev, { time: new Date().toISOString(), type: "WARNING", category: "log", values: "Servidor desconectado" }])
+            return
+        }
         setHardwareStatus('connecting')
         send({
             type: "connectRobot",
@@ -374,6 +379,57 @@ export const WebSocketProvider = ({ children }) => {
         if (ws.current?.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify(obj))
         }
+    }
+
+    const loadRobotParts = async () => {
+        try {
+            const res = await fetch(`http://${IP}:${port}/parts_catalog`)
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            return data
+        } catch (e) {
+            setLogs(prev => [...prev, {
+                time: new Date().toISOString(),
+                type: "ERROR",
+                category: "log",
+                values: `Error al cargar datos para la construcción del robot: ${e}`
+            }])
+        }
+
+
+        // fetch(`http://${IP}:${port}/parts_catalog`)
+        //     .then(data => {
+        //         if (data.status === "ok") {
+        //             console.log("DATA LOADED: ", data)
+        //             return data.values
+        //         } else {
+        //             setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error del servidor: ${data.status}` }])
+        //             return "ERROR"
+        //         }
+        //     })
+        //     .catch(err => setLogs(prev => [...prev, { category: 'log', time: new Date().toISOString(), type: "ERROR", values: `Error al cargar datos para la construcción del robot ${err}` }]))
+    }
+
+    const buildRobot = async (wizardState) => {
+        try {
+            const res = await fetch(`http://${IP}:${port}/build_robot`, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(wizardState)
+            })
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+            const data = await res.json()
+            console.log("ROBOT CONSTRUIDO", data)
+            return data
+        } catch (e) {
+            setLogs(prev => [...prev, {
+                time: new Date().toISOString(),
+                type: "ERROR",
+                category: "log",
+                values: `Error eeeee: ${e}`
+            }])
+        }
+
     }
 
     // const debouncedSend = useMemo(
@@ -414,8 +470,9 @@ export const WebSocketProvider = ({ children }) => {
             positions, savePos, deletePos, updatePos,
             IP, setIP,
             port, setPort,
-            sequences, saveSeq, deleteSequence, updateSeq,
-            connectHardware, disconnectHardware, hardwareStatus, hardwareConnectionOptions
+            sequences, saveSeq, deleteSeq, updateSeq,
+            connectHardware, disconnectHardware, hardwareStatus, hardwareConnectionOptions,
+            loadRobotParts, buildRobot
         }}>
             {children}
         </WebSocketContext.Provider>

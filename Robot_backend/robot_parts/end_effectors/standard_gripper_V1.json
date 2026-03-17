@@ -1,0 +1,29 @@
+{
+    "id": "twofingersgripperv1",
+    "name": "Two fingers gripper V1",
+    "type": "gripper",
+    "control": {
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "default": 0
+    },
+    "mesh": {
+        "base": "",
+        "left_finger": "", 
+        "right_finger": ""
+    },
+    "origin": {
+        "translation": [
+            0,
+            100,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ]
+    },
+    "previewImage": "appIcon.png"
+}

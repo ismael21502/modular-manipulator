@@ -82,8 +82,10 @@ const AxisDot = ({ color = "#FFF", label = "", negative = false, size = 1, direc
             onClick={() => disabled ? {} : onClick(direction)}
                 onPointerEnter={(e) => {
                     e.stopPropagation()
-                    if (!disabled) setHovered(true)
-                    document.body.style.cursor = "pointer"
+                    if (!disabled) {
+                        setHovered(true)
+                        document.body.style.cursor = "pointer"
+                    }
                 }}
                 onPointerLeave={(e) => {
                     e.stopPropagation()

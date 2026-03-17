@@ -12,6 +12,9 @@ import CustomScroll from "../../ui/scrolls/CustomScroll.jsx";
 import JointEditor from "./JointEditor.jsx";
 import Scene from "../3D/Scene.jsx";
 import SolidButton from "../../ui/buttons/SolidButton.jsx";
+import { useWebSocket } from "../../../context/WebSocketContext.jsx";
+
+//[ ] Cambiar joints[i].id por joints[i].joint
 
 /* --------------------------
    1) Estado inicial y reducer
@@ -40,8 +43,8 @@ function wizardReducer(state, action) {
 
         case "ADD_JOINT": {
             const newJoint = {
-                id: generateId(),
-                type: null,     // e.g. 'revolute', 'prismatic', etc.
+                tempId: generateId(),
+                id: null,
                 link: null,       // datos del link
                 limits: {
                     min: -90,
@@ -60,7 +63,7 @@ function wizardReducer(state, action) {
             return {
                 ...state,
                 joints: state.joints.map(j =>
-                    j.id === jointId ? { ...j, ...payload } : j
+                    j.tempId === jointId ? { ...j, ...payload } : j
                 )
             };
         }
@@ -83,47 +86,71 @@ function wizardReducer(state, action) {
    -------------------------- */
 function RobotBuildingModal({ onClose }) {
     const { colors } = useTheme()
-
+    const { loadRobotParts, buildRobot } = useWebSocket()
+    const [robotCatalog, setRobotCatalog] = useState()
+    useEffect(() => {
+        const loadData = async () => {
+            const data = await loadRobotParts()
+            setRobotCatalog(data)
+        }
+        loadData()
+    }, [])
     const [wizardState, dispatch] = useReducer(wizardReducer, initialState)
 
     const buildSteps = [
         {
             id: "base", title: "Base", hint: "Tipo de base",
+            component: SelectPanel,
             content: {
                 label: "Selecciona el tipo de base",
-                options: [
-                    { label: "Base estándar", img: "vite.svg", value: { type: "fixed" } },
-                    { label: "Base móvil V1", img: "vite.svg", value: { type: "mobile_v1" } },
-                    { label: "Base móvil V2", img: "vite.svg", value: { type: "mobile_v2" } },
-                ]
+                options: robotCatalog?.bases || []
+                // options: [
+                //     { label: "Base estándar", img: "vite.svg", value: "ola" },
+                //     { label: "Base móvil V1", img: "vite.svg", value: { type: "mobile_v1" } },
+                //     { label: "Base móvil V2", img: "vite.svg", value: { type: "mobile_v2" } },
+                // ]
             }
         },
         {
             id: "joints", title: "Articulaciones", hint: "Grados de libertad",
+            component: JointsPanel,
             content: {
                 label: "Configuración de las articulaciones",
                 // Estas opciones se usarán para elegir tipo de joint al editar una joint
-                options: [
-                    { label: "Revolute", img: "vite.svg", value: { type: "revolute" } },
-                    { label: "Prismatic", img: "vite.svg", value: { type: "prismatic" } },
-                    { label: "Spherical", img: "vite.svg", value: { type: "spherical" } }
-                ],
-                linkOptions: [
-                    { label: "Straight 10mm", img: "vite.svg", value: { type: "straight10mm" } },
-                    { label: "Straight 20mm", img: "vite.svg", value: { type: "straight20mm" } },
-                    { label: "Straight 40mm", img: "vite.svg", value: { type: "straight40mm" } },
-                ]
+                options: robotCatalog?.joints || [],
+                linkOptions: robotCatalog?.links || []
+                // options: [
+                //     { label: "Revolute", img: "vite.svg", value: { type: "revolute" } },
+                //     { label: "Prismatic", img: "vite.svg", value: { type: "prismatic" } },
+                //     { label: "Spherical", img: "vite.svg", value: { type: "spherical" } }
+                // ],
+                // linkOptions: [
+                //     { label: "Straight 10mm", img: "vite.svg", value: { type: "straight10mm" } },
+                //     { label: "Straight 20mm", img: "vite.svg", value: { type: "straight20mm" } },
+                //     { label: "Straight 40mm", img: "vite.svg", value: { type: "straight40mm" } },
+                // ]
             }
         },
         {
             id: "tool", title: "Herramienta", hint: "Efector final",
+            component: SelectPanel,
             content: {
                 label: "Selecciona la herramienta",
-                options: [
-                    { label: "Gripper MG90s", img: "vite.svg", value: { type: "gripper_mg90s" } },
-                ]
+                options: robotCatalog?.tools || []
+                // options: [
+                //     { label: "Gripper MG90s", img: "vite.svg", value: { type: "gripper_mg90s" } },
+                // ]
             }
         },
+        {
+            id: "final", title: "Configuración final", hint: "Espacio de trabajo",
+            component: FinalConfigurationPanel,
+            content: {
+                title: "Configuración final",
+                subtitle: "Define el espacio de trabajo y el nombre del robot",
+                options: [{ label: "Gripper MG90s", img: "vite.svg", value: { type: "gripper_mg90s" } },]
+            }
+        }
     ];
 
     const [currentStep, setCurrentStep] = useState(0);
@@ -150,6 +177,83 @@ function RobotBuildingModal({ onClose }) {
         dispatch({ type: "SET_STEP_VALUE", stepId, value: option });
     }
 
+    function SelectPanel({ step }) {
+        return (
+            <Select title={step.content.label}>
+                <div className="w-full grid grid-cols-3 gap-4">
+                    {step.content.options.map((option, index) => (
+                        <BuildCard
+                            key={index}
+                            label={option.label}
+                            imgSrc={option.img}
+                            onClick={() => handleSelectOptionForStep(option.id)}
+                            isActive={wizardState[step.id] === option.id}
+                        />
+                    ))}
+                </div>
+            </Select>
+        )
+    }
+
+    function FinalConfigurationPanel({ step }) {
+        const [tempVal, setTempVal] = useState("")
+        return (
+            <Select title={step.content.title} subtitle={step.content.subtitle}>
+                <div className="flex flex-1 flex-col gap-8 text-xl">
+                    <div className="flex flex-col flex-1 gap-3 p-5 border rounded-lg"
+                        style={{ borderColor: colors.border, background: colors.backgroundSubtle }}>
+                        <h1>Nombre del robot</h1>
+                        {/* Crear un componente para este tipo de inputs */}
+                        <input type="text" className="border rounded-lg" />
+                    </div>
+                    <div className="flex flex-col flex-1 p-5 border rounded-lg"
+                        style={{ borderColor: colors.border, background: colors.backgroundSubtle }}>
+                        <div className="flex flex-1 flex-row justify-between items-center">
+                            <div className="flex flex-row gap-3">
+                                <p>ICONO</p>
+                                <h1>Límites cartesianos</h1>
+                            </div>
+                            <div className="flex p-1 justify-center items-center border rounded-lg text-sm"
+                                style={{ color: colors.accent, borderColor: colors.accent }}>
+                                <h1>Zona de seguridad</h1>
+                            </div>
+                        </div>
+                        <div className="flex flex-col py-4 gap-4">
+                            <div className="flex flex-row gap-4">
+                                <h2>Eje X</h2>
+                                <input type="text" className="border rounded-lg" placeholder="mínimo" />
+                                <input type="text" className="border rounded-lg" placeholder="máximo" />
+                            </div>
+                            <div className="flex flex-row gap-4">
+                                <h2>Eje Y</h2>
+                                <input type="text" className="border rounded-lg" placeholder="mínimo" />
+                                <input type="text" className="border rounded-lg" placeholder="máximo" />
+                            </div>
+                            <div className="flex flex-row gap-4">
+                                <h2>Eje Z</h2>
+                                <input type="text" className="border rounded-lg" placeholder="mínimo" />
+                                <input type="text" className="border rounded-lg" placeholder="máximo" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Select>
+        )
+        // <Select title={step.content.label}>
+        //     <div className="hola">AAAA</div>
+        //     {/* <div className="w-full grid grid-cols-3 gap-4">
+        //         {step.content.options.map((option, index) => (
+        //             <BuildCard
+        //                 key={index}
+        //                 label={option.label}
+        //                 imgSrc={option.img}
+        //                 onClick={() => handleSelectOptionForStep(option.id)}
+        //                 isActive={wizardState[step.id] === option.id}
+        //             />
+        //         ))}
+        //     </div> */}
+        // </Select>
+    }
     /* --------------------------
        Renderizado del paso 'joints'
        -------------------------- */
@@ -163,7 +267,7 @@ function RobotBuildingModal({ onClose }) {
                         <button
                             className="flex items-center justify-center p-2 opacity-80 hover:opacity-100 cursor-pointer rounded-full"
                             onClick={() => {
-                                dispatch({ type: "ADD_JOINT" });
+                                dispatch({ type: "ADD_JOINT" }); //[ ] Si quiero sacar esto a otro archivo debo cambiar esto por una prop
                                 // seleccionar la recién creada (se añade al final)
                                 // como dispatch es síncrono en reducer, el state cambiará en el siguiente render
                                 // aquí hacemos un pequeño truco: seleccionar tras un timeout 0 para esperar el re-render
@@ -189,16 +293,16 @@ function RobotBuildingModal({ onClose }) {
 
                             {wizardState.joints.map((joint, idx) => (
                                 <div
-                                    key={joint.id}
-                                    className={`flex justify-between p-3 rounded-lg cursor-pointer border hover:ring-2 ring-[var(--primary)] ${selectedJointId === joint.id ? "ring-2" : ""}`}
-                                    onClick={() => setSelectedJointId(joint.id)}
-                                    style={{ borderColor: colors.border, backgroundColor: selectedJointId === joint.id ? `${colors.primary}1A` : "transparent" }}
+                                    key={joint.tempId}
+                                    className={`flex justify-between gap-2 p-3 rounded-lg cursor-pointer border hover:ring-2 ring-[var(--primary)] ${selectedJointId === joint.tempId ? "ring-2" : ""}`}
+                                    onClick={() => setSelectedJointId(joint.tempId)}
+                                    style={{ borderColor: colors.border, backgroundColor: selectedJointId === joint.tempId ? `${colors.primary}1A` : "transparent" }}
                                 >
                                     <div>
                                         <div className="font-semibold">Joint {idx + 1}</div>
                                         <div className="text-xs opacity-90 font-bold"
-                                            style={{ color: colors.text.secondary }}>{joint.type || joint.link
-                                                ? [joint.type, joint.link].filter(Boolean).join(" - ")
+                                            style={{ color: colors.text.secondary }}>{joint.id || joint.link //Cambiar por labels en lugar de ids
+                                                ? [step.content.options.find(option => option.id === joint.id)?.label, step.content.linkOptions.find(option => option.id === joint.link)?.label].filter(Boolean).join(" - ")
                                                 : "Sin tipo"}</div>
                                     </div>
                                     <div className="flex gap-2 mt-2">
@@ -207,7 +311,7 @@ function RobotBuildingModal({ onClose }) {
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 dispatch({ type: "REMOVE_JOINT", jointId: joint.id });
-                                                if (selectedJointId === joint.id) setSelectedJointId(null);
+                                                if (selectedJointId === joint.tempId) setSelectedJointId(null);
                                             }}
                                             onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
                                             onMouseLeave={(e) => e.currentTarget.style.color = colors.disabled}
@@ -229,7 +333,7 @@ function RobotBuildingModal({ onClose }) {
                 <div className="w-2/3 border-l" style={{ borderColor: colors.border }}>
                     {selectedJointId ? (
                         <JointEditor
-                            joint={wizardState.joints.find(j => j.id === selectedJointId)}
+                            joint={wizardState.joints.find(j => j.tempId === selectedJointId)}
                             jointOptions={step.content.options}
                             linkOptions={step.content.linkOptions}
                             onUpdate={(payload) => dispatch({ type: "UPDATE_JOINT", jointId: selectedJointId, payload })}
@@ -249,7 +353,6 @@ function RobotBuildingModal({ onClose }) {
 
     function isStepComplete(stepId, wizardState) {
         const value = wizardState[stepId];
-
         switch (stepId) {
             case "base":
             case "tool":
@@ -259,9 +362,9 @@ function RobotBuildingModal({ onClose }) {
                 return (
                     value.length > 0 &&
                     value.every(j =>
-                        j.type &&
-                        j.link &&
-                        Object.keys(j.link).length > 0
+                        j.id &&
+                        j.link //&&
+                        // Object.keys(j.link).length > 0
                     )
                 );
 
@@ -270,13 +373,14 @@ function RobotBuildingModal({ onClose }) {
         }
     }
 
-    const handleNextStep = () => {
+    const handleNextStep = async () => {
         // buildSteps[currentStep]
-        console.log("Así va el wizard: ", wizardState[buildSteps[currentStep].id])
+        // console.log("Así va el wizard: ", wizardState[buildSteps[currentStep].id])
         // if (isEmpty(wizardState[buildSteps[currentStep].id])) console.log("NO HAY NADA")
         if (currentStep >= buildSteps.length - 1) {
-            console.log("Construir robotConfig.json", wizardState);
-            return;
+            console.log("Construir robotConfig.json", wizardState)
+            await buildRobot(wizardState)
+            return
         }
         setCompletedSteps(prev => [
             ...prev,
@@ -284,6 +388,11 @@ function RobotBuildingModal({ onClose }) {
         ]);
         setCurrentStep(currentStep + 1)
     }
+
+    const handleBuildRobot = () => { //[ ] Esto es un onconfirm
+        console.log("OLA")
+    }
+
     return (
         <Modal>
             <div className="flex flex-row h-full w-full"
@@ -331,8 +440,11 @@ function RobotBuildingModal({ onClose }) {
                 <div className="flex flex-3 flex-col">
                     <div className="flex flex-1 min-h-0">
                         {/* Si el paso actual es 'joints' renderizamos panel especial */}
-                        {currentStepObj.id === "joints" ? (
-                            <JointsPanel step={currentStepObj} />
+                        {/* <currentStepObj.component/> */}
+                        <currentStepObj.component step={currentStepObj} />
+                        {/* {currentStepObj.id === "joints" ? (
+                            <currentStepObj.component step={currentStepObj} />
+                            // <JointsPanel step={currentStepObj} />
                         ) : (
                             <Select title={currentStepObj.content.label}>
                                 <div className="w-full grid grid-cols-3 gap-4">
@@ -341,13 +453,13 @@ function RobotBuildingModal({ onClose }) {
                                             key={index}
                                             label={option.label}
                                             imgSrc={option.img}
-                                            onClick={() => handleSelectOptionForStep(option)}
-                                            isActive={wizardState[currentStepObj.id]?.label === option.label}
+                                            onClick={() => handleSelectOptionForStep(option.id)}
+                                            isActive={wizardState[currentStepObj.id] === option.id}
                                         />
                                     ))}
                                 </div>
                             </Select>
-                        )}
+                        )} */}
                     </div>
 
                     <div className="flex flex-0.1 border-t p-6 flex-row justify-end gap-6 text-xl"

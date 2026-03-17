@@ -146,10 +146,10 @@ export const RobotStateProvider = ({ children }) => {
 
     const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
-    const startSequence = async (selectedPos, sequences) => {
+    const startSequence = async (selectedSequence, sequences) => {
         if (isPlaying) return
         setIsPlaying(true)
-        const sequence = sequences.find(seq => seq.name === selectedPos)
+        const sequence = sequences.find(seq => seq.name === selectedSequence)
         if (sequence === null) return
         for (const step of sequence.steps) {
             const jointsTarget = step.joints

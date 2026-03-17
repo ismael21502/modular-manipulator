@@ -22,10 +22,14 @@ class RobotController:
         if command["type"] == "articular_move":
             self.currentMode = ControlMode.ARTICULAR
             joints = command["values"]
-
+            
             self.robotState.setJoints(joints)
             tcp = await self.fkSolver(joints)
             # tcp = self.calculateFK(joints)
+            await self.hardwareDriver.send({
+                "type": "move_joints",
+                "values": joints
+            })
             await self.notify({
                 "event": "ROBOT_STATE",
                 "payload": {
@@ -58,8 +62,11 @@ class RobotController:
                     "joints": joints
                 }
             })
+            await self.hardwareDriver.send({
+                "type": "move_joints",
+                "values": joints
+            })
             
-    
     def addNotifier(self, notifier):
         self._notifiers.append(notifier)
 

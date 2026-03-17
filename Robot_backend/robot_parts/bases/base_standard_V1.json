@@ -1,0 +1,7 @@
+{
+    "id": "basestandardv1",
+    "name": "Base Estándar V1",
+    "length": 40,
+    "mesh": "Linkx2.glb",
+    "previewImage": "appIcon.png"
+}

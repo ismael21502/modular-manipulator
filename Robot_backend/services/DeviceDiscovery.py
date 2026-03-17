@@ -24,7 +24,6 @@ class DeviceDiscovery:
 
     async def run(self, interval=2):
         while True:
-            print("RUNNING")
             currentPorts = self._scanPorts()
 
             if currentPorts != self._lastPorts:
@@ -53,11 +52,7 @@ class DeviceDiscovery:
         self._notifiers.remove(notifier)
         
     async def notifyCurrent(self, notifier):
-        # print("ENTER notifyCurrent")
-        # await asyncio.sleep(0.5)
-        # print("EXIT notifyCurrent")
         try:
-            print("CURRENT: ")
             options = {
                 "ports": self._scanPorts(),
                 "baudrates": self.baudrates

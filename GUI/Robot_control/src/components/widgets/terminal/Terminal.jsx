@@ -47,7 +47,7 @@ function Terminal({ }) {
                         iconSx={{ fontSize: 16 }}
                         iconClass={`${isConnecting && "rotate"}`}
                         text={isConnecting ? "Reconectando..." : "Reconectar"}
-                        onClick={initializeWebSocket} />}
+                        onClick={!isConnected ? initializeWebSocket : ()=>{}} />}
                 </div>
 
                 <button onClick={clearTerminal}>

@@ -23,7 +23,7 @@ function Sequences() {
     const endEffectors = state.robotState.endEffectors
 
     const { startSequence, isPlaying } = useRobotState()
-    const { sequences, deleteSequence } = useWebSocket()
+    const { sequences, deleteSeq } = useWebSocket()
     //Posible formato de referencia de posiciones
     // { "type": "ref", "positionId": "home", "delay": 500 },
     const { colors } = useTheme()
@@ -67,7 +67,7 @@ function Sequences() {
             message: `¿Estás seguro que deseas eliminar ${selectedeSequence}?`,
             onConfirm: () => {
                 setSelectedeSequence("")
-                deleteSequence(selectedeSequence)
+                deleteSeq(selectedeSequence)
                 setPopUp(null)
             },
             onCancel: () => {

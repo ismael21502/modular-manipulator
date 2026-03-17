@@ -1,3 +1,5 @@
+from email.mime import base
+
 from fastapi import FastAPI, WebSocket
 import json
 from datetime import datetime
@@ -16,6 +18,10 @@ from utils.appfactory import createApp
 from controller import RobotController
 from services.IKService import IKService
 from services.DeviceDiscovery import DeviceDiscovery
+from pathlib import Path #[ ] Tal vez convenga cambiar os por pathlib para manejar todos los archivos
+#[ ] Considerar sistema de logs dentro del propio backend
+#[ ] Hacer que la robotConfig se cree al iniciar el backend y solo se retorne al frontend
+#[ ] Tengo que mover "unit" de los json de donde están a un apartado UI
 
 #[ ] Sacar symbolicFK de robotState
 app = createApp()
@@ -27,7 +33,6 @@ esp = ESP32Connection()
 
 async def sendLog(ws: WebSocket, payload: dict):
     """Envía un log con timestamp al cliente."""
-    print("ENVIANDO...", payload)
     try:
         await ws.send_json({
             **payload,
@@ -50,10 +55,10 @@ asyncio.create_task(deviceDiscoverer.run())
 asyncio.create_task(controller.run())
 
 @app.get("/robot_config")
-async def get_robot_config():
+async def getRobotConfig():
     try:
-        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robotConfig.json")
-        with open(file_path, "r", encoding="utf-8") as f:
+        filePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robotConfig.json")
+        with open(filePath, "r", encoding="utf-8") as f:
             data = json.load(f)
             # robotConfig = data
             symbolicFK, jointSymbols = GeneralFK_sym(data['joints'], data['end_effectors'])
@@ -64,77 +69,126 @@ async def get_robot_config():
         print("Error leyendo robotConfig.json:", e)
         return {}
 
-#[ ] Considerar crear un archivo nuevo para estas funciones
-# #region Serial info
-# BAUDRATES = [{'label': 9600, 'value': 9600},
-#     {'label': 19200, 'value': 19200},
-#     {'label': 38400, 'value': 38400},
-#     {'label': 57600, 'value': 57600},
-#     {'label': 115200, 'value': 115200},]
-# def getPorts():
-#     # return [
-#     #     {
-#     #         "device": p.device,
-#     #         "description": p.description,
-#     #     }
-#     #     for p in list_ports.comports()
-#     # ]
-#     return [{
-#         'label': p.device,
-#         'value': p.device
-#     } for p in list_ports.comports()]
+#region robotBuilding
+def createRobotPartsCatalog():
+    bases = loadPartsFromFolder("robot_parts/bases")
+    joints = loadPartsFromFolder("robot_parts/joints")
+    links = loadPartsFromFolder("robot_parts/links")
+    endEffectors = loadPartsFromFolder("robot_parts/end_effectors")
+    return {
+        "bases": [{
+            "id": base["id"],
+            "label": base["name"],
+            "img": base["previewImage"],
+            "mesh": base["mesh"]
+        } for base in bases],
+        "joints": [{
+            "id": joint["id"],
+            "label": joint["name"], #[ ] Cambiar label por name
+            "type": joint["type"],
+            "img": joint["previewImage"],
+            "mesh": joint["mesh"],
+            "limits": joint["limits"],
+            "axis": joint["axis"],
+            "origin": joint["origin"]
+        } for joint in joints],
+        "links": [{
+            "id": link["id"],
+            "label": link["name"],
+            "length": link["length"],
+            "img": link["previewImage"],
+            "mesh": link["mesh"]
+        } for link in links],
+        "tools": [{
+            "id": tool["id"],
+            "label": tool["name"],
+            "img": tool["previewImage"],
+            "control": tool["control"],
+            "mesh": tool["mesh"],
+            "origin": tool["origin"]
+        } for tool in endEffectors]
+    }
 
-# def getSerialOptions():
-#     return {
-#         "ports": getPorts(),
-#         "baudrates": BAUDRATES
-#     } 
+def loadPartsFromFolder(folder):
+    parts = []
+    for file in Path(folder).glob("*.json"):
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            parts.append(data)
+    return parts
 
-# async def sendPorts(ws):
-#     await sendLog(ws, {
-#         "event": "HARDWARE_CONFIG",
-#         "payload": getSerialOptions()    
-#     })
-# async def updatePorts(ws):
-#     options = getSerialOptions()
-#     while True:
-#         newOptions = getSerialOptions()
-#         if options != newOptions:
-#             options = newOptions
-#             sendPorts(ws)
-#             #Enviar al frontend
-#         await asyncio.sleep(1)
+partsCatalog = createRobotPartsCatalog()
+partsIndex = {part["id"]: part for category in partsCatalog.values() for part in category}
 
+print("CATALOG: ", partsCatalog)
+@app.get("/parts_catalog") 
+async def getRobotPartsCatalog():
+    return partsCatalog
 
-# #endregion
+@app.post("/build_robot")
+async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro?
+    base = partsIndex[robotParts["base"]]
+    joints = [partsIndex[joint["id"]] for joint in robotParts["joints"]]
+    links = [partsIndex[joint["link"]] for joint in robotParts["joints"]]
+    endEffectors = partsIndex[robotParts["tool"]]
+    # print("Base: ", base)
+    # print("Joints: ", joints)
+    # print("Links: ", links)
+    # print("End Effector: ", endEffector)
+    for joint in joints:
+        print("JOINT: ", joint["limits"])
+    
+    links = [{
+      "id": f"link_{i+1}",
+      "length": link["length"], #[ ] Change for link length
+      "mesh": link["mesh"],
+      "color": "#FFF"
+    } for i, link in enumerate(links)]
+    links.insert(0, {
+        "id": "base",
+        "lenght": 0,
+        "mesh": base["mesh"],
+        "color": "#FFF"
+    })
+    joints = [{
+        "id": f"j{i+1}",
+        "label": joint["label"],
+        "type": joint["type"],
+        "min": joint["limits"]["min"],
+        "max": joint["limits"]["max"],
+        "default": joint["limits"]["default"],
+        "unit": "deg", #[ ] Revisar si ponerlo fijo o no
+        "parent": links[i]["id"],
+        "child": links[i+1]["id"],
+        "axis": joint["axis"],
+        "origin": joint["origin"]
+    } for i, joint in enumerate(joints)]
+    
+    # #Ahora solo podré usar 1 endEffector.
+    endEffectors = {
+        "id": endEffectors["id"],
+        "label": "Gripper",
+        "type": "revolute",
+        "min": endEffectors["control"]["min"],
+        "max": endEffectors["control"]["max"],
+        "default": endEffectors["control"]["default"],
+        "unit": "%", #[ ] Revisar si dejarlo fijo o no
+        "parent": links[len(links)-1]["id"],
+        "origin": endEffectors["origin"],
+        "mesh": endEffectors["mesh"] 
+    }
 
-# async def process_gui_command(ws: WebSocket, esp: ESP32Connection, data: dict):
-#     if data.get("type") == "cartesian_move":
-#         await request_ik(ws, data.get("values"))
-#     elif data.get("type") == "articular_move":
-#         joints = data.get("values")
-#         fk_values = await calculate_fk(joints)
-#         try:
-#             await asyncio.to_thread(
-#                 esp.send,{
-#                     "type": "move_joints",
-#                     "values": [joint+90 for joint in joints]
-#                 }
-#             )
-#         except Exception as e:
-#             pass
-#         await send_log(ws, "state", "COORDS", fk_values)
-#     elif data.get("type") == "end_effectors_move":
-#         endEffectors = data.get("values")
-#         try:
-#             await asyncio.to_thread(
-#                 esp.send,{
-#                     "type": "move_end_effector",
-#                     "values": [mapVal(ee, 0, 100, 0, 180) for ee in endEffectors]
-#                 }
-#             )
-#         except Exception as e:
-#             pass
+    newRobotConfig = {
+        "id": 123,#generateID()
+        "links": links,
+        "joints": joints,
+        "end_effectors": endEffectors,
+        "cartesian": 1 #Aquí va la configuración cartesiana, la tomaré de frontend tal vez
+    }
+
+    print("HOLA: ", newRobotConfig)
+# print("CATALOG: ", createRobotPartsCatalog())
+#endregion
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):
@@ -151,7 +205,7 @@ async def websocket_endpoint(ws: WebSocket):
         await notifier({
                 "event": "HARDWARE_STATE",
                 "payload": {
-                    "connected": True
+                    "connected": esp.isConnected()
                 },
                 "meta": {
                     "severity": "info",

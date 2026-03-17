@@ -1,0 +1,30 @@
+{
+    "id": "typeljointv1",
+    "name": "Type L joint V1",
+    "type": "revolute",
+    "axis": [
+        0,
+        0,
+        1
+    ],
+    "limits": {
+        "min": -90,
+        "max": 90,
+        "default": 0,
+        "unit": "deg"
+    },
+    "origin": {
+        "translation": [
+            0,
+            0,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ]
+    },
+    "mesh": "TypeLJoint.glb",
+    "previewImage": "collage.jpg"
+}

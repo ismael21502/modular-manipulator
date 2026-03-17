@@ -116,5 +116,86 @@
         "label": "Paso 7"
       }
     ]
+  },
+  {
+    "name": "Test",
+    "updated_at": "2026-03-04T23:07:17.910Z",
+    "steps": [
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -25,
+          65,
+          90
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 1"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          7,
+          20,
+          11
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 2"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -30,
+          71,
+          87
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 3"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          6,
+          22,
+          9
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 4"
+      },
+      {
+        "type": "inline",
+        "joints": [
+          0,
+          -39,
+          69,
+          84
+        ],
+        "endEffectors": [
+          0
+        ],
+        "delay": 200,
+        "duration": 1000,
+        "label": "Paso 5"
+      }
+    ]
   }
 ]

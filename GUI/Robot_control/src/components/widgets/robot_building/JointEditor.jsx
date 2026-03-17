@@ -1,6 +1,7 @@
 import CustomScroll from "../../ui/scrolls/CustomScroll";
 import BuildCard from "./BuildCard";
 import { useTheme } from "../../../context/themes/ThemeContext";
+import { useEffect } from "react";
 /* --------------------------
        JointEditor subcomponente (simple)
        - Permite seleccionar tipo de joint usando tus BuildCard
@@ -9,6 +10,7 @@ import { useTheme } from "../../../context/themes/ThemeContext";
 function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
     if (!joint) return null;
     const { colors } = useTheme()
+    
     return (
         <div className="flex h-full flex-col gap-4">
             <CustomScroll
@@ -19,14 +21,17 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                 <div className="p-2">
                     <div className="text-lg mb-2">Tipo de articulación</div>
                     <div className="grid grid-cols-3 gap-4">
+                        {/* Para estas cards creo que vale la pena hacer un carousel o algo así */}
                         {jointOptions.map((opt, i) => (
                             <BuildCard
                                 key={i}
                                 label={opt.label}
                                 imgSrc={opt.img}
-                                onClick={() => onUpdate({ type: opt.value.type })}
+                                onClick={() => {
+                                    onUpdate({ id: opt.id })
+                                }}
                                 size="sm"
-                                isActive={joint.type === opt.value.type}
+                                isActive={joint.id === opt.id}
                             />
                         ))}
                     </div>
@@ -40,9 +45,9 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                                 key={i}
                                 label={opt.label}
                                 imgSrc={opt.img}
-                                onClick={() => onUpdate({ link: opt.value.type })}
+                                onClick={() => onUpdate({ link: opt.id })}
                                 size="sm"
-                                isActive={joint.link === opt.value.type}
+                                isActive={joint.link === opt.id}
                             />
                         ))}
                     </div>
@@ -56,7 +61,7 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                                 type="text"
                                 placeholder="min"
                                 value={joint.limits.min ?? ""}
-                                onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), min: e.target.value ? Number(e.target.value) : null } })}
+                                onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), min: e.target.value ? Number(e.target.value) : null } })} //Tal vez convenga hacer una función para hacer commits cada x tiempo o al perder el focus (esto último es más simple)
                                 className="border p-2 rounded"
                                 style={{ borderColor: colors.border }}
 
