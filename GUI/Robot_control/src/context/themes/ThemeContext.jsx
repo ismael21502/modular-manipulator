@@ -87,7 +87,7 @@ const colorPalettes = {
 const baseThemes = {
     light: {
         background: "#ffffff",
-        backgroundSubtle: "#f3f3f3",
+        backgroundSubtle: "#fafafa",
 
         danger: "#d64545",
         dangerDark: "#c53030",

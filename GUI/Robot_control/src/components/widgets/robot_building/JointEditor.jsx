@@ -8,9 +8,8 @@ import { useEffect } from "react";
        - Muestra inputs simples para link.length y límites como ejemplo
        -------------------------- */
 function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
-    if (!joint) return null;
+    if (!joint) return null
     const { colors } = useTheme()
-    
     return (
         <div className="flex h-full flex-col gap-4">
             <CustomScroll
@@ -24,7 +23,7 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                         {/* Para estas cards creo que vale la pena hacer un carousel o algo así */}
                         {jointOptions.map((opt, i) => (
                             <BuildCard
-                                key={i}
+                                key={opt.id}
                                 label={opt.label}
                                 imgSrc={opt.img}
                                 onClick={() => {
@@ -96,4 +95,4 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
     )
 }
 
-export default JointEditor;
+export default JointEditor

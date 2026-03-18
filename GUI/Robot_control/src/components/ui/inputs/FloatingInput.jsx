@@ -1,0 +1,61 @@
+import { useState } from 'react';
+
+function FloatingInput({
+    value,
+    onChange,
+    label = "",
+    type = "text",
+    backgroundColor = "#FFF",
+    borderColor = "#FFF",
+    textColor = "#000000",
+    primaryColor = "#FFF", // azul tipo Tailwind
+    className = "",
+    style = {}
+}) {
+    const [isFocused, setIsFocused] = useState(false);
+
+    const isActive = isFocused || value; // 👈 clave para el floating
+
+    return (
+        <div
+            className={`relative flex flex-1 flex-col justify-center ${className}`}
+            style={{ color: textColor, ...style }}
+        >
+            {/* Label */}
+            <div
+                className={`
+          absolute opacity-70 left-2 px-1.5 pointer-events-none
+          transition-all duration-200 ease-in-out text-inherit
+          ${isActive ? 'text-xs top-0 -translate-y-1/2 opacity-100' : 'top-1/2 -translate-y-1/2'}
+        `}
+                style={{
+                    backgroundColor: isActive ? backgroundColor : 'transparent',
+                    color: isFocused ? primaryColor : textColor
+                }}
+            >
+                {label}
+            </div>
+
+            {/* Input */}
+            <input
+                type={type}
+                value={value}
+                onChange={onChange}
+                className={`
+          w-full p-2 border rounded-lg
+          focus:outline-2 -outline-offset-2
+        `}
+                style={{
+                    borderColor: isFocused ? primaryColor : borderColor,
+                    backgroundColor: backgroundColor,
+                    color: textColor,
+                    outlineColor: primaryColor
+                }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+            />
+        </div>
+    );
+}
+
+export default FloatingInput;
