@@ -14,7 +14,7 @@ function FloatingInput({
 }) {
     const [isFocused, setIsFocused] = useState(false);
 
-    const isActive = isFocused || value; // 👈 clave para el floating
+    const isActive = isFocused || value !== "" && value !== null && value !== undefined
 
     return (
         <div
@@ -25,8 +25,8 @@ function FloatingInput({
             <div
                 className={`
           absolute opacity-70 left-2 px-1.5 pointer-events-none
-          transition-all duration-200 ease-in-out text-inherit
-          ${isActive ? 'text-xs top-0 -translate-y-1/2 opacity-100' : 'top-1/2 -translate-y-1/2'}
+          transition-translate duration-200 ease-in-out text-inherit
+          ${isActive ? 'text-sm top-0 -translate-y-1/2 opacity-100 font-bold' : 'top-1/2 -translate-y-1/2'}
         `}
                 style={{
                     backgroundColor: isActive ? backgroundColor : 'transparent',

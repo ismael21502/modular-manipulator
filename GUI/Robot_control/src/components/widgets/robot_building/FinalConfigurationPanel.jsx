@@ -4,8 +4,9 @@ import Select from "./Select";
 import IconInput from "../../ui/inputs/IconInput.jsx";
 import FloatingInput from "../../ui/inputs/FloatingInput.jsx";
 import LabelIcon from '@mui/icons-material/Label';
+import validateNumber from "../../../utils/validate.js";
 
-function FinalConfigurationPanel({ step }) {
+function FinalConfigurationPanel({ step, wizardState, dispatch }) {
     const { colors } = useTheme();
     const [tempVal, setTempVal] = useState("")
     return (
@@ -16,6 +17,8 @@ function FinalConfigurationPanel({ step }) {
                     <h1>Nombre del robot</h1>
                     {/* Crear un componente para este tipo de inputs */}
                     <IconInput
+                    value={wizardState.name}
+                        onChange={(e)=>dispatch({ type: "UPDATE_NAME", newName: e.target.value })}
                         className="text-base"
                         outlineColor={colors.primary}
                         placeholder="Ej. Robot 6 DOF"
@@ -41,8 +44,8 @@ function FinalConfigurationPanel({ step }) {
                         <div className="flex flex-col flex-1 gap-4">
                             <h2 className="text-center">Eje X</h2>
                             <FloatingInput
-                                value={tempVal}
-                                onChange={(e)=>setTempVal(e.target.value)}
+                                value={wizardState.cartesian[0].min ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Mínimo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -50,7 +53,18 @@ function FinalConfigurationPanel({ step }) {
                                 primaryColor={colors.primary}
                                 className="text-base" />
                             <FloatingInput
+                                value={wizardState.cartesian[0].max ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Máximo"
+                                backgroundColor={colors.background}
+                                borderColor={colors.border}
+                                textColor={colors.text.primary}
+                                primaryColor={colors.primary}
+                                className="text-base" />
+                            <FloatingInput
+                                value={wizardState.cartesian[0].default ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
                                 textColor={colors.text.primary}
@@ -60,6 +74,8 @@ function FinalConfigurationPanel({ step }) {
                         <div className="flex flex-col flex-1 gap-4">
                             <h2 className="text-center">Eje Y</h2>
                             <FloatingInput
+                                value={wizardState.cartesian[1].min ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Mínimo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -67,7 +83,18 @@ function FinalConfigurationPanel({ step }) {
                                 primaryColor={colors.primary}
                                 className="text-base" />
                             <FloatingInput
+                                value={wizardState.cartesian[1].max ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Máximo"
+                                backgroundColor={colors.background}
+                                borderColor={colors.border}
+                                textColor={colors.text.primary}
+                                primaryColor={colors.primary}
+                                className="text-base" />
+                            <FloatingInput
+                                value={wizardState.cartesian[1].default ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
                                 textColor={colors.text.primary}
@@ -77,6 +104,8 @@ function FinalConfigurationPanel({ step }) {
                         <div className="flex flex-col flex-1 gap-4">
                             <h2 className="text-center">Eje Z</h2>
                             <FloatingInput
+                                value={wizardState.cartesian[2].min ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Mínimo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -84,7 +113,18 @@ function FinalConfigurationPanel({ step }) {
                                 primaryColor={colors.primary}
                                 className="text-base" />
                             <FloatingInput
+                                value={wizardState.cartesian[2].max ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Máximo"
+                                backgroundColor={colors.background}
+                                borderColor={colors.border}
+                                textColor={colors.text.primary}
+                                primaryColor={colors.primary}
+                                className="text-base" />
+                            <FloatingInput
+                                value={wizardState.cartesian[2].default ?? ""}
+                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
                                 textColor={colors.text.primary}

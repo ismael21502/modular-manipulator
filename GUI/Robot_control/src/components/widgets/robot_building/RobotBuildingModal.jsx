@@ -15,10 +15,55 @@ import JointsPanel from "./JointsPanel.jsx";
    1) Estado inicial y reducer
    -------------------------- */
 const initialState = {
-    robotName: "",
+    name: "",
     base: {},
     joints: [],
-    tool: {}
+    tool: {},
+    //[ ] Debería mandar la estructura cartesian desde el backend? 
+    cartesian: [
+        {
+            id: "x",
+            label: "Eje X (Lateral)",
+            min: -100,
+            max: 100,
+            default: 0,
+        },
+        {
+            id: "y",
+            label: "Eje Y (Profundidad)",
+            min: -100,
+            max: 100,
+            default: 0,
+        },
+        {
+            id: "z",
+            label: "Eje Z (Vertical)",
+            min: -100,
+            max: 100,
+            default: 0,
+        },
+        {
+            id: "roll",
+            label: "Roll",
+            min: -180,
+            max: 180,
+            default: 0,
+        },
+        {
+            id: "pitch",
+            label: "Pitch",
+            min: -180,
+            max: 180,
+            default: 0,
+        },
+        {
+            id: "yaw",
+            label: "Yaw",
+            min: -180,
+            max: 180,
+            default: 0,
+        }
+    ]
 };
 
 function generateId() {
@@ -33,7 +78,7 @@ function wizardReducer(state, action) {
             return {
                 ...state,
                 [stepId]: value
-            };
+            }
         }
 
         case "ADD_JOINT": {
@@ -46,33 +91,51 @@ function wizardReducer(state, action) {
                     max: 90,
                     default: 0
                 }
-            };
+            }
             return {
                 ...state,
                 joints: [...state.joints, newJoint]
-            };
+            }
         }
 
         case "UPDATE_JOINT": {
-            const { jointId, payload } = action;
+            const { jointId, payload } = action
             return {
                 ...state,
                 joints: state.joints.map(j =>
                     j.tempId === jointId ? { ...j, ...payload } : j
                 )
-            };
+            }
         }
 
         case "REMOVE_JOINT": {
-            const { jointId } = action;
+            const { jointId } = action
             return {
                 ...state,
                 joints: state.joints.filter(j => j.id !== jointId)
-            };
+            }
+        }
+
+        case "UPDATE_NAME": {
+            const { newName } = action
+            return {
+                ...state,
+                name: newName
+            }
+        }
+
+        case "UPDATE_CARTESIAN": {
+            const { axisId, payload } = action
+            return {
+                ...state,
+                cartesian: state.cartesian.map(cart => 
+                    cart.id === axisId ? {...cart, ...payload} : cart
+                )
+            }
         }
 
         default:
-            return state;
+            return state
     }
 }
 
@@ -171,9 +234,6 @@ function RobotBuildingModal({ onClose }) {
         const stepId = currentStepObj.id;
         dispatch({ type: "SET_STEP_VALUE", stepId, value: option });
     }
-
-
-
 
     /* --------------------------
        Render principal
@@ -336,7 +396,7 @@ function RobotBuildingModal({ onClose }) {
                 </div>
             </div>
         </Modal>
-    );
+    )
 }
 
 export default RobotBuildingModal

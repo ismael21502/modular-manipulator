@@ -16,7 +16,7 @@ function JointsPanel({ step, wizardState, dispatch, selectedJointId, setSelected
                     <button
                         className="flex items-center justify-center p-2 opacity-80 hover:opacity-100 cursor-pointer rounded-full"
                         onClick={() => {
-                            dispatch({ type: "ADD_JOINT" });
+                            dispatch({ type: "ADD_JOINT" })
                         }}
                         style={{ backgroundColor: `${colors.primary}1A`, color: colors.primary }}
                     >
