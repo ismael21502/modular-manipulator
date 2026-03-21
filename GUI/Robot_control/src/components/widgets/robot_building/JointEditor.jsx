@@ -56,12 +56,11 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                 <div className="p-2">
                     <h4 className="text-lg mb-2">Límites</h4>
                     <div className="flex flex-1 flex-row gap-2 p-2 text-lg">
-
                         <div className="flex flex-col gap-2">
                             {/* <h4>Límite mínimo</h4> */}
                             <FloatingInput
                                 value={joint.limits.min ?? ""}
-                                label="min"
+                                label="Min"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
                                 primaryColor={colors.primary}
@@ -69,22 +68,13 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                                 onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), min: e.target.value ? validateNumber(e.target.value, -360, 360) : null } })}
                                 // className="border p-2 rounded"
                                 style={{ borderColor: colors.border }}
-                            />
-                            {/* <input
-                                type="text"
-                                placeholder="min"
-                                value={joint.limits.min ?? ""}
-                                onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), min: e.target.value ? validateNumber(e.target.value, -360, 360) : null } })} //Tal vez convenga hacer una función para hacer commits cada x tiempo o al perder el focus (esto último es más simple)
-                                className="border p-2 rounded"
-                                style={{ borderColor: colors.border }}
-
-                            /> */}
+                            />                            
                         </div>
                         <div className="flex flex-col gap-2">
                             {/* <h4>Límite máximo</h4> */}
                             <FloatingInput
                                 value={joint.limits.max ?? ""}
-                                label="max"
+                                label="Max"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
                                 primaryColor={colors.primary}
@@ -92,21 +82,13 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                                 onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), max: e.target.value ? validateNumber(e.target.value, -360, 360) : null } })}
                                 // className="border p-2 rounded"
                                 style={{ borderColor: colors.border }}
-                            />
-                            {/* <input
-                                type="text"
-                                placeholder="max"
-                                value={joint.limits.max ?? ""}
-                                onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), max: e.target.value ? Number(e.target.value) : null } })}
-                                className="border p-2 rounded"
-                                style={{ borderColor: colors.border }}
-                            /> */}
+                            />                            
                         </div>
                         <div className="flex flex-col gap-2">
                             {/* <h4>Posición default (zero)</h4> */}
                             <FloatingInput
                                 value={joint.limits.default ?? ""}
-                                label="default"
+                                label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
                                 primaryColor={colors.primary}
@@ -114,16 +96,7 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                                 onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), default: e.target.value ? validateNumber(e.target.value, joint.limits.min, joint.limits.max) : null } })}
                                 // className="border p-2 rounded"
                                 style={{ borderColor: colors.border }}
-                            />
-                            
-                            {/* <input
-                                type="text"
-                                placeholder="max"
-                                value={joint.limits.default ?? ""}
-                                onChange={(e) => onUpdate({ limits: { ...(joint.limits || {}), default: e.target.value ? Number(e.target.value) : null } })}
-                                className="border p-2 rounded"
-                                style={{ borderColor: colors.border }}
-                            /> */}
+                            />                                                       
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,189 @@
+{
+    "id": 1774059048353,
+    "name": "3DOF",
+    "links": [
+        {
+            "id": "base",
+            "length": 0,
+            "mesh": "Linkx2.glb",
+            "color": "#FFF"
+        },
+        {
+            "id": "link_1",
+            "length": 40,
+            "mesh": "Linkx2.glb",
+            "color": "#FFF"
+        },
+        {
+            "id": "link_2",
+            "length": 40,
+            "mesh": "Linkx2.glb",
+            "color": "#FFF"
+        },
+        {
+            "id": "link_3",
+            "length": 40,
+            "mesh": "Linkx2.glb",
+            "color": "#FFF"
+        }
+    ],
+    "joints": [
+        {
+            "id": "j1",
+            "label": "Type Y joint V1",
+            "type": "revolute",
+            "min": -90,
+            "max": 90,
+            "default": 0,
+            "unit": "deg",
+            "parent": "base",
+            "child": "link_1",
+            "axis": [
+                0,
+                0,
+                1
+            ],
+            "origin": {
+                "translation": [
+                    0,
+                    0,
+                    0
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "id": "j2",
+            "label": "Type Y joint V1",
+            "type": "revolute",
+            "min": -90,
+            "max": 90,
+            "default": 0,
+            "unit": "deg",
+            "parent": "link_1",
+            "child": "link_2",
+            "axis": [
+                0,
+                0,
+                1
+            ],
+            "origin": {
+                "translation": [
+                    0,
+                    40,
+                    0
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        {
+            "id": "j3",
+            "label": "Type Y joint V1",
+            "type": "revolute",
+            "min": -90,
+            "max": 90,
+            "default": 0,
+            "unit": "deg",
+            "parent": "link_2",
+            "child": "link_3",
+            "axis": [
+                0,
+                0,
+                1
+            ],
+            "origin": {
+                "translation": [
+                    0,
+                    40,
+                    0
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    ],
+    "end_effectors": [
+        {
+            "id": "twofingersgripperv1",
+            "label": "Gripper",
+            "type": "revolute",
+            "min": 0,
+            "max": 100,
+            "default": 0,
+            "unit": "%",
+            "parent": "link_3",
+            "origin": {
+                "translation": [
+                    0,
+                    100,
+                    0
+                ],
+                "rotation": [
+                    0,
+                    0,
+                    0
+                ]
+            },
+            "mesh": {
+                "base": "",
+                "left_finger": "",
+                "right_finger": ""
+            }
+        }
+    ],
+    "cartesian": [
+        {
+            "id": "x",
+            "label": "Eje X (Lateral)",
+            "min": -100,
+            "max": 100,
+            "default": 0
+        },
+        {
+            "id": "y",
+            "label": "Eje Y (Profundidad)",
+            "min": -100,
+            "max": 100,
+            "default": 0
+        },
+        {
+            "id": "z",
+            "label": "Eje Z (Vertical)",
+            "min": -100,
+            "max": 100,
+            "default": 0
+        },
+        {
+            "id": "roll",
+            "label": "Roll",
+            "min": -180,
+            "max": 180,
+            "default": 0
+        },
+        {
+            "id": "pitch",
+            "label": "Pitch",
+            "min": -180,
+            "max": 180,
+            "default": 0
+        },
+        {
+            "id": "yaw",
+            "label": "Yaw",
+            "min": -180,
+            "max": 180,
+            "default": 0
+        }
+    ]
+}

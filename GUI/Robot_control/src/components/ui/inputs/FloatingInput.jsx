@@ -42,7 +42,7 @@ function FloatingInput({
                 value={value}
                 onChange={onChange}
                 className={`
-          w-full p-2 border rounded-lg
+          w-full py-2 px-3.5 border rounded-lg
           focus:outline-2 -outline-offset-2
         `}
                 style={{

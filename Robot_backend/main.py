@@ -146,7 +146,7 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
     } for i, link in enumerate(links)]
     links.insert(0, {
         "id": "base",
-        "lenght": 0,
+        "length": 0,
         "mesh": base["mesh"],
         "color": "#FFF"
     })
@@ -165,7 +165,7 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
     } for i, joint in enumerate(joints)]
     
     # #Ahora solo podré usar 1 endEffector.
-    endEffectors = {
+    endEffectors = [{
         "id": endEffectors["id"],
         "label": "Gripper",
         "type": "revolute",
@@ -176,17 +176,26 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
         "parent": links[len(links)-1]["id"],
         "origin": endEffectors["origin"],
         "mesh": endEffectors["mesh"] 
-    }
+    }]
 
     newRobotConfig = {
-        "id": 123,#generateID()
+        "id": generateID(),
+        "name": robotParts["name"],
         "links": links,
         "joints": joints,
         "end_effectors": endEffectors,
-        "cartesian": 1 #Aquí va la configuración cartesiana, la tomaré de frontend tal vez
+        "cartesian": robotParts["cartesian"] #Aquí va la configuración cartesiana, la tomaré de frontend tal vez
     }
+    saveRobotConfig(newRobotConfig)
+    print("Nueva robot config: ", newRobotConfig)
+ 
+def generateID(): #[ ] Revisar esta función, no es muy robusta pero por ahora sirve
+    return int(datetime.now().timestamp() * 1000)
 
-    print("HOLA: ", newRobotConfig)
+def saveRobotConfig(config):
+    filePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "newRobotConfig.json")
+    with open(filePath, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=4)
 # print("CATALOG: ", createRobotPartsCatalog())
 #endregion
 

@@ -239,7 +239,7 @@ function RobotBuildingModal({ onClose }) {
        Render principal
        -------------------------- */
 
-    function isStepComplete(stepId, wizardState) {
+    function isStepComplete(stepId, wizardState) { //[ ] Mejorar esta función para validar cada paso. Tal vez pueda crear una función diferente para cada paso y guardarla en los buildSteps
         const value = wizardState[stepId];
         switch (stepId) {
             case "base":
@@ -254,7 +254,8 @@ function RobotBuildingModal({ onClose }) {
                         j.link //&&
                         // Object.keys(j.link).length > 0
                     )
-                );
+                )
+            case "final":
 
             default:
                 return true;

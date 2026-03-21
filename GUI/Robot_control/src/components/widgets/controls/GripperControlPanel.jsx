@@ -63,7 +63,7 @@ function Gripper({ }) {
             <div className='flex flex-row gap-2 items-center font-bold py-2 px-5 text-md'>
                 {/* <BackHandIcon fontSize='small' /> */}
                 <HandymanIcon fontSize='small' />
-                <p>Herramientas</p>
+                <p>HERRAMIENTA</p>
             </div>
             <div className="flex flex-col py-2 px-5 w-full justify-between gap-6">
                 {endEffectorsConfig.map((effector, i) => (

@@ -8,7 +8,6 @@ import validateNumber from "../../../utils/validate.js";
 
 function FinalConfigurationPanel({ step, wizardState, dispatch }) {
     const { colors } = useTheme();
-    const [tempVal, setTempVal] = useState("")
     return (
         <Select title={step.content.title} subtitle={step.content.subtitle}>
             <div className="flex flex-1 flex-col gap-8 text-xl">
