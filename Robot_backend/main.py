@@ -80,6 +80,7 @@ def createRobotPartsCatalog():
             "id": base["id"],
             "label": base["name"],
             "img": base["previewImage"],
+            "end": base["end"],
             "mesh": base["mesh"]
         } for base in bases],
         "joints": [{
@@ -97,7 +98,8 @@ def createRobotPartsCatalog():
             "label": link["name"],
             "length": link["length"],
             "img": link["previewImage"],
-            "mesh": link["mesh"]
+            "mesh": link["mesh"],
+            "end": link["end"] 
         } for link in links],
         "tools": [{
             "id": tool["id"],
@@ -134,20 +136,23 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
     # print("Base: ", base)
     # print("Joints: ", joints)
     # print("Links: ", links)
-    # print("End Effector: ", endEffector)
+    # print("End Effector: ", endEffectors)
+    # return 
     for joint in joints:
         print("JOINT: ", joint["limits"])
     
     links = [{
       "id": f"link_{i+1}",
-      "length": link["length"], #[ ] Change for link length
+      "length": link["length"], 
       "mesh": link["mesh"],
+      "end": link["end"],
       "color": "#FFF"
     } for i, link in enumerate(links)]
     links.insert(0, {
         "id": "base",
         "length": 0,
         "mesh": base["mesh"],
+        "end": base["end"],
         "color": "#FFF"
     })
     joints = [{
@@ -161,7 +166,7 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
         "parent": links[i]["id"],
         "child": links[i+1]["id"],
         "axis": joint["axis"],
-        "origin": joint["origin"]
+        "origin": links[i]["end"]
     } for i, joint in enumerate(joints)]
     
     # #Ahora solo podré usar 1 endEffector.

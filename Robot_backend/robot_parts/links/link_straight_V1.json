@@ -3,5 +3,17 @@
     "name": "Link Straight V1",
     "length": 40,
     "mesh": "Linkx2.glb",
-    "previewImage": "icon.png"
+    "previewImage": "icon.png",
+    "end": {
+        "translation": [
+            0,
+            40,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ]
+    }
 }

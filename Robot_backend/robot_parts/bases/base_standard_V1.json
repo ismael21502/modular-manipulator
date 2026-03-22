@@ -3,5 +3,17 @@
     "name": "Base Estándar V1",
     "length": 40,
     "mesh": "Linkx2.glb",
-    "previewImage": "appIcon.png"
+    "previewImage": "appIcon.png",
+    "end": {
+        "translation": [
+            0,
+            0,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ]
+    }
 }
