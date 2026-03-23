@@ -17,7 +17,7 @@ function BackendConnection() {
         setPort(newPort)
     }
     return (
-        <div className='flex flex-row items-center rounded-md border-1 py-2 px-5 gap-5 text-sm'
+        <div className='flex flex-row items-center rounded-md py-2 px-5 gap-5 text-base' // border-1
             style={{ borderColor: colors.border, color: colors.text.primary }}>
             <p>CONEXIÓN</p>
             <div className='flex flex-row justify-end items-center'>

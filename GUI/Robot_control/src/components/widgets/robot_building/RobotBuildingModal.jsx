@@ -269,7 +269,7 @@ function RobotBuildingModal({ onClose }) {
         if (currentStep >= buildSteps.length - 1) {
             console.log("Construir robotConfig.json", wizardState)
             await buildRobot(wizardState)
-            onClose() //[ ] Esperar confirmación
+            onClose() //[ ] Esperar confirmación del backend antes de cerrar modal. Si hay error, mostrar un modal con el mensaje
             return
         }
         setCompletedSteps(prev => [

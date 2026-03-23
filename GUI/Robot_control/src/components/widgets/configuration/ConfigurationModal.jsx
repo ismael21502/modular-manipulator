@@ -8,11 +8,18 @@ import SmartToyIcon from '@mui/icons-material/SmartToy';
 import RobotBuildingModal from '../robot_building/RobotBuildingModal';
 import HollowButton from '../../ui/buttons/HollowButton';
 import SolidButton from '../../ui/buttons/SolidButton';
+import FloatingInput from '../../ui/inputs/FloatingInput';
+import { useWebSocket } from '../../../context/WebSocketContext';
+import LinkIcon from '@mui/icons-material/Link';
+import LinkOffIcon from '@mui/icons-material/LinkOff';
+import ActiviyIndicator from '../../ui/indicators/LoadingIndicator';
 
 function ConfigurationModal({ onClose = () => { } }) {
     const { colors, mode, setMode, setMainColorName, mainColorName, colorOptions } = useTheme()
     const [prevConfig, setPrevConfig] = useState(mainColorName)
     const [openRobotBuild, setOpenRobotBuild] = useState(false)
+
+    const { isConnected, isConnecting, initializeWebSocket, disconnect, port, setPort, IP, setIP } = useWebSocket()
 
     const onCancel = () => {
         console.log("CANCEL")
@@ -72,7 +79,7 @@ function ConfigurationModal({ onClose = () => { } }) {
                         </div>
                         <div>
                             <h2>Color principal</h2>
-                            <div className="flex items-center gap-4 p-2">                            
+                            <div className="flex items-center gap-4 p-2">
                                 {colorOptions.map(option => (
                                     // <h1>option</h1>
                                     <span className={`rounded-full w-8 h-8 cursor-pointer transition-all duration-50 ease-out hover:scale-[1.03] hover:outline-2 hover:outline-offset-2 ${mainColorName === option.name ? "outline-2 outline-offset-2" : ''}`}
@@ -81,6 +88,40 @@ function ConfigurationModal({ onClose = () => { } }) {
                                 ))}
 
                             </div>
+                        </div>
+                        <h1 style={{ color: colors.text.title }} className='mt-2 font-bold'>CONFIGURACIÓN DE CONEXIÓN</h1>
+                        <div className="w-full h-[2px] my-3"
+                            style={{ backgroundColor: colors.border }}></div>
+                        <div className='flex flex-row py-4 gap-4 w-200'>
+                            {/* <BackendConnection />
+                            <div className="flex-1"></div> */}
+                            <FloatingInput
+                                label="IP"
+                                placeholder='IP'
+                                primaryColor={colors.primary}
+                                borderColor={colors.border}
+                                backgroundColor={colors.background}
+                                textColor={colors.text.primary} 
+                                value={IP}
+                                onChange={(e) => setIP(e.target.value)} />
+                            <FloatingInput
+                                label="PORT"
+                                placeholder='PORT'
+                                primaryColor={colors.primary}
+                                borderColor={colors.border}
+                                backgroundColor={colors.background}
+                                textColor={colors.text.primary}
+                                value={port}
+                                onChange={(e) => setPort(e.target.value)} />
+                            <SolidButton
+                                text={`${isConnected ? "Desconectar" : isConnecting ? "Conectando..." : "Conectar"}`}
+                                bgColor={isConnected ? colors.danger : colors.primary}
+                                borderColor={isConnected ? colors.danger : colors.primary} 
+                                color="white" 
+                                onClick={isConnected ? disconnect : initializeWebSocket}
+                                IconComponent={isConnected ? LinkOffIcon : isConnecting ? () => <ActiviyIndicator color={"white"} /> : LinkIcon}
+                                disabled={isConnecting}
+                                />
                         </div>
                     </div>
 
