@@ -3,12 +3,10 @@ import BuildCard from "./BuildCard";
 import { useTheme } from "../../../context/themes/ThemeContext";
 import validateNumber from "../../../utils/validate";
 import FloatingInput from "../../ui/inputs/FloatingInput";
-/* --------------------------
-       JointEditor subcomponente (simple)
-       - Permite seleccionar tipo de joint usando tus BuildCard
-       - Muestra inputs simples para link.length y límites como ejemplo
-       -------------------------- */
-function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
+import IconInput from "../../ui/inputs/IconInput";
+import LabelIcon from '@mui/icons-material/Label';
+
+function JointEditor({ wizardState, joint, jointOptions = [], linkOptions = [], onUpdate }) { // [ ] Debo pasar wizardState o solo el joint label?
     if (!joint) return null
     const { colors } = useTheme()
     return (
@@ -19,13 +17,25 @@ function JointEditor({ joint, jointOptions = [], linkOptions = [], onUpdate }) {
                 thumbColor={colors.scrollbar.thumb}>
                 <h4 className="font-bold px-2 text-2xl">Editar Joint</h4>
                 <div className="p-2">
+                    <h4 className="text-lg mb-2">Etiqueta de la articulación</h4>
+                    <IconInput
+                        value={wizardState.joints.find(j => j.tempId === joint.tempId)?.label || ""}
+                        onChange={(e) => onUpdate({  label: e.target.value })}
+                        className="text-base mb-2 w-100"
+                        outlineColor={colors.primary}
+                        placeholder="Ej. J1 (hombro)"
+                        style={{ color: colors.text.primary }}
+                        borderColor={colors.border}
+                        iconColor={colors.primary}
+                        IconComponent={LabelIcon}
+                    />
                     <h4 className="text-lg mb-2">Tipo de articulación</h4>
                     <div className="grid grid-cols-3 gap-4">
                         {/* Para estas cards creo que vale la pena hacer un carousel o algo así */}
                         {jointOptions.map((opt, i) => (
                             <BuildCard
                                 key={opt.id}
-                                label={opt.label}
+                                label={opt.name}
                                 imgSrc={opt.img}
                                 onClick={() => {
                                     onUpdate({ id: opt.id })

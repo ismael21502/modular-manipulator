@@ -112,7 +112,7 @@ function wizardReducer(state, action) {
             const { jointId } = action
             return {
                 ...state,
-                joints: state.joints.filter(j => j.id !== jointId)
+                joints: state.joints.filter(j => j.tempId !== jointId)
             }
         }
 
@@ -240,25 +240,30 @@ function RobotBuildingModal({ onClose }) {
        -------------------------- */
 
     function isStepComplete(stepId, wizardState) { //[ ] Mejorar esta función para validar cada paso. Tal vez pueda crear una función diferente para cada paso y guardarla en los buildSteps
-        const value = wizardState[stepId];
+        const value = wizardState[stepId]
         switch (stepId) {
             case "base":
             case "tool":
-                return value && Object.keys(value).length > 0;
+                return value && Object.keys(value).length > 0
 
             case "joints":
                 return (
                     value.length > 0 &&
                     value.every(j =>
+                        j.label !== "" && j.label &&
                         j.id &&
                         j.link //&&
                         // Object.keys(j.link).length > 0
                     )
                 )
             case "final":
-
+                const isNameValid = wizardState.name !== ""
+                // console.log("X: ", wizardState.cartesian.every(cart => 
+                //     cart.max && cart.min //[ ] Añadir default y corregir el que no deje usar 0
+                // ))
+                return isNameValid
             default:
-                return true;
+                return true
         }
     }
 
@@ -269,7 +274,8 @@ function RobotBuildingModal({ onClose }) {
         if (currentStep >= buildSteps.length - 1) {
             console.log("Construir robotConfig.json", wizardState)
             await buildRobot(wizardState)
-            onClose() //[ ] Esperar confirmación del backend antes de cerrar modal. Si hay error, mostrar un modal con el mensaje
+            return
+            // onClose() //[ ] Esperar confirmación del backend antes de cerrar modal. Si hay error, mostrar un modal con el mensaje
             return
         }
         setCompletedSteps(prev => [

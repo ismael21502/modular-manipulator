@@ -85,7 +85,8 @@ def createRobotPartsCatalog():
         } for base in bases],
         "joints": [{
             "id": joint["id"],
-            "label": joint["name"], #[ ] Cambiar label por name
+            "name": joint["name"], #[ ] Cambiar label por name
+            "label": joint["label"],
             "type": joint["type"],
             "img": joint["previewImage"],
             "mesh": joint["mesh"],
@@ -130,14 +131,16 @@ async def getRobotPartsCatalog():
 @app.post("/build_robot")
 async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro?
     base = partsIndex[robotParts["base"]]
-    joints = [partsIndex[joint["id"]] for joint in robotParts["joints"]]
+    joints = [{**partsIndex[joint["id"]], "label": joint["label"] } for joint in robotParts["joints"]]
     links = [partsIndex[joint["link"]] for joint in robotParts["joints"]]
     endEffectors = partsIndex[robotParts["tool"]]
     # print("Base: ", base)
     # print("Joints: ", joints)
     # print("Links: ", links)
     # print("End Effector: ", endEffectors)
-    # return 
+    # return
+    # print(robotParts) 
+    # return
     for joint in joints:
         print("JOINT: ", joint["limits"])
     
@@ -157,6 +160,7 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
     })
     joints = [{
         "id": f"j{i+1}",
+        "name": joint["name"],
         "label": joint["label"],
         "type": joint["type"],
         "min": joint["limits"]["min"],
@@ -191,7 +195,7 @@ async def buildRobot(robotParts: dict): #[ ] Pasar robot catalog como parámetro
         "end_effectors": endEffectors,
         "cartesian": robotParts["cartesian"] #Aquí va la configuración cartesiana, la tomaré de frontend tal vez
     }
-    saveRobotConfig(newRobotConfig)
+    # saveRobotConfig(newRobotConfig)
     print("Nueva robot config: ", newRobotConfig)
  
 def generateID(): #[ ] Revisar esta función, no es muy robusta pero por ahora sirve

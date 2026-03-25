@@ -14,10 +14,9 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                 <div className="flex flex-col flex-1 gap-3 p-5 border rounded-lg"
                     style={{ borderColor: colors.border, background: colors.backgroundSubtle }}>
                     <h1>Nombre del robot</h1>
-                    {/* Crear un componente para este tipo de inputs */}
                     <IconInput
-                    value={wizardState.name}
-                        onChange={(e)=>dispatch({ type: "UPDATE_NAME", newName: e.target.value })}
+                        value={wizardState.name}
+                        onChange={(e) => dispatch({ type: "UPDATE_NAME", newName: e.target.value })}
                         className="text-base"
                         outlineColor={colors.primary}
                         placeholder="Ej. Robot 6 DOF"
@@ -35,7 +34,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                             <h1>Límites cartesianos (mm)</h1>
                         </div>
                         <div className="flex p-2 justify-center items-center rounded-lg text-sm"
-                            style={{ color: colors.accent, borderColor: colors.accent, backgroundColor: `${colors.accent}3F`}}>
+                            style={{ color: colors.accent, borderColor: colors.accent, backgroundColor: `${colors.accent}3F` }}>
                             <h1>Zona de seguridad</h1>
                         </div>
                     </div>
@@ -44,7 +43,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                             <h2 className="text-center">Eje X</h2>
                             <FloatingInput
                                 value={wizardState.cartesian[0].min ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Mínimo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -53,7 +52,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                                 className="text-base" />
                             <FloatingInput
                                 value={wizardState.cartesian[0].max ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Máximo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -62,7 +61,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                                 className="text-base" />
                             <FloatingInput
                                 value={wizardState.cartesian[0].default ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "x", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -74,7 +73,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                             <h2 className="text-center">Eje Y</h2>
                             <FloatingInput
                                 value={wizardState.cartesian[1].min ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Mínimo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -83,7 +82,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                                 className="text-base" />
                             <FloatingInput
                                 value={wizardState.cartesian[1].max ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Máximo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -92,7 +91,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                                 className="text-base" />
                             <FloatingInput
                                 value={wizardState.cartesian[1].default ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "y", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -104,7 +103,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                             <h2 className="text-center">Eje Z</h2>
                             <FloatingInput
                                 value={wizardState.cartesian[2].min ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { min: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Mínimo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -113,7 +112,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                                 className="text-base" />
                             <FloatingInput
                                 value={wizardState.cartesian[2].max ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { max: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Máximo"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}
@@ -122,7 +121,7 @@ function FinalConfigurationPanel({ step, wizardState, dispatch }) {
                                 className="text-base" />
                             <FloatingInput
                                 value={wizardState.cartesian[2].default ?? ""}
-                                onChange={(e)=>dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
+                                onChange={(e) => dispatch({ type: "UPDATE_CARTESIAN", axisId: "z", payload: { default: e.target.value ? validateNumber(e.target.value, -1000, 1000) : null } })}
                                 label="Default"
                                 backgroundColor={colors.background}
                                 borderColor={colors.border}

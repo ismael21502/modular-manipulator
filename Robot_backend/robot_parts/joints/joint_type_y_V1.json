@@ -1,6 +1,7 @@
 {
     "id": "typeyjointv1",
     "name": "Type Y joint V1",
+    "label": "",
     "type": "revolute",
     "axis": [
         0,

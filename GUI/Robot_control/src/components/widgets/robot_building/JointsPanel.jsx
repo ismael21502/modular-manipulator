@@ -44,7 +44,7 @@ function JointsPanel({ step, wizardState, dispatch, selectedJointId, setSelected
                                     <div className="font-semibold">Joint {idx + 1}</div>
                                     <div className="text-xs opacity-90 font-bold"
                                         style={{ color: colors.text.secondary }}>{joint.id || joint.link //Cambiar por labels en lugar de ids
-                                            ? [step.content.options.find(option => option.id === joint.id)?.label, step.content.linkOptions.find(option => option.id === joint.link)?.label].filter(Boolean).join(" - ")
+                                            ? [step.content.options.find(option => option.id === joint.id)?.name, step.content.linkOptions.find(option => option.id === joint.link)?.label].filter(Boolean).join(" - ")
                                             : "Sin tipo"}</div>
                                 </div>
                                 <div className="flex gap-2 mt-2">
@@ -52,7 +52,7 @@ function JointsPanel({ step, wizardState, dispatch, selectedJointId, setSelected
                                         className="text-sm opacity-80 hover:opacity-100 cursor-pointer"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            dispatch({ type: "REMOVE_JOINT", jointId: joint.id });
+                                            dispatch({ type: "REMOVE_JOINT", jointId: joint.tempId });
                                             if (selectedJointId === joint.tempId) setSelectedJointId(null);
                                         }}
                                         onMouseEnter={(e) => e.currentTarget.style.color = colors.danger}
@@ -75,6 +75,7 @@ function JointsPanel({ step, wizardState, dispatch, selectedJointId, setSelected
             <div className="w-2/3 border-l" style={{ borderColor: colors.border }}>
                 {selectedJointId ? (
                     <JointEditor
+                        wizardState={wizardState}
                         joint={wizardState.joints.find(j => j.tempId === selectedJointId)}
                         jointOptions={step.content.options}
                         linkOptions={step.content.linkOptions}

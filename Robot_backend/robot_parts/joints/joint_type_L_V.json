@@ -1,6 +1,7 @@
 {
     "id": "typeljointv1",
     "name": "Type L joint V1",
+    "label": "",
     "type": "revolute",
     "axis": [
         0,

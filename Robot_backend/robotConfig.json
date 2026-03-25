@@ -1,102 +1,41 @@
 {
-    "id": 1774170767263,
-    "name": "New 4 DOF",
+    "name": "My4DOF",
     "links": [
         {
             "id": "base",
             "length": 0,
-            "mesh": "Linkx2.glb",
-            "end": {
-                "translation": [
-                    0,
-                    0,
-                    0
-                ],
-                "rotation": [
-                    0,
-                    0,
-                    0
-                ]
-            },
+            "mesh": "robot_parts/bases/base.glb",
             "color": "#FFF"
         },
         {
             "id": "link_1",
-            "length": 40,
-            "mesh": "Linkx2.glb",
-            "end": {
-                "translation": [
-                    0,
-                    40,
-                    0
-                ],
-                "rotation": [
-                    0,
-                    0,
-                    0
-                ]
-            },
-            "color": "#FFF"
+            "length": 20,
+            "mesh": "robot_parts/links/link100mm.glb",
+            "color": "#000"
         },
         {
             "id": "link_2",
-            "length": 40,
-            "mesh": "Linkx2.glb",
-            "end": {
-                "translation": [
-                    0,
-                    40,
-                    0
-                ],
-                "rotation": [
-                    0,
-                    0,
-                    0
-                ]
-            },
-            "color": "#FFF"
+            "length": 43,
+            "mesh": "robot_parts/links/link100mm.glb",
+            "color": "#5a2ac9"
         },
         {
             "id": "link_3",
-            "length": 40,
-            "mesh": "Linkx2.glb",
-            "end": {
-                "translation": [
-                    0,
-                    40,
-                    0
-                ],
-                "rotation": [
-                    0,
-                    0,
-                    0
-                ]
-            },
-            "color": "#FFF"
+            "length": 43,
+            "mesh": "robot_parts/links/link100mm.glb",
+            "color": "#d89a27"
         },
         {
-            "id": "link_4",
-            "length": 40,
-            "mesh": "Linkx2.glb",
-            "end": {
-                "translation": [
-                    0,
-                    40,
-                    0
-                ],
-                "rotation": [
-                    0,
-                    0,
-                    0
-                ]
-            },
-            "color": "#FFF"
+            "id": "end_effector",
+            "length": 43,
+            "mesh": "robot_parts/links/link100mm.glb",
+            "color": "#2451b3"
         }
     ],
     "joints": [
         {
             "id": "j1",
-            "label": "Type Y joint V1",
+            "label": "J1 (Base)",
             "type": "revolute",
             "min": -90,
             "max": 90,
@@ -109,6 +48,7 @@
                 0,
                 1
             ],
+            "mesh": "robot_parts/joints/typeYJoint.glb",
             "origin": {
                 "translation": [
                     0,
@@ -124,7 +64,7 @@
         },
         {
             "id": "j2",
-            "label": "Type Y joint V1",
+            "label": "J2 (Hombro)",
             "type": "revolute",
             "min": -90,
             "max": 90,
@@ -137,11 +77,12 @@
                 0,
                 1
             ],
+            "mesh": "robot_parts/joints/typeYJoint.glb",
             "origin": {
                 "translation": [
                     0,
                     0,
-                    40
+                    20
                 ],
                 "rotation": [
                     1.57079632679,
@@ -152,7 +93,7 @@
         },
         {
             "id": "j3",
-            "label": "Type Y joint V1",
+            "label": "J3 (Codo)",
             "type": "revolute",
             "min": -90,
             "max": 90,
@@ -165,10 +106,11 @@
                 0,
                 1
             ],
+            "mesh": "robot_parts/joints/typeYJoint.glb",
             "origin": {
                 "translation": [
                     0,
-                    40,
+                    43,
                     0
                 ],
                 "rotation": [
@@ -180,23 +122,24 @@
         },
         {
             "id": "j4",
-            "label": "Type Y joint V1",
+            "label": "J4 (Muñeca)",
             "type": "revolute",
             "min": -90,
             "max": 90,
             "default": 0,
             "unit": "deg",
             "parent": "link_3",
-            "child": "link_4",
+            "child": "end_effector",
             "axis": [
                 0,
                 0,
                 1
             ],
+            "mesh": "robot_parts/joints/typeYJoint.glb",
             "origin": {
                 "translation": [
                     0,
-                    40,
+                    43,
                     0
                 ],
                 "rotation": [
@@ -209,14 +152,14 @@
     ],
     "end_effectors": [
         {
-            "id": "twofingersgripperv1",
+            "id": "gripper",
             "label": "Gripper",
             "type": "revolute",
             "min": 0,
             "max": 100,
             "default": 0,
             "unit": "%",
-            "parent": "link_4",
+            "parent": "end_effector",
             "origin": {
                 "translation": [
                     0,
@@ -240,44 +183,50 @@
         {
             "id": "x",
             "label": "Eje X (Lateral)",
-            "min": -100,
-            "max": 100,
-            "default": 0
+            "min": -180,
+            "max": 180,
+            "default": 0,
+            "unit": "mm"
         },
         {
             "id": "y",
             "label": "Eje Y (Profundidad)",
-            "min": -100,
-            "max": 100,
-            "default": 0
+            "min": -180,
+            "max": 180,
+            "default": 0,
+            "unit": "mm"
         },
         {
             "id": "z",
             "label": "Eje Z (Vertical)",
-            "min": -100,
-            "max": 100,
-            "default": 0
+            "min": -50,
+            "max": 210,
+            "default": 0,
+            "unit": "mm"
         },
         {
             "id": "roll",
             "label": "Roll",
             "min": -180,
             "max": 180,
-            "default": 0
+            "default": 0,
+            "unit": "deg"
         },
         {
             "id": "pitch",
             "label": "Pitch",
-            "min": -180,
-            "max": 180,
-            "default": 0
+            "min": -90,
+            "max": 90,
+            "default": 0,
+            "unit": "deg"
         },
         {
             "id": "yaw",
             "label": "Yaw",
             "min": -180,
             "max": 180,
-            "default": 0
+            "default": 0,
+            "unit": "deg"
         }
     ]
 }

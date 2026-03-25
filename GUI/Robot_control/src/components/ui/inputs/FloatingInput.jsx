@@ -22,11 +22,13 @@ function FloatingInput({
             style={{ color: textColor, ...style }}
         >
             {/* Label */}
+            <div className={`absolute px-1.5 pointer-events-none left-1 transition-transform 
+            duration-200 ${value && 'text-xs top-0 -translate-y-1/2'}`} />
             <div
                 className={`
           absolute opacity-70 left-2 px-1.5 pointer-events-none
-          transition-translate duration-200 ease-in-out text-inherit
-          ${isActive ? 'text-sm top-0 -translate-y-1/2 opacity-100 font-bold' : 'top-1/2 -translate-y-1/2'}
+          transition-transform duration-200 ease-out text-inherit
+          ${isActive ? 'text-sm top-0 -translate-y-1/2 opacity-100 font-bold' : ''}
         `}
                 style={{
                     backgroundColor: isActive ? backgroundColor : 'transparent',
