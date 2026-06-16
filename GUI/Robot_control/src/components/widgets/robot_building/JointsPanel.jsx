@@ -44,7 +44,7 @@ function JointsPanel({ step, wizardState, dispatch, selectedJointId, setSelected
                                     <div className="font-semibold">Joint {idx + 1}</div>
                                     <div className="text-xs opacity-90 font-bold"
                                         style={{ color: colors.text.secondary }}>{joint.id || joint.link //Cambiar por labels en lugar de ids
-                                            ? [step.content.options.find(option => option.id === joint.id)?.name, step.content.linkOptions.find(option => option.id === joint.link)?.label].filter(Boolean).join(" - ")
+                                            ? [step.content.options.find(option => option.id === joint.id)?.name, step.content.linkOptions.find(option => option.id === joint.link)?.name].filter(Boolean).join(" - ")
                                             : "Sin tipo"}</div>
                                 </div>
                                 <div className="flex gap-2 mt-2">

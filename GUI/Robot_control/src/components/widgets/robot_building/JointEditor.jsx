@@ -53,7 +53,7 @@ function JointEditor({ wizardState, joint, jointOptions = [], linkOptions = [], 
                         {linkOptions.map((opt, i) => (
                             <BuildCard
                                 key={i}
-                                label={opt.label}
+                                label={opt.name}
                                 imgSrc={opt.img}
                                 onClick={() => onUpdate({ link: opt.id })}
                                 size="sm"

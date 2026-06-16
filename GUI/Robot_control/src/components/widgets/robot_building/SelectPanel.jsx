@@ -8,7 +8,7 @@ function SelectPanel({ step, wizardState, onSelectOption }) {
                 {step.content.options.map((option, index) => (
                     <BuildCard
                         key={index}
-                        label={option.label}
+                        label={option.name}
                         imgSrc={option.img}
                         onClick={() => onSelectOption(option.id)}
                         isActive={wizardState[step.id] === option.id}

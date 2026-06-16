@@ -18,6 +18,7 @@ from utils.appfactory import createApp
 from controller import RobotController
 from services.IKService import IKService
 from services.DeviceDiscovery import DeviceDiscovery
+from fastapi.staticfiles import StaticFiles
 from pathlib import Path #[ ] Tal vez convenga cambiar os por pathlib para manejar todos los archivos
 #[ ] Considerar sistema de logs dentro del propio backend
 #[ ] Hacer que la robotConfig se cree al iniciar el backend y solo se retorne al frontend
@@ -53,6 +54,7 @@ deviceDiscoverer = DeviceDiscovery()
 
 asyncio.create_task(deviceDiscoverer.run())
 asyncio.create_task(controller.run())
+app.mount("/robot_parts", StaticFiles(directory="robot_parts"), name="robot_parts")
 
 @app.get("/robot_config")
 async def getRobotConfig():
@@ -70,51 +72,67 @@ async def getRobotConfig():
         return {}
 
 #region robotBuilding
+def buildUrls(part, category):
+    baseURL = "http://localhost:8000" #[ ] Tal vez pueda cambiarlos por variables de entorno o algo así para no tenerlo hardcodeado
+    part["img"] = f"{baseURL}/robot_parts/{category}/{part["id"]}/{part['img']}"
+    part["mesh"] = f"{baseURL}/robot_parts/{category}/{part["id"]}/{part['mesh']}"
+    return part
+    #[ ] También debo hacer lo mismo con el mesh
+
 def createRobotPartsCatalog():
     bases = loadPartsFromFolder("robot_parts/bases")
+    bases = [buildUrls(base, "bases") for base in bases]
     joints = loadPartsFromFolder("robot_parts/joints")
+    joints = [buildUrls(joint, "joints") for joint in joints]
     links = loadPartsFromFolder("robot_parts/links")
-    endEffectors = loadPartsFromFolder("robot_parts/end_effectors")
+    links = [buildUrls(link, "links") for link in links]
+    tools = loadPartsFromFolder("robot_parts/end_effectors")
+    tools = [buildUrls(tool, "end_effectors") for tool in tools]
+
     return {
-        "bases": [{
-            "id": base["id"],
-            "label": base["name"],
-            "img": base["previewImage"],
-            "end": base["end"],
-            "mesh": base["mesh"]
-        } for base in bases],
-        "joints": [{
-            "id": joint["id"],
-            "name": joint["name"], #[ ] Cambiar label por name
-            "label": joint["label"],
-            "type": joint["type"],
-            "img": joint["previewImage"],
-            "mesh": joint["mesh"],
-            "limits": joint["limits"],
-            "axis": joint["axis"],
-            "origin": joint["origin"]
-        } for joint in joints],
-        "links": [{
-            "id": link["id"],
-            "label": link["name"],
-            "length": link["length"],
-            "img": link["previewImage"],
-            "mesh": link["mesh"],
-            "end": link["end"] 
-        } for link in links],
-        "tools": [{
-            "id": tool["id"],
-            "label": tool["name"],
-            "img": tool["previewImage"],
-            "control": tool["control"],
-            "mesh": tool["mesh"],
-            "origin": tool["origin"]
-        } for tool in endEffectors]
+        "bases": bases, 
+        "joints": joints,
+        "links": links, 
+        "tools": tools, 
+        # "bases": [{
+        #     "id": base["id"],
+        #     "label": base["name"],
+        #     "img": base["previewImage"],
+        #     "end": base["end"],
+        #     "mesh": base["mesh"]
+        # } for base in bases],
+        # "joints": [{
+        #     "id": joint["id"],
+        #     "name": joint["name"], #[ ] Cambiar label por name
+        #     "label": joint["label"],
+        #     "type": joint["type"],
+        #     "img": joint["previewImage"],
+        #     "mesh": joint["mesh"],
+        #     "limits": joint["limits"],
+        #     "axis": joint["axis"],
+        #     "origin": joint["origin"]
+        # } for joint in joints],
+        # "links": [{
+        #     "id": link["id"],
+        #     "label": link["name"],
+        #     "length": link["length"],
+        #     "img": link["previewImage"],
+        #     "mesh": link["mesh"],
+        #     "end": link["end"] 
+        # } for link in links],
+        # "tools": [{
+        #     "id": tool["id"],
+        #     "label": tool["name"],
+        #     "img": tool["previewImage"],
+        #     "control": tool["control"],
+        #     "mesh": tool["mesh"],
+        #     "origin": tool["origin"]
+        # } for tool in endEffectors]
     }
 
 def loadPartsFromFolder(folder):
     parts = []
-    for file in Path(folder).glob("*.json"):
+    for file in Path(folder).rglob("*.json"):
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
             parts.append(data)

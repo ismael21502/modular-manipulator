@@ -3,7 +3,7 @@
     "name": "Base Estándar V1",
     "length": 40,
     "mesh": "Linkx2.glb",
-    "previewImage": "appIcon.png",
+    "img": "appIcon.png",
     "end": {
         "translation": [
             0,
