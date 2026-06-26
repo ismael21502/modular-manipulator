@@ -7,9 +7,6 @@ function LoadingIndicator({color="white", width="24px", height="24px"}) {
                 style={{ border: '3px solid', borderColor: color, borderTopColor: 'transparent'}}
             />
         </div>
-        
-
-
     )
 }
 

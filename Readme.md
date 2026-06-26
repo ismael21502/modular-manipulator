@@ -1,8 +1,8 @@
-[Project name] (check for available names)
+# [Project name] (check for available names)
 
 Web-based platform for configuring, visualizing and controlling modular robotic manipulators.
 
-Overview
+## Overview
 
 Modular Robotics Platform is a web-based application for
 configuring, visualizing and controlling robotic manipulators.
@@ -17,27 +17,27 @@ the platform provides real-time visualization, general FK/IK
 solvers, Cartesian and joint-space control, and robot
 configuration tools.
 
-Main features
+## Main features
 
-• Configuration-driven robot definition
+- Configuration-driven robot definition
 
-• General Forward Kinematics (FK) solver
+- General Forward Kinematics (FK) solver
 
-• General Inverse Kinematics (IK) solver
+- General Inverse Kinematics (IK) solver
 
-• Real-time 3D visualization
+- Real-time 3D visualization
 
-• Joint-space and Cartesian-space control
+- Joint-space and Cartesian-space control
 
-• Position and sequence management
+- Position and sequence management
 
-• Robot configuration wizard
+- Robot configuration wizard
 
-• Real-time logging system
+- Real-time logging system
 
-Technologies
+## Technologies
 
-Frontend
+### Frontend
 
 React
 
@@ -47,13 +47,13 @@ React Three Fiber
 
 Three.js
 
-Backend
+### Backend
 
 Python
 
 FastAPI
 
-Hardware
+### Hardware
 
 ESP32
 
@@ -61,15 +61,15 @@ MG90S Servo Motors
 
 Modular 3D Printed Structure
 
-Installation
+## Installation
 
 [Add installation steps]
 
-Arquitechture(?)
+## Arquitechture(?)
 
 [Add diagram]
 
-Roadmap(?)
+## Roadmap(?)
 
 Robot visualization (done)
 

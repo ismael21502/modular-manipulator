@@ -7,7 +7,7 @@ class ESP32Connection:
         self.port = port
         self.baudrate = baudrate
         self.ser = None
-
+    #[ ] Puedo agregar un return y en controller.py un await. Se enviaría un mensaje handshake mediante "send" y si el handshake es positivo, se retornará True
     def connect(self, port=None, baudrate=None):
         if port is not None:
             self.port = port

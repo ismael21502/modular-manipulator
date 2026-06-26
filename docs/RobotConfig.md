@@ -30,7 +30,7 @@ Represents a rigid body between joints.
 {
   "id": "link1",
   "length": 100,
-  "mesh": "/meshes/link1.stl",
+  "mesh": "/meshes/link1.glb",
   "color": "#ff0000"
 }
 ```
