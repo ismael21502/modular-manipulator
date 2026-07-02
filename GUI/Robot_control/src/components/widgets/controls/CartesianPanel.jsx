@@ -45,7 +45,7 @@ function CartesianControl() {
         })
     }
 
-    const commitVal = (i, val, min, max) => {
+    const commitVal = (i, val, min, max) => { //[ ] Eliminar min-max. 
         const valid = validateNumber(val, min, max)
         if (valid === undefined) return
         setVal(i, valid)

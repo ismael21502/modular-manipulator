@@ -19,14 +19,12 @@ void parseJson(const String &jsonStr)
 {
   StaticJsonDocument<512> doc;
   DeserializationError error = deserializeJson(doc, jsonStr);
-  if (error)
-  {
+  if (error){
     Serial.print("JSON error: ");
     Serial.println(error.c_str());
     return;
   }
-  if (doc["type"] == "move_joints")
-  {
+  if (doc["type"] == "move_joints"){
     JsonArray values = doc["values"];
     if (values.isNull())
       return;
@@ -36,8 +34,7 @@ void parseJson(const String &jsonStr)
       joints[i].write(angle);
     }
   }
-  else if (doc["type"] == "move_end_effector")
-  {
+  else if (doc["type"] == "move_end_effector"){
     JsonArray values = doc["values"];
     if (values.isNull())
       return;
@@ -46,6 +43,11 @@ void parseJson(const String &jsonStr)
       int angle = clamp(values[i], 0, 180);
       endEffectors[i].write(angle);
     }
+  }
+  else if (doc["type"] == "handshake"){
+    //JsonArray values = doc["values"];
+    Serial.println("Shaked");
+    digitalWrite(2, HIGH);
   }
 }
 
@@ -60,6 +62,11 @@ void setup()
   {
     endEffectors[i].attach(endEffectorPins[i]);
   }
+  pinMode(2, OUTPUT);
+  digitalWrite(2, HIGH);
+  delay(500);
+  digitalWrite(2, LOW);
+  delay(500);
   Serial.setTimeout(10);
 }
 
@@ -68,7 +75,7 @@ void loop()
   while (Serial.available())
   {
     String string = Serial.readStringUntil('\n');
-    Serial.println(string);
+    // Serial.println(string);
     parseJson(string);
   }
 }

@@ -1,47 +1,6 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 
-// export function TextLabel3D({ text, color, position }) {
-//   // 1. Creamos el dibujo en un canvas "en memoria"
-//   const texture = useMemo(() => {
-//     const canvas = document.createElement('canvas')
-//     const ctx = canvas.getContext('2d')
-//     canvas.width = 256
-//     canvas.height = 256
-
-//     // Dibujamos un fondo circular (estilo tu cursor)
-//     ctx.fillStyle = `${color}33` // Transparente
-//     ctx.beginPath()
-//     ctx.arc(128, 128, 100, 0, Math.PI * 2)
-//     ctx.fill()
-//     ctx.strokeStyle = color
-//     ctx.lineWidth = 10
-//     ctx.stroke()
-
-//     // Dibujamos el texto (X, Y, Z o coordenadas)
-//     ctx.font = 'Bold 80px Arial'
-//     ctx.fillStyle = 'white'
-//     ctx.textAlign = 'center'
-//     ctx.fillText(text, 128, 155)
-
-//     return new THREE.CanvasTexture(canvas)
-//   }, [text, color])
-
-//   return (
-//     <mesh position={position}>
-//       {/* 2. Usamos un plano que siempre mire a la cámara */}
-//       <planeGeometry args={[0.1, 0.1]} />
-//       <meshBasicMaterial
-//         map={texture}
-//         transparent={true}
-//         side={THREE.DoubleSide}
-//         depthTest={false}
-//         depthWrite={false}
-//       />
-//     </mesh>
-//   )
-// }
-
 import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 

@@ -15,8 +15,8 @@ All commands follow the same general structure.
 
 | Property | Required | Type     | Description                                                             |
 | -------- | -------- | -------- | ----------------------------------------------------------------------- |
-| `type`   | ✅        | `string` | Identifies the command to be executed by the hardware.                  |
-| `values` | ❌        | `object` | Command-specific parameters. The structure depends on the command type. |
+| `type`   | Yes | `string` | Identifies the command to be executed by the hardware.                  |
+| `values` | No | `object` | Command-specific parameters. The structure depends on the command type. |
 
 ---
 

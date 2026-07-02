@@ -15,16 +15,18 @@ All messages follow the same general structure.
 }
 ```
 
-| Property  | Type     | Description                                                                |
-| --------- | -------- | -------------------------------------------------------------------------- |
-| `event`   | `string` | Identifies the type of event being transmitted.                            |
-| `payload` | `object` | Contains the event-specific data. The structure depends on the event type. |
-| `meta`    | `object` | Additional metadata used by the frontend.                                  |
-| `message` | `string` | Human-readable message intended for logs or user notifications.            |
+| Property | Required | Type | Description |
+|----------|:--------:|------|-------------|
+| `event` | Yes | `string` | Identifies the event being transmitted. |
+| `payload` | Yes | `object` | Contains the data associated with the event. Its structure depends on the event type. |
+| `meta` | No | `object` | Contains additional metadata for the frontend. |
+| `message` | No | `string` | Human-readable description intended for logs or user notifications. |
 
 ---
 
-## Example
+## Examples
+
+### Complete message
 
 ```json
 {
@@ -40,13 +42,24 @@ All messages follow the same general structure.
 }
 ```
 
+### State update message
+
+Messages that only update the application state usually omit the optional `meta` and `message` fields.
+
+```json
+{
+    "event": "ROBOT_STATE",
+    "payload": {
+        "joints": [...]
+    }
+}
+```
+
 ---
 
 ## Event
 
 The `event` field identifies the action or state being communicated.
-
-Example:
 
 ```json
 "event": "HARDWARE_STATE"
@@ -58,7 +71,9 @@ Each event defines the expected structure of its corresponding `payload`.
 
 ## Payload
 
-The `payload` contains the data associated with the event.
+The `payload` field contains the data associated with an event.
+
+Its structure varies depending on the event type.
 
 Example:
 
@@ -68,13 +83,11 @@ Example:
 }
 ```
 
-The payload structure is specific to each event.
-
 ---
 
 ## Meta
 
-The `meta` object provides additional information that does not belong to the application state itself.
+The optional `meta` object contains additional information used by the frontend.
 
 Example:
 
@@ -87,46 +100,22 @@ Example:
 
 Current fields:
 
-| Property      | Description                                                    |
-| ------------- | -------------------------------------------------------------- |
-| `severity`    | Message severity (`info`, `warning`, `error`, etc.).           |
+| Property | Description |
+|----------|-------------|
+| `severity` | Message severity (`info`, `warning`, `error`, etc.). |
 | `userVisible` | Indicates whether the message should be displayed to the user. |
 
 ---
 
 ## Message
 
-The `message` field contains a human-readable description of the event.
+The optional `message` field contains a human-readable description of the event.
 
 It is intended for:
 
-* Application logs.
-* Terminal output.
-* User notifications.
+- Application logs.
+- Terminal output.
+- User notifications.
 
-Applications should **not** rely on this field for program logic. Instead, they should use the `event` and `payload` fields.
-
-## Required Fields
-
-Every message **must** contain the following fields:
-
-* `event`
-* `payload`
-
-The following fields are optional:
-
-* `meta`
-* `message`
-
-Messages that only update the application state usually omit `meta` and `message`.
-
-Example: 
-
-```json
-{
-    "event": "ROBOT_STATE",
-    "payload": {
-        "joints": [...]
-    }
-}
-```
+> [!NOTE]
+> Frontend logic should rely on the `event` and `payload` fields, **not** on the `message` field.

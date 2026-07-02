@@ -26,7 +26,7 @@ class RobotController:
             self.robotState.setJoints(joints)
             tcp = await self.fkSolver(joints)
             # tcp = self.calculateFK(joints)
-            await self.hardwareDriver.send({
+            self.hardwareDriver.send({
                 "type": "move_joints",
                 "values": joints
             })
@@ -62,7 +62,7 @@ class RobotController:
                     "joints": joints
                 }
             })
-            await self.hardwareDriver.send({
+            self.hardwareDriver.send({
                 "type": "move_joints",
                 "values": joints
             })

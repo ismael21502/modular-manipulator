@@ -199,3 +199,40 @@ Axes:
 - X: Right
 - Y: Forward
 - Z: Up
+
+## Cartesian
+
+The `cartesian` array defines the Cartesian variables available for controlling the robot's Tool Center Point (TCP).
+
+Each axis specifies its identifier, display label, valid range, default value, and measurement unit. The frontend uses this information to generate the corresponding controls.
+
+```json
+{
+    "cartesianAxes": [
+        {
+            "id": "x",
+            "label": "X",
+            "min": -180,
+            "max": 180,
+            "default": 0,
+            "unit": "mm"
+        }
+    ]
+}
+```
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `id` | `string` | Unique axis identifier (e.g. `x`, `y`, `z`, `roll`, `pitch`, `yaw`). |
+| `label` | `string` | Human-readable name displayed in the user interface. |
+| `min` | `number` | Minimum allowed value for the axis. |
+| `max` | `number` | Maximum allowed value for the axis. |
+| `default` | `number` | Default axis value when the robot is initialized or reset. |
+| `unit` | `string` | Measurement unit (`mm`, `deg`, etc.). |
+
+### Notes
+
+- Position axes (`x`, `y`, `z`) are typically expressed in millimeters.
+- Orientation axes (`roll`, `pitch`, `yaw`) are typically expressed in degrees.
+- The available Cartesian axes depend on the robot configuration. For example, a robot with fewer degrees of freedom may expose only a subset of these axes.
+- The frontend generates the Cartesian controls dynamically based on this configuration.
