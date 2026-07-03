@@ -55,8 +55,7 @@ asyncio.create_task(deviceDiscoverer.run())
 asyncio.create_task(controller.run())
 app.mount("/robot_parts", StaticFiles(directory="robot_parts"), name="robot_parts")
 
-@app.get("/robot_config")
-async def getRobotConfig():
+def loadRobotConfig():
     try:
         filePath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "robotConfig.json")
         with open(filePath, "r", encoding="utf-8") as f:
@@ -69,6 +68,12 @@ async def getRobotConfig():
     except Exception as e:
         print("Error leyendo robotConfig.json:", e)
         return {}
+
+robotConfig = loadRobotConfig()  
+@app.get("/robot_config")
+async def getRobotConfig():
+    print("Robot config: ", robotConfig)
+    return robotConfig
 
 #region robotBuilding
 def buildUrls(part, category):

@@ -47,7 +47,7 @@ void parseJson(const String &jsonStr)
   else if (doc["type"] == "handshake"){
     //JsonArray values = doc["values"];
     Serial.println("Shaked");
-    digitalWrite(2, HIGH);
+    digitalWrite(2, HIGH); //Convertir esto luego en un indicador de estado de conexión con heatbeat 
   }
 }
 

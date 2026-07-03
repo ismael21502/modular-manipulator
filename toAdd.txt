@@ -11,7 +11,7 @@ Speed override global (slider 0–200%)
 
 Parámetros del trapezoidal
 
-Host/puerto por defecto 
+Host/puerto por defecto **
 
 Theme
 
@@ -32,7 +32,7 @@ maybe separate desired state vs currentState in the sliders **
 Corregir animaciones
 -Agregar RobotState que envuelve a joints y gripper **
 -Añadir animación de gripper **
--Cuando muevo un slider cartesian mediante el input y luego uso startPosition, se bugea y vuelve al inicio (resuelto)
+-Cuando muevo un slider cartesian mediante el input y luego uso startPosition, se bugea y vuelve al inicio (resuelto) **
 -Añadir envío de datos al back para FK **
 
 
